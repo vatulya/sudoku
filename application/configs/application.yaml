@@ -26,6 +26,8 @@ production:
                 username: sudoku
                 password: sudoku
                 dbname: sudoku
+        layout:
+            layoutPath: APPLICATION_PATH/layouts/scripts/
 
 staging:
     _extends: production

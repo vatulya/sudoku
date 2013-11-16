@@ -10,101 +10,16 @@
 
     <?php
     $this->headScript()
-        ->prependFile('/js/global.js')
-        ->prependFile('/js/bootstrap.js')
-        ->prependFile('/js/jquery.form.js')
-        ->prependFile('/js/jquery-1.8.2.min.js')
+        ->appendFile('/js/jquery-2.0.3.js')
+//        ->appendFile('/js/jquery.form.js')
+        ->appendFile('/js/bootstrap.js')
+        ->appendFile('/js/global.js')
 ?>
 </head>
 <body>
 
-<div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container">
-            <!-- TOP PANEL -->
-
-            <a class="brand" href="<?php echo $this->url(array(), null, true) ?>">Futurumshop: Planner</a>
-            <?php if ($this->me['role'] >= Application_Model_Auth::ROLE_USER): ?>
-            <ul class="nav">
-                <li <?php if ($this->activeMenu == 'checking'): ?>class="active"<?php endif; ?>>
-                    <a href="<?php echo $this->url(array('controller' => 'checking'), null, true) ?>">
-                        Check IN/OUT
-                    </a>
-                </li>
-                <li <?php if ($this->activeMenu == 'planning'): ?>class="active"<?php endif; ?>>
-                    <a href="<?php echo $this->url(array('controller' => 'planning'), 'planner', true) ?>">
-                        Planning
-                    </a>
-                </li>
-                <li <?php if ($this->activeMenu == 'requests'): ?>class="active"<?php endif; ?>>
-                    <a href="<?php echo $this->url(array('controller' => 'requests'), 'planner', true) ?>">
-                        Request
-                    </a>
-                </li>
-                <?php if ($this->me['role'] >= Application_Model_Auth::ROLE_GROUP_ADMIN): ?>
-                <li <?php if ($this->activeMenu == 'open-requests'): ?>class="active"<?php endif; ?>>
-                    <a href="<?php echo $this->url(array('controller' => 'open-requests'), 'planner', true) ?>">
-                        Accordering
-                    </a>
-                </li>
-                <?php endif; ?>
-                <?php if ($this->me['role'] >= Application_Model_Auth::ROLE_ADMIN): ?>
-                <li <?php if ($this->activeMenu == 'group-settings'): ?>class="active"<?php endif; ?>>
-                    <a href="<?php echo $this->url(array('controller' => 'group-settings'), 'planner', true) ?>">
-                        Settings groups
-                    </a>
-                </li>
-                <li <?php if ($this->activeMenu == 'user-settings'): ?>class="active"<?php endif; ?>>
-                    <a href="<?php echo $this->url(array('controller' => 'user-settings'), 'planner', true) ?>">
-                        Settings users
-                    </a>
-                </li>
-                <li <?php if ($this->activeMenu == 'overview'): ?>class="active"<?php endif; ?>>
-                    <a href="<?php echo $this->url(array('controller' => 'overview'), 'planner', true) ?>">
-                        Overview
-                    </a>
-                </li>
-                <li <?php if ($this->activeMenu == 'alerts'): ?>class="active"<?php endif; ?>>
-                    <a href="<?php echo $this->url(array('controller' => 'alerts'), 'planner', true) ?>">
-                        Alerts
-                    </a>
-                </li>
-                <?php endif; ?>
-                <li class="divider-vertical"></li>
-                <li>
-                    <?php
-                    $title = Application_Model_Auth::getRole(true) . ': ' . $this->me['full_name'] . '
-                    (' . $this->me['email'] . ')';
-                    ?>
-                    <a id="logout-link" href="<?php echo $this->url(array(), 'logout', true) ?>" title="<?php echo $title; ?>">
-                        Logout
-                    </a>
-                </li>
-            </ul>
-            <?php endif; ?>
-
-            <!-- TOP PANEL -->
-        </div>
-    </div>
-</div>
-
 <div class="container" id="container">
     <?php echo $this->layout()->content ?>
-</div>
-
-<div class="modal hide span12 popup" id="mainPopup">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-        <h3></h3>
-    </div>
-    <div class="modal-body">
-        <p class="modal-body-p"></p>
-    </div>
-    <?php /* ?>
-    <div class="modal-footer">
-        <button class="btn btn-primary button-submit">Save</button>
-    </div>
-    <?php */ ?>
 </div>
 
 <?php echo $this->headScript(); ?>

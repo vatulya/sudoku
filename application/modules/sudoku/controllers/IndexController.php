@@ -1,6 +1,6 @@
 <?php
 
-class Planner_IndexController extends Zend_Controller_Action
+class Sudoku_IndexController extends Zend_Controller_Action
 {
 
     public $ajaxable = array(
@@ -21,7 +21,7 @@ class Planner_IndexController extends Zend_Controller_Action
 
     public function indexAction()
     {
-
+        $a = 1;
     }
 
 }
