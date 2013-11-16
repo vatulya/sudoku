@@ -1,6 +1,6 @@
 <?php
 
-class Planner_IndexController extends My_Controller_Action
+class Planner_IndexController extends Zend_Controller_Action
 {
 
     public $ajaxable = array(
@@ -11,23 +11,17 @@ class Planner_IndexController extends My_Controller_Action
 
     public function init()
     {
-        $this->_modelUser = new Application_Model_User();
-        $group = $this->_getParam('group');
-        $allowed = false;
-        if ($this->_me['role'] >= Application_Model_Auth::ROLE_ADMIN) {
-            $allowed = true;
-        } elseif ($group && in_array($group, $this->_me['admin_groups'])) {
-            $allowed = true;
-        }
-        if ( ! $allowed) {
-            $this->_setParam('user', $this->_me['id']);
-        }
-        parent::init();
+        $this->_helper->getHelper('AjaxContext')->initContext();
+    }
+
+    public function preDispatch()
+    {
+
     }
 
     public function indexAction()
     {
-        $this->_forward('index', 'checking', null, array('controller' => 'checking'));
+
     }
 
 }
