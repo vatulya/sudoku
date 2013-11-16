@@ -1,0 +1,10 @@
+<?php if (empty($this->users)): ?>
+<h2>No users for this project.</h2>
+<?php else: ?>
+
+    <?php foreach ($this->users as $user): ?>
+        <?php $this->user = $user; ?>
+        <?php echo $this->render('_blocks/user_row.phtml'); ?>
+    <?php endforeach; ?>
+
+<?php endif; ?>
