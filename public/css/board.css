@@ -1,0 +1,33 @@
+.sudoku-board {
+    border: solid #000;
+    border-width: 2px 0 0 2px;
+}
+
+.sudoku-board .sudoku-col {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    border: solid #000;
+    border-width: 0 1px 1px 0;
+}
+
+.sudoku-board .sudoku-col.col-3,
+.sudoku-board .sudoku-col.col-6,
+.sudoku-board .sudoku-col.col-9 {
+    border-right-width: 2px;
+}
+
+.sudoku-board .sudoku-row.row-3,
+.sudoku-board .sudoku-row.row-6,
+.sudoku-board .sudoku-row.row-9 {
+    border-bottom-width: 2px;
+}
+
+.sudoku-board .square-1,
+.sudoku-board .square-3,
+.sudoku-board .square-5,
+.sudoku-board .square-7,
+.sudoku-board .square-9 {
+    background-color: #ddd;
+}
