@@ -3,13 +3,10 @@
 class Application_Model_Auth extends Application_Model_Abstract
 {
 
-    const ROLE_GUEST       = 0;
-    const ROLE_USER        = 20;
+    const DB_MODEL_NAME = 'Users';
 
-    public function __construct()
-    {
-        $this->_modelDb = new Application_Model_Db_Users();
-    }
+    const ROLE_GUEST = 0;
+    const ROLE_USER  = 20;
 
     public function login($email, $password)
     {

@@ -4,7 +4,6 @@
     <?php $this->headLink()
         ->appendStylesheet('/css/bootstrap.css')
         ->appendStylesheet('/css/styles.css')
-        ->appendStylesheet('/css/board.css')
     ?>
     <?php echo $this->headLink() ?>
     <?php echo $this->headTitle() ?>
@@ -12,12 +11,11 @@
     <?php
     $this->headScript()
         ->appendFile('/js/jquery-2.0.3.js')
-//        ->appendFile('/js/jquery.form.js')
         ->appendFile('/js/bootstrap.js')
         ->appendFile('/js/global.js')
 ?>
 </head>
-<body>
+<body onload="gogogo();">
 
 <div class="container" id="container">
     <?php echo $this->layout()->content ?>

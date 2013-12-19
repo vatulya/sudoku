@@ -1,7 +1,8 @@
 <?php
 
-class Application_Model_AuthAdapter extends Application_Model_Abstract implements Zend_Auth_Adapter_Interface
+class Application_Model_AuthAdapter implements Zend_Auth_Adapter_Interface
 {
+
     protected $_email;
     protected $_password; // SHA1
 
@@ -14,12 +15,9 @@ class Application_Model_AuthAdapter extends Application_Model_Abstract implement
     public function authenticate()
     {
         $users = new Application_Model_Db_Users();
-        $user = $users->getUserByEmail($this->_email);
+        $user = $users->withHiddenFields()->getUserByEmail($this->_email);
         if ($user['password'] === $this->_password) {
-            unset($user['password']);
-
-            $group = new Application_Model_Group();
-            $user['admin_groups'] = $group->getUserGroupsAdmin($user);
+            $user = $users->hideFields($user);
             return new Zend_Auth_Result(Zend_Auth_Result::SUCCESS, $user);
         }
         return new Zend_Auth_Result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, null);

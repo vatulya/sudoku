@@ -1,11 +1,13 @@
 <?php
 
-abstract class Application_Model_Db_Abstract extends Application_Model_Database
+abstract class Application_Model_Db_Abstract
 {
+
+    protected $_db;
 
     public function __construct()
     {
-        parent::__construct();
+        $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
 
 }
