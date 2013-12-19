@@ -1,6 +1,6 @@
-(function (window, document, $) {
+(function ($w, $d, $) {
 
-    window.gogogo = function() {
+    $w.gogogo = function() {
 
     }
 

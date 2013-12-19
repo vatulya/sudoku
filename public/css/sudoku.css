@@ -1,0 +1,90 @@
+.sudoku-board {
+    float: left;
+    margin: 0 5px;
+    border: 2px solid #000000;
+}
+
+/********************************** board cells *********************************/
+
+.sudoku-board .cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #000000;
+    margin: -1px 0 0 -1px;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.sudoku-board .cell.gray {
+    background-color: #dddddd;
+}
+.sudoku-board .cell:hover {
+    background-color: #ffffff;
+}
+.sudoku-board .cell.hover {
+    background-color: #bbbbbb;
+}
+.sudoku-board .cell.selected {
+    background-color: #ffff66;
+}
+.sudoku-board .cell.locked {
+    background-color: #aaaaaa;
+}
+.sudoku-board .cell.error {
+    background-color: #ff4444;
+}
+
+.sudoku-board .cell.row-4,
+.sudoku-board .cell.row-7
+{
+    border-top-width: 2px;
+}
+
+.sudoku-board .cell.col-4,
+.sudoku-board .cell.col-7
+{
+    border-left-width: 2px;
+}
+
+/********************************** numpad *********************************/
+.sudoku-numpad {
+    display: none;
+}
+
+.sudoku-numpad table {
+    border: 1px solid #000000;
+    padding: 5px;
+    border-radius: 3px;
+    background-color: #dddddd;
+}
+
+.sudoku-numpad .number {
+    background-color: #f0f0f0;
+    float: left;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #000000;
+    padding: 2px;
+    margin: 2px;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+}
+.sudoku-numpad .number.clear {
+    width: 80px;
+}
+
+.sudoku-numpad .number:hover {
+    background-color: #ffff66;
+}
+
+.sudoku-numpad .none {
+    visibility: hidden;
+}
+
+.sudoku-numpad .close {
+    cursor: pointer;
+}

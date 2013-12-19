@@ -1,0 +1,68 @@
+<?php
+$cols = 9; // 1..9
+$rows = 9;
+
+/**
+ * @param int $row
+ * @param int $col
+ * @return bool
+ */
+function isGray($row, $col) {
+    $grayRow = (bool)(ceil($row / 3) % 2); // 111000111
+    $grayCol = (bool)(ceil($col / 3) % 2); // 111000111
+    $isGray = $grayRow == $grayCol;
+    return $isGray;
+}
+?>
+<div class="sudoku-table">
+    <input type="hidden" name="selected-cell" value="" class="selected-cell">
+
+    <table class="sudoku-board">
+        <?php for ($r = 1; $r <= $rows; $r++): ?>
+        <tr>
+            <?php for ($c = 1; $c <= $cols; $c++): ?>
+                <?php
+                    $isGray = isGray($r, $c);
+                    $cellNumber = ($r - 1) * 9 + $c;
+                    $value = isset($this->openCells[$cellNumber]) ? $this->openCells[$cellNumber] : '';
+                ?>
+                <td
+                    class="cell row-<?php echo $r; ?> col-<?php echo $c; ?> <?php if ($isGray) echo 'gray'; ?> <?php echo $value ? 'locked' : 'open'; ?>"
+                    data-row="<?php echo $r; ?>"
+                    data-col="<?php echo $c; ?>"
+                    data-value="<?php echo $value; ?>"
+                >
+                    <?php echo $value; ?>
+                </td>
+            <?php endfor; ?>
+        </tr>
+        <?php endfor; ?>
+    </table>
+
+    <div class="sudoku-numpad">
+        <table>
+            <tr>
+                <td colspan="3" class="close"><i class="icon-remove-circle"></i></td>
+            </tr>
+            <?php $number = 1; ?>
+            <?php for ($r = 1; $r <= 3; $r++): ?>
+            <tr>
+                <?php for ($c = 1; $c <= 3; $c++): ?>
+                    <td class="number" data-number="<?php echo $number; ?>">
+                        <?php if ($number == 3): ?><?php endif; ?>
+                        <?php echo $number; ?>
+                    </td>
+                    <?php $number++; ?>
+                <?php endfor; ?>
+            </tr>
+            <?php endfor; ?>
+            <tr>
+                <td class="number clear" colspan="3" data-number="">clear</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="additional-buttons">
+        <button class="check-field btn btn-mini">Check</button>
+    </div>
+</div>
