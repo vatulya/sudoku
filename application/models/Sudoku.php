@@ -5,67 +5,159 @@ class Application_Model_Sudoku extends Application_Model_Abstract
 
     const DEFAULT_GAME_DIFFICULTY = 2;
 
-    const TOTAL_CELLS = 81;
+    const SHUFFLE_COUNT = 10;
 
     public function createGame($difficulty = self::DEFAULT_GAME_DIFFICULTY)
     {
-        // TODO: create game from resolved board
+        $openCellsCount = 35;
 
-        $totalOpenCells = 30;
-        $attempts = 1000;
-        $openCells = $openCellsPerRows = $openCellsPerCols = $openCellsPerSquares = array();
-        while ($attempts > 0 && $totalOpenCells > 0) {
-            $error = false;
-            $cellNumber = rand(1, self::TOTAL_CELLS);
-            $row = (int)ceil($cellNumber / 9);
-            $col = $cellNumber % 9;
-            if (!$col) $col = 9;
-            $square = (int)((ceil($row / 3) - 1) * 3 + ceil($col / 3));
-            $cellValue = rand(1,9);
+        $board = $this->_getSimpleBoard();
+        $board = $this->_shuffleBoard($board);
+        $board = $this->_mergeBoardRows($board);
+        $board = $this->_getOpenCells($board, $openCellsCount);
+        $board = $this->_normalizeBoardKeys($board);
+        $openCells = $board;
 
-            try {
-                if (isset($openCells[$cellNumber])) {
-                    throw new Exception('Cell #' . $cellNumber . ' already opened');
-                }
-                if (isset($openCellsPerRows[$row][$cellValue])) {
-                    throw new Exception('Cell with value "' . $cellValue . '" already opened in same row #' . $row);
-                }
-                if (isset($openCellsPerCols[$col][$cellValue])) {
-                    throw new Exception('Cell with value "' . $cellValue . '" already opened in same col #' . $col);
-                }
-                if (isset($openCellsPerSquares[$square][$cellValue])) {
-                    throw new Exception('Cell with value "' . $cellValue . '" already opened in same square #' . $square);
-                }
-            } catch (Exception $e) {
-                $error = true;
+        return $openCells;
+    }
+
+    protected function _getSimpleBoard()
+    {
+        $board = array();
+        $rows = 9;
+        $rowOffsets = array(null, 0, 3, 6, 1, 4, 7, 2, 5, 8);
+        $row = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
+        for ($r = 1; $r <= $rows; $r++) {
+            $rowCopy = $row;
+            $offset = $rowOffsets[$r];
+            while ($offset > 0) {
+                array_push($rowCopy, array_shift($rowCopy)); // move first element to the end
+                $offset--;
             }
+            $board[] = $rowCopy;
+        }
+        return $board;
+    }
 
-            if (!$error) {
-                $openCells[$cellNumber] = $cellValue;
+    protected function _shuffleBoard(array $board)
+    {
+        $shuffledBoard = $board;
+        $allowedMethods = $this->getAllowedShuffleMethods();
+        $allowedMethodsCount = count($allowedMethods) - 1;
+        $count = self::SHUFFLE_COUNT;
+        while ($count > 0) {
+            $method = rand(0, $allowedMethodsCount);
+            $method = $allowedMethods[$method];
+            $method = '_shuffleBoardType' . $method;
+            $shuffledBoard = $this->$method($shuffledBoard);
+            $count--;
+        }
+        return $shuffledBoard;
+    }
 
-                if (empty($openCellsPerRows[$row])) {
-                    $openCellsPerRows[$row] = array();
-                }
-                $openCellsPerRows[$row][$cellValue] = $cellValue;
+    public function getAllowedShuffleMethods()
+    {
+        return array(
+            'Transposing',
+            'SwapRows',
+            'SwapCols',
+            'SwapSquareRows',
+            'SwapSquareCols',
+        );
+    }
 
-                if (empty($openCellsPerCols[$col])) {
-                    $openCellsPerCols[$col] = array();
-                }
-                $openCellsPerCols[$col][$cellValue] = $cellValue;
+    protected function _shuffleBoardTypeTransposing(array $board)
+    {
+        // I don't understand this magic. Thx Stackoverflow :)
+        array_unshift($board, null);
+        return call_user_func_array('array_map', $board);
+    }
 
-                if (empty($openCellsPerSquares[$square])) {
-                    $openCellsPerSquares[$square] = array();
-                }
-                $openCellsPerSquares[$square][$cellValue] = $cellValue;
-            }
+    protected function _shuffleBoardTypeSwapRows(array $board)
+    {
+        $rowToShuffleNumber = rand(1, 9); // 8
+        $rowToSwitchOffset = rand(1, 2); // 2
+        $squareRow = ceil($rowToShuffleNumber / 3); // 3
+        $rowToShufflePosition = $rowToShuffleNumber % 3; // 2
+        if (!$rowToShufflePosition) $rowToShufflePosition = 3;
+        $rowToSwitchPosition = ($rowToShufflePosition + $rowToSwitchOffset) % 3; // ( (2 + 2) % 3 ) = 1
+        if (!$rowToSwitchPosition) $rowToSwitchPosition = 3;
+        $rowToSwitchNumber = (int)(($squareRow - 1) * 3 + $rowToSwitchPosition); // (3 - 1) * 3 = 6 + 1 = 7
+        // So we should switch row 8 and 7
+        $rowToShuffleNumber--;
+        $rowToSwitchNumber--;
+        $tempRow = $board[$rowToShuffleNumber];
+        $board[$rowToShuffleNumber] = $board[$rowToSwitchNumber];
+        $board[$rowToSwitchNumber] = $tempRow;
+        return $board;
+    }
 
-            if ($error) {
-                $attempts--;
-            } else {
-                $totalOpenCells--;
-            }
+    protected function _shuffleBoardTypeSwapCols(array $board)
+    {
+        $board = $this->_shuffleBoardTypeTransposing($board);
+        $board = $this->_shuffleBoardTypeSwapRows($board);
+        $board = $this->_shuffleBoardTypeTransposing($board);
+        return $board;
+    }
+
+    protected function _shuffleBoardTypeSwapSquareRows(array $board)
+    {
+        $squareToShuffleNumber = rand(1, 3); // 2
+        $squareToSwitchOffset = rand(1, 2); // 2
+        $squareToSwitchNumber = ($squareToShuffleNumber + $squareToSwitchOffset) % 3; // (2 + 2) % 3 = 1
+        if (!$squareToSwitchNumber) $squareToSwitchNumber = 3;
+        // So we should switch square 2 and 1
+        $squareToShuffleStart = ($squareToShuffleNumber - 1) * 3; // (2 - 1) * 3 = 3
+        $squareToSwitchStart = ($squareToSwitchNumber - 1) * 3; // (1 - 1) * 3 = 0
+        $shuffleSquare = array_slice($board, $squareToShuffleStart, 3); // 4..6
+        $switchSquare = array_slice($board, $squareToSwitchStart, 3); // 1..3
+        array_splice($board, $squareToShuffleStart, 3, $switchSquare);
+        array_splice($board, $squareToSwitchStart, 3, $shuffleSquare);
+        return $board;
+    }
+
+    protected function _shuffleBoardTypeSwapSquareCols(array $board)
+    {
+        $board = $this->_shuffleBoardTypeTransposing($board);
+        $board = $this->_shuffleBoardTypeSwapSquareRows($board);
+        $board = $this->_shuffleBoardTypeTransposing($board);
+        return $board;
+    }
+
+    protected function _mergeBoardRows(array $board)
+    {
+        $mergedBoard = array();
+        foreach ($board as $row) {
+            $mergedBoard = array_merge($mergedBoard, $row);
+        }
+        return $mergedBoard;
+    }
+
+    protected function _getOpenCells(array $board, $count)
+    {
+        $keys = array_keys($board);
+        shuffle($keys);
+        $openCells = array();
+        while ($count > 0) {
+            $key = $keys[$count];
+            $openCells[$key] = $board[$key];
+            $count--;
         }
         return $openCells;
+    }
+
+    protected function _normalizeBoardKeys(array $board)
+    {
+        $normalizedBoard = array();
+        foreach ($board as $key => $value) {
+            $key++; // 0 -> 1, 8 -> 9, 9 -> 10
+            $row = ceil($key / 9);
+            $col = $key % 9;
+            if (!$col) $col = 9;
+            $coords = $row . $col;
+            $normalizedBoard[$coords] = $value;
+        }
+        return $normalizedBoard;
     }
 
     public function checkField(array $cells)

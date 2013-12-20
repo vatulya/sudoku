@@ -49,6 +49,23 @@
     border-left-width: 2px;
 }
 
+/* no-errors */
+.sudoku-board.no-errors .cell.row-4,
+.sudoku-board.no-errors .cell.row-7
+{
+    border-top-color: #008800;
+}
+
+.sudoku-board.no-errors .cell.col-4,
+.sudoku-board.no-errors .cell.col-7
+{
+    border-left-color: #008800;
+}
+
+.sudoku-board.no-errors
+{
+    border-color: #008800;
+}
 /********************************** numpad *********************************/
 .sudoku-numpad {
     display: none;

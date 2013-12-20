@@ -34,7 +34,9 @@ class Sudoku_IndexController extends Zend_Controller_Action
         /** @var Application_Model_Sudoku $sudoku */
         $sudoku = Application_Model_Sudoku::getInstance();
         $errors = $sudoku->checkField($cells);
-        $this->view->errors = $errors;
+        if ($errors) {
+            $this->view->errors = $errors;
+        }
     }
 
 }

@@ -23,7 +23,7 @@ function isGray($row, $col) {
             <?php for ($c = 1; $c <= $cols; $c++): ?>
                 <?php
                     $isGray = isGray($r, $c);
-                    $cellNumber = ($r - 1) * 9 + $c;
+                    $cellNumber = $r . $c;
                     $value = isset($this->openCells[$cellNumber]) ? $this->openCells[$cellNumber] : '';
                 ?>
                 <td
@@ -64,5 +64,6 @@ function isGray($row, $col) {
 
     <div class="additional-buttons">
         <button class="check-field btn btn-mini">Check</button>
+        <button class="clear-field btn btn-mini btn-danger">Clear</button>
     </div>
 </div>

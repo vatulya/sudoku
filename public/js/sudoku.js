@@ -29,6 +29,9 @@
         .on('click', '.sudoku-table .check-field', function() {
             Sudoku.checkBoard(this);
         })
+        .on('click', '.sudoku-table .clear-field', function() {
+            Sudoku.clearBoard(this);
+        })
     ;
 
     var Sudoku = {
@@ -76,7 +79,7 @@
             table.find('.selected-cell').val(row + '-' + col);
             table.find('.cell').removeClass('selected');
             table.find('.cell.row-' + row + '.col-' + col).addClass('selected');
-            Sudoku.opeNumpad(el);
+            Sudoku.openNumpad(el);
         },
 
         unselectCell: function(el) {
@@ -105,7 +108,7 @@
         closeNumpad: function(el) {
             Sudoku.findTable(el).find('.sudoku-numpad').hide();
         },
-        opeNumpad: function(el) {
+        openNumpad: function(el) {
             Sudoku.findTable(el).find('.sudoku-numpad').show();
         },
 
@@ -127,15 +130,19 @@
                     cells: cells
                 },
                 success: function(response) {
-                    var errors = response.errors;
-                    $.each(errors, function(coords, value) {
-                        coords = coords.split('');
-                        var
-                            row = coords[0],
-                            col = coords[1]
-                        ;
-                        Sudoku.showError(board, row, col);
-                    });
+                    if (typeof response.errors == 'undefined') {
+                        board.addClass('no-errors');
+                        setTimeout(function() {board.removeClass('no-errors');}, 2000);
+                    } else {
+                        $.each(response.errors, function(coords, value) {
+                            coords = coords.split('');
+                            var
+                                row = coords[0],
+                                col = coords[1]
+                            ;
+                            Sudoku.showError(board, row, col);
+                        });
+                    }
                 }
             });
         },
@@ -147,6 +154,15 @@
                 cell.addClass('error');
                 setTimeout(function() {cell.removeClass('error')}, 2000);
             }
+        },
+
+        clearBoard: function(el) {
+            var board = Sudoku.findBoard(el);
+            board.find('.cell.open').each(function(i, el) {
+                el = $(el);
+                el.data('value', '');
+                el.html('');
+            });
         }
 
     };
