@@ -19,7 +19,7 @@
 }
 
 .sudoku-board .cell.gray {
-    background-color: #dddddd;
+    background-color: #eeeeee;
 }
 .sudoku-board .cell:hover {
     background-color: #ffffff;
@@ -27,11 +27,15 @@
 .sudoku-board .cell.hover {
     background-color: #bbbbbb;
 }
-.sudoku-board .cell.selected {
-    background-color: #ffff66;
-}
 .sudoku-board .cell.locked {
     background-color: #aaaaaa;
+}
+.sudoku-board .cell.hovered {
+    color: #338833;
+    background-color: #aabbaa;
+}
+.sudoku-board .cell.selected {
+    background-color: #ffff66;
 }
 .sudoku-board .cell.error {
     background-color: #ff4444;

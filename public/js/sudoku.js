@@ -17,11 +17,15 @@
         .on('mouseout', '.sudoku-board', function() {
             $(this).find('.cell').removeClass('hover');
         })
+        .on('click', '.sudoku-board .cell', function() {
+            Sudoku.hoverNumber(this);
+        })
         .on('click', '.sudoku-board .cell.open', function() {
             Sudoku.cellClick(this);
         })
         .on('click', '.sudoku-numpad .number', function() {
-            Sudoku.checkNumber(this);
+            var el = $(this);
+            Sudoku.checkNumber(el, el.data('number'));
         })
         .on('click', '.sudoku-numpad .close', function() {
             Sudoku.closeNumpad(this);
@@ -32,6 +36,11 @@
         .on('click', '.sudoku-table .clear-field', function() {
             Sudoku.clearBoard(this);
         })
+        .on('keypress', function(e) {
+            $('.sudoku-table').each(function(i, el) {
+                Sudoku.keyPress(el, e.charCode);
+            })
+        });
     ;
 
     var Sudoku = {
@@ -58,6 +67,23 @@
                 }
             }
             return board;
+        },
+
+        hoverNumber: function(el) {
+            el = $(el);
+            var value = el.data('value');
+            if (value) {
+                var board = Sudoku.findBoard(el);
+                board.find('.hovered-number').val(value);
+                board.find('.cell').each(function(i, el) {
+                    el = $(el);
+                    if (el.data('value') == value) {
+                        el.addClass('hovered');
+                    } else {
+                        el.removeClass('hovered');
+                    }
+                });
+            }
         },
 
         cellClick: function(el) {
@@ -91,18 +117,18 @@
         },
 
         getSelectedCell: function(el) {
-            var table = el.hasClass('sudoku-table') ? el : Sudoku.findTable(el);
+            var table = Sudoku.findTable(el);
             var coords = table.find('.selected-cell').val().split('-');
             var cell = table.find('.cell.row-' + coords[0] + '.col-' + coords[1]);
             return cell;
         },
 
-        checkNumber: function(el) {
+        checkNumber: function(el, number) {
             el = $(el);
             var table = Sudoku.findTable(el);
             var cell = Sudoku.getSelectedCell(table);
-            var value = el.data('number');
-            cell.html(value).data('value', value);
+            cell.html(number).data('value', number);
+            Sudoku.hoverNumber(cell);
         },
 
         closeNumpad: function(el) {
@@ -163,6 +189,16 @@
                 el.data('value', '');
                 el.html('');
             });
+        },
+
+        keyPress: function(table, charCode) {
+            var cell = Sudoku.getSelectedCell(table);
+            if (cell.hasClass('open')) {
+                var number = String.fromCharCode(charCode);
+                if (number >= 1 && number <= 9) { // 1..9
+                    Sudoku.checkNumber(cell, number);
+                }
+            }
         }
 
     };

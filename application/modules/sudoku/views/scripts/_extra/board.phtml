@@ -16,6 +16,7 @@ function isGray($row, $col) {
 ?>
 <div class="sudoku-table">
     <input type="hidden" name="selected-cell" value="" class="selected-cell">
+    <input type="hidden" name="hovered-number" value="" class="hovered-number">
 
     <table class="sudoku-board">
         <?php for ($r = 1; $r <= $rows; $r++): ?>

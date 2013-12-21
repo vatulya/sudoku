@@ -5,7 +5,7 @@ class Application_Model_Sudoku extends Application_Model_Abstract
 
     const DEFAULT_GAME_DIFFICULTY = 2;
 
-    const SHUFFLE_COUNT = 10;
+    const SHUFFLE_COUNT = 20;
 
     public function createGame($difficulty = self::DEFAULT_GAME_DIFFICULTY)
     {
