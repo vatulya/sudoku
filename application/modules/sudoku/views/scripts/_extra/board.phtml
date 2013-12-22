@@ -2,6 +2,8 @@
 $cols = 9; // 1..9
 $rows = 9;
 
+$game = $this->sudoku->getParams();
+
 /**
  * @param int $row
  * @param int $col
@@ -15,6 +17,10 @@ function isGray($row, $col) {
 }
 ?>
 <div class="sudoku-table">
+
+    <div class="game-params">
+        Cells opened initially: <span><?php echo count($game['openCells']);?></span>
+    </div>
 
     <div class="congratulations">
         <div class="message">
@@ -33,7 +39,7 @@ function isGray($row, $col) {
                 <?php
                     $isGray = isGray($r, $c);
                     $cellNumber = $r . $c;
-                    $number = isset($this->openCells[$cellNumber]) ? $this->openCells[$cellNumber] : '';
+                    $number = isset($game['openCells'][$cellNumber]) ? $game['openCells'][$cellNumber] : '';
                 ?>
                 <td
                     class="cell row-<?php echo $r; ?> col-<?php echo $c; ?> <?php if ($isGray) echo 'gray'; ?> <?php echo $number ? 'locked' : 'open empty'; ?>"
@@ -50,14 +56,16 @@ function isGray($row, $col) {
 
     <div class="sudoku-numpad">
         <table>
+            <?php /*
             <tr>
                 <td colspan="3" class="close"><i class="icon-remove-circle"></i></td>
             </tr>
+            */ ?>
             <?php $number = 1; ?>
             <?php for ($r = 1; $r <= 3; $r++): ?>
             <tr>
                 <?php for ($c = 1; $c <= 3; $c++): ?>
-                    <td class="number" data-number="<?php echo $number; ?>">
+                    <td class="number enabled" data-number="<?php echo $number; ?>">
                         <?php if ($number == 3): ?><?php endif; ?>
                         <?php echo $number; ?>
                     </td>
@@ -72,8 +80,8 @@ function isGray($row, $col) {
     </div>
 
     <div class="additional-buttons">
-        <button class="undo-move btn btn-mini" data-moves=""><i class="icon-chevron-left"></i> Undo</button>
-        <button class="redo-move btn btn-mini" data-moves=""><i class="icon-chevron-right"></i>Redo</button>
+        <button class="undo-move btn btn-mini disabled" data-moves=""><i class="icon-chevron-left"></i> Undo</button>
+        <button class="redo-move btn btn-mini disabled" data-moves=""><i class="icon-chevron-right"></i>Redo</button>
         <button class="check-field btn btn-mini">Check</button>
         <button class="clear-field btn btn-mini btn-danger">Clear</button>
     </div>

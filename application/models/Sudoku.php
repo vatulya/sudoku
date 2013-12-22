@@ -3,24 +3,40 @@
 class Application_Model_Sudoku extends Application_Model_Abstract
 {
 
+    const PRACTICE_DIFFICULTY  = 1;
+    const EASY_DIFFICULTY      = 2;
+    const NORMAL_DIFFICULTY    = 4;
+    const EXPERT_DIFFICULTY    = 6;
+    const NIGHTMARE_DIFFICULTY = 10;
+    const RANDOM_DIFFICULTY    = 0;
+
     const DEFAULT_GAME_DIFFICULTY = 2;
 
     const SHUFFLE_COUNT = 20;
 
     const TOTAL_CELLS = 81;
 
-    public function createGame($difficulty = self::DEFAULT_GAME_DIFFICULTY)
+    public function createGame($difficulty)
     {
-        $openCellsCount = 80; // 35;
+        $params = $this->getDifficultyParams($difficulty);
+        if (!$params) {
+            $params = $this->getDifficultyParams(self::DEFAULT_GAME_DIFFICULTY);
+        }
+        $openCellsCount = $params['openCells'];
+        if (is_array($openCellsCount)) {
+            $openCellsCount = rand($openCellsCount['min'], $openCellsCount['max']);
+        }
 
         $board = $this->_getSimpleBoard();
         $board = $this->_shuffleBoard($board);
         $board = $this->_mergeBoardRows($board);
         $board = $this->_getOpenCells($board, $openCellsCount);
         $board = $this->_normalizeBoardKeys($board);
-        $openCells = $board;
 
-        return $openCells;
+        $game = new Application_Model_Game('Sudoku', $difficulty);
+        $game->setParams(array('openCells' => $board));
+
+        return $game;
     }
 
     protected function _getSimpleBoard()
@@ -221,6 +237,29 @@ class Application_Model_Sudoku extends Application_Model_Abstract
             return true;
         }
         return false;
+    }
+
+    public function getAllDifficulties()
+    {
+        $difficulties = array(
+            self::PRACTICE_DIFFICULTY  => array('title' => 'Practice',  'openCells' => 40),
+            self::EASY_DIFFICULTY      => array('title' => 'Easy',      'openCells' => 35),
+            self::NORMAL_DIFFICULTY    => array('title' => 'Normal',    'openCells' => 30),
+            self::EXPERT_DIFFICULTY    => array('title' => 'Expert',    'openCells' => 25),
+            self::NIGHTMARE_DIFFICULTY => array('title' => 'Nightmare', 'openCells' => 20),
+            self::RANDOM_DIFFICULTY    => array('title' => 'Random',    'openCells' => array('min' => '20', 'max' => '30')),
+        );
+        return $difficulties;
+    }
+
+    public function getDifficultyParams($difficulty)
+    {
+        $difficulties = $this->getAllDifficulties();
+        if (isset($difficulties[$difficulty])) {
+            return $difficulties[$difficulty];
+        } else {
+            return array();
+        }
     }
 
 }

@@ -24,8 +24,20 @@ class Sudoku_IndexController extends Zend_Controller_Action
     {
         /** @var Application_Model_Sudoku $sudoku */
         $sudoku = Application_Model_Sudoku::getInstance();
-        $openCells = $sudoku->createGame();
-        $this->view->openCells = $openCells;
+
+        $difficulties = $sudoku->getAllDifficulties();
+        $this->view->difficulties = $difficulties;
+
+        /** @var Zend_Controller_Request_Abstract $request */
+        $request = $this->_request;
+        $difficulty = $request->getParam('difficulty');
+        if (!isset($difficulties[$difficulty])) {
+            $difficulty = $sudoku::DEFAULT_GAME_DIFFICULTY;
+        }
+        $this->view->currentDifficulty = $difficulty;
+
+        $game = $sudoku->createGame($difficulty);
+        $this->view->sudoku = $game;
     }
 
     public function checkFieldAction()

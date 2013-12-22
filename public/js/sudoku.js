@@ -1,6 +1,6 @@
-(function ($w, $d, $) {
+(function (w, d, $) {
 
-    $($d)
+    $(d)
         .on('mouseover', '.sudoku-board .cell', function() {
             var el = $(this);
             var board = el.parents('.sudoku-board');
@@ -25,7 +25,9 @@
         })
         .on('click', '.sudoku-numpad .number', function() {
             var el = $(this);
-            Sudoku.checkNumber(el, el.data('number'));
+            if (!el.hasClass('disabled')) {
+                Sudoku.checkNumber(el, el.data('number'));
+            }
         })
         .on('click', '.sudoku-numpad .close', function() {
             Sudoku.closeNumpad(this);
@@ -171,14 +173,15 @@
                 } else {
                     cell.addClass('empty');
                 }
+                Sudoku.checkNumbersCount(cell);
             }
         },
 
         closeNumpad: function(el) {
-            Sudoku.findTable(el).find('.sudoku-numpad').hide();
+//            Sudoku.findTable(el).find('.sudoku-numpad').hide();
         },
         openNumpad: function(el) {
-            Sudoku.findTable(el).find('.sudoku-numpad').show();
+//            Sudoku.findTable(el).find('.sudoku-numpad').show();
         },
 
         checkBoard: function(el) {
@@ -333,6 +336,35 @@
             Sudoku.checkUndoRedoButtons(table);
         },
 
+        checkNumbersCount: function(el) {
+            var table = Sudoku.findTable(el);
+            var numbersCount = {};
+            table.find('.cell').each(function(i, el) {
+                el = $(el);
+                var number = el.data('number');
+                if (number) {
+                    if (numbersCount['' + number]) {
+                        numbersCount['' + number]++;
+                    } else {
+                        numbersCount['' + number] = 1;
+                    }
+                }
+            });
+            table.find('.sudoku-numpad .number').each(function(i, el) {
+                el = $(el);
+                el.removeClass('disabled').addClass('enabled');
+                var number = el.data('number');
+                if (numbersCount[number]) {
+                    el.data('count', numbersCount[number]);
+                    if (numbersCount[number] >= 9) {
+                        el.addClass('disabled').removeClass('enabled');
+                    }
+                } else {
+                    el.data('count', 0);
+                }
+            });
+        },
+
         checkWinGame: function(el) {
             var table = Sudoku.findTable(el);
             if (!table.find('.cell.empty').length) {
@@ -357,6 +389,6 @@
 
     };
 
-    $w.Sudoku = Sudoku;
+    w.Sudoku = Sudoku;
 
 })(this, this.document, this.jQuery);

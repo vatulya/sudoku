@@ -22,10 +22,10 @@
     background-color: #eeeeee;
 }
 .sudoku-board .cell:hover {
-    background-color: #ffffff;
+    background-color: #ffffbb;
 }
 .sudoku-board .cell.hover {
-    background-color: #bbbbbb;
+    /*background-color: #dddddd;*/
 }
 .sudoku-board .cell.locked {
     background-color: #aaaaaa;
@@ -72,7 +72,7 @@
 }
 /********************************** numpad *********************************/
 .sudoku-numpad {
-    display: none;
+    /*display: none;*/
 }
 
 .sudoku-numpad table {
@@ -83,7 +83,7 @@
 }
 
 .sudoku-numpad .number {
-    background-color: #f0f0f0;
+    background-color: #fff;
     float: left;
     width: 20px;
     height: 20px;
@@ -93,12 +93,19 @@
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
+    font-weight: bold;
 }
+
+.sudoku-numpad .number.disabled {
+    background-color: #dddddd;
+    font-weight: normal;
+}
+
 .sudoku-numpad .number.clear {
     width: 80px;
 }
 
-.sudoku-numpad .number:hover {
+.sudoku-numpad .number.enabled:hover {
     background-color: #ffff66;
 }
 
