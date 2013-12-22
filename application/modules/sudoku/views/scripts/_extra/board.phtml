@@ -15,6 +15,14 @@ function isGray($row, $col) {
 }
 ?>
 <div class="sudoku-table">
+
+    <div class="congratulations">
+        <div class="message">
+            Congratulations!<br>
+            You have solved this sudoku!
+        </div>
+    </div>
+
     <input type="hidden" name="selected-cell" value="" class="selected-cell">
     <input type="hidden" name="hovered-number" value="" class="hovered-number">
 
@@ -25,15 +33,15 @@ function isGray($row, $col) {
                 <?php
                     $isGray = isGray($r, $c);
                     $cellNumber = $r . $c;
-                    $value = isset($this->openCells[$cellNumber]) ? $this->openCells[$cellNumber] : '';
+                    $number = isset($this->openCells[$cellNumber]) ? $this->openCells[$cellNumber] : '';
                 ?>
                 <td
-                    class="cell row-<?php echo $r; ?> col-<?php echo $c; ?> <?php if ($isGray) echo 'gray'; ?> <?php echo $value ? 'locked' : 'open'; ?>"
+                    class="cell row-<?php echo $r; ?> col-<?php echo $c; ?> <?php if ($isGray) echo 'gray'; ?> <?php echo $number ? 'locked' : 'open empty'; ?>"
                     data-row="<?php echo $r; ?>"
                     data-col="<?php echo $c; ?>"
-                    data-value="<?php echo $value; ?>"
+                    data-number="<?php echo $number; ?>"
                 >
-                    <?php echo $value; ?>
+                    <?php echo $number; ?>
                 </td>
             <?php endfor; ?>
         </tr>
@@ -64,6 +72,8 @@ function isGray($row, $col) {
     </div>
 
     <div class="additional-buttons">
+        <button class="undo-move btn btn-mini" data-moves=""><i class="icon-chevron-left"></i> Undo</button>
+        <button class="redo-move btn btn-mini" data-moves=""><i class="icon-chevron-right"></i>Redo</button>
         <button class="check-field btn btn-mini">Check</button>
         <button class="clear-field btn btn-mini btn-danger">Clear</button>
     </div>

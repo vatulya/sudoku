@@ -109,3 +109,34 @@
 .sudoku-numpad .close {
     cursor: pointer;
 }
+
+/********************************** congratulations *********************************/
+.sudoku-table .congratulations {
+    width: 940px;
+    display: none;
+    position: absolute;
+    z-index: 10;
+}
+
+.sudoku-table.resolved .sudoku-board .cell {
+    background-color: #ddffdd;
+}
+
+.sudoku-table.resolved .congratulations {
+    display: block;
+}
+
+.sudoku-table .congratulations .message {
+    padding: 20px 50px;
+    margin: 100px auto 0;
+    width: 400px;
+    background-color: #fff;
+    border: 5px solid #cccccc;
+    border-radius: 5px;
+    font-size: 2em;
+    font-weight: bold;
+    line-height: 40px;
+    color: #008800;
+    text-align: center;
+    vertical-align: middle;
+}

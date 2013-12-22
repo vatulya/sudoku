@@ -33,9 +33,11 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $cells = $this->_getParam('cells');
         /** @var Application_Model_Sudoku $sudoku */
         $sudoku = Application_Model_Sudoku::getInstance();
-        $errors = $sudoku->checkField($cells);
-        if ($errors) {
+        $errors = $sudoku->checkGameSolution($cells);
+        if (is_array($errors)) {
             $this->view->errors = $errors;
+        } else {
+            $this->view->resolved = (bool)$errors; // TRUE if resolved
         }
     }
 

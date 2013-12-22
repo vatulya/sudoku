@@ -7,9 +7,11 @@ class Application_Model_Sudoku extends Application_Model_Abstract
 
     const SHUFFLE_COUNT = 20;
 
+    const TOTAL_CELLS = 81;
+
     public function createGame($difficulty = self::DEFAULT_GAME_DIFFICULTY)
     {
-        $openCellsCount = 35;
+        $openCellsCount = 80; // 35;
 
         $board = $this->_getSimpleBoard();
         $board = $this->_shuffleBoard($board);
@@ -160,7 +162,7 @@ class Application_Model_Sudoku extends Application_Model_Abstract
         return $normalizedBoard;
     }
 
-    public function checkField(array $cells)
+    public function checkFields(array $cells)
     {
         $errors = array();
         $openCellsPerRows = $openCellsPerCols = $openCellsPerSquares = array();
@@ -207,6 +209,18 @@ class Application_Model_Sudoku extends Application_Model_Abstract
         $errors += checkCells($openCellsPerCols);
         $errors += checkCells($openCellsPerSquares);
         return $errors;
+    }
+
+    public function checkGameSolution(array $cells)
+    {
+        $errors = $this->checkFields($cells);
+        if (!empty($errors)) {
+            return $errors;
+        }
+        if (self::TOTAL_CELLS == count($cells)) {
+            return true;
+        }
+        return false;
     }
 
 }
