@@ -18,10 +18,10 @@
             $(this).find('.cell').removeClass('hover');
         })
         .on('click', '.sudoku-board .cell', function() {
-            Sudoku.hoverNumber(this);
+//            Sudoku.hoverNumber(this);
         })
         .on('click', '.sudoku-board .cell.open', function() {
-            Sudoku.cellClick(this);
+//            Sudoku.cellClick(this);
         })
         .on('click', '.sudoku-numpad .number', function() {
             var el = $(this);
@@ -44,11 +44,36 @@
         .on('click', '.sudoku-table .redo-move', function() {
             Sudoku.redoMove(this);
         })
+        .on('mouseover', '.sudoku-numpad.popup .number.enabled', function() {
+            var el = $(this);
+            el.addClass('hover');
+        })
+        .on('mouseout', '.sudoku-numpad.popup .number.enabled', function() {
+            $('.sudoku-numpad.popup .number.hover').removeClass('hover');
+        })
         .on('keypress', function(e) {
             $('.sudoku-table').each(function(i, el) {
                 Sudoku.keyPress(el, e.charCode);
-            })
-        });
+            });
+        })
+        .on('mousedown', '.sudoku-table .cell.open', function() {
+            Sudoku.mousedown(this);
+        })
+        .on('mouseup', '.sudoku-table .cell', function() {
+            var cell = $(this);
+//            Sudoku.hoverNumber(cell);
+//            if (cell.hasClass('open')) {
+//                Sudoku.cellClick(cell);
+//            }
+        })
+        .on('mouseup', '.sudoku-numpad.popup .number.enabled', function() {
+            Sudoku.mouseup(this);
+        })
+        .on('mouseup', function() {
+            clearTimeout(Sudoku.pushTimer);
+            $('.pushed').removeClass('pushed');
+            Sudoku.hidePopupNumpad();
+        })
     ;
 
     $('.sudoku-table').each(function(i, el) {
@@ -57,7 +82,13 @@
         })
     });
 
+    w.disableSelect('.sudoku-table');
+
     var Sudoku = {
+
+        pushTimer: 0,
+
+        popupNumpad: false,
 
         findTable: function(el) {
             el = $(el);
@@ -91,8 +122,9 @@
         hoverNumber: function(el) {
             el = $(el);
             var number = el.data('number');
+            var board = Sudoku.findBoard(el);
+            board.find('.cell.empty.hovered').removeClass('hovered');
             if (number) {
-                var board = Sudoku.findBoard(el);
                 board.find('.hovered-number').val(number);
                 board.find('.cell').each(function(i, el) {
                     el = $(el);
@@ -320,6 +352,9 @@
             Sudoku.setCellNumber(cell, move.old_number);
             Sudoku.removeLastMoveFromHistory(undoButton);
             Sudoku.checkUndoRedoButtons(table);
+
+            cell = Sudoku.getSelectedCell(table);
+            Sudoku.hoverNumber(cell);
         },
 
         redoMove: function(redoButton) {
@@ -334,6 +369,9 @@
             Sudoku.setCellNumber(cell, move.old_number);
             Sudoku.removeLastMoveFromHistory(redoButton);
             Sudoku.checkUndoRedoButtons(table);
+
+            cell = Sudoku.getSelectedCell(table);
+            Sudoku.hoverNumber(cell);
         },
 
         checkNumbersCount: function(el) {
@@ -375,6 +413,48 @@
         win: function(el) {
             var table = Sudoku.findTable(el);
             table.addClass('resolved');
+        },
+
+        mousedown: function(cell) {
+            cell = $(cell);
+            var table = Sudoku.findTable(cell);
+            cell.addClass('pushed');
+            Sudoku.selectCell(cell);
+            Sudoku.pushTimer = setTimeout(function() {Sudoku.showPopupNumpad(table);}, 500);
+        },
+
+        mouseup: function(number) {
+            number = $(number);
+            var table = Sudoku.findTable(number);
+            var cell = Sudoku.getSelectedCell(table);
+            Sudoku.checkNumber(cell, number.data('number'));
+        },
+
+        getPopupNumpad: function(el) {
+            var table = Sudoku.findTable(el);
+            var numpad = table.find('.sudoku-numpad.popup');
+            if (!numpad.length) {
+                numpad = table.find('.sudoku-numpad').clone().addClass('popup');
+                table.append(numpad);
+                w.disableSelect(numpad);
+            }
+            return numpad;
+        },
+
+        showPopupNumpad: function(table) {
+            Sudoku.hidePopupNumpad();
+            var cell = table.find('.cell.pushed');
+            var popupNumpad = Sudoku.getPopupNumpad(table);
+            popupNumpad.show();
+            var coords = cell.position();
+            coords.top = coords.top - (popupNumpad.outerHeight() / 2) + cell.outerHeight();
+            coords.left = coords.left - (popupNumpad.outerWidth() / 2) + (cell.outerWidth() / 2);
+            popupNumpad.offset(coords);
+            console.log(popupNumpad);
+        },
+
+        hidePopupNumpad: function() {
+            $('.sudoku-numpad.popup').hide();
         },
 
         keyPress: function(table, charCode) {

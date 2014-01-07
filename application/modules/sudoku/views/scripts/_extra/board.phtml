@@ -16,7 +16,7 @@ function isGray($row, $col) {
     return $isGray;
 }
 ?>
-<div class="sudoku-table">
+<div class="sudoku-table" ondragstart="return false;" ondrop="return false;">
 
     <div class="game-params">
         Cells opened initially: <span><?php echo count($game['openCells']);?></span>

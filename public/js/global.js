@@ -15,7 +15,16 @@
             w.Sudoku.checkUndoRedoButtons(el);
             w.Sudoku.checkNumbersCount(el);
         });
-    }
+    };
+
+    w.disableSelect = function(el) {
+        el = $(el);
+        el
+            .attr('unselectable','on')
+            .addClass('select-disabled')
+            .bind('selectstart', function() { return false; })
+        ;
+    };
 
     Array.prototype.clean = function(deleteValue) {
         for (var i = 0; i < this.length; i++) {

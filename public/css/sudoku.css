@@ -37,6 +37,9 @@
 .sudoku-board .cell.selected {
     background-color: #ffff66;
 }
+.sudoku-board .cell.pushed {
+    background-color: #888855;
+}
 .sudoku-board .cell.error {
     background-color: #ff4444;
 }
@@ -105,7 +108,8 @@
     width: 80px;
 }
 
-.sudoku-numpad .number.enabled:hover {
+.sudoku-numpad .number.enabled:hover,
+.sudoku-numpad .number.enabled.hover {
     background-color: #ffff66;
 }
 
@@ -116,6 +120,14 @@
 .sudoku-numpad .close {
     cursor: pointer;
 }
+
+/********************************** numpad popup *********************************/
+
+.sudoku-numpad.popup {
+    position: absolute;
+    display: none;
+}
+
 
 /********************************** congratulations *********************************/
 .sudoku-table .congratulations {
