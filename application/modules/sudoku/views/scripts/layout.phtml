@@ -11,10 +11,10 @@
 
     <?php
     $this->headScript()
-        ->appendFile('/js/jquery-2.0.3.js')
-        ->appendFile('/js/bootstrap.js')
-        ->appendFile('/js/global.js')
-        ->appendFile('/js/sudoku.js')
+        ->prependFile('/js/sudoku.js')
+        ->prependFile('/js/global.js')
+        ->prependFile('/js/bootstrap.js')
+        ->prependFile('/js/jquery-2.0.3.js')
 ?>
 </head>
 <body onload="gogogo();">

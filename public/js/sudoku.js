@@ -1,203 +1,156 @@
 (function (w, d, $) {
 
-    $(d)
-        .on('mouseover', '.sudoku-board .cell', function() {
-            var el = $(this);
-            var board = el.parents('.sudoku-board');
-            board.find('.cell').removeClass('hover');
-            var row = el.data('row');
-            var col = el.data('col');
-            board.find('.cell.row-' + row + ', .cell.col-' + col).each(function(i, cell){
-                cell = $(cell);
-                if (cell.data('row') != row || cell.data('col') != col) {
-                    cell.addClass('hover');
+    function Sudoku(table) {
+
+        var $Sudoku = this;
+
+        $Sudoku.table = $(table);
+        $Sudoku.pushTimer = false;
+
+        $Sudoku.table
+            .on('mouseover', '.sudoku-board .cell', function() {
+                // .hover vertical col and horizontal row
+                $Sudoku.hoverColAndRow(this);
+            })
+            .on('mouseout', function() {
+                $Sudoku.hoverColAndRow(); // un .hover vertical cols and horizontal rows
+            })
+            .on('click', '.sudoku-board .cell', function() {
+                // look mousedown/mouseup
+                $Sudoku.hoverNumber(this);
+            })
+            .on('click', '.sudoku-board .cell.open', function() {
+                // look mousedown/mouseup
+//            Sudoku.cellClick(this);
+            })
+            .on('click', '.sudoku-numpad .number', function() {
+                var el = $(this);
+                if (!el.hasClass('disabled')) {
+                    $Sudoku.checkNumber(el.data('number'));
                 }
             })
-        })
-        .on('mouseout', '.sudoku-board', function() {
-            $(this).find('.cell').removeClass('hover');
-        })
-        .on('click', '.sudoku-board .cell', function() {
-//            Sudoku.hoverNumber(this);
-        })
-        .on('click', '.sudoku-board .cell.open', function() {
-//            Sudoku.cellClick(this);
-        })
-        .on('click', '.sudoku-numpad .number', function() {
-            var el = $(this);
-            if (!el.hasClass('disabled')) {
-                Sudoku.checkNumber(el, el.data('number'));
-            }
-        })
-        .on('click', '.sudoku-numpad .close', function() {
-            Sudoku.closeNumpad(this);
-        })
-        .on('click', '.sudoku-table .check-field', function() {
-            Sudoku.checkBoard(this);
-        })
-        .on('click', '.sudoku-table .clear-field', function() {
-            Sudoku.clearBoard(this);
-        })
-        .on('click', '.sudoku-table .undo-move', function() {
-            Sudoku.undoMove(this);
-        })
-        .on('click', '.sudoku-table .redo-move', function() {
-            Sudoku.redoMove(this);
-        })
-        .on('mouseover', '.sudoku-numpad.popup .number.enabled', function() {
-            var el = $(this);
-            el.addClass('hover');
-        })
-        .on('mouseout', '.sudoku-numpad.popup .number.enabled', function() {
-            $('.sudoku-numpad.popup .number.hover').removeClass('hover');
-        })
-        .on('keypress', function(e) {
-            $('.sudoku-table').each(function(i, el) {
-                Sudoku.keyPress(el, e.charCode);
-            });
-        })
-        .on('mousedown', '.sudoku-table .cell.open', function() {
-            Sudoku.mousedown(this);
-        })
-        .on('mouseup', '.sudoku-table .cell', function() {
-            var cell = $(this);
-//            Sudoku.hoverNumber(cell);
-//            if (cell.hasClass('open')) {
-//                Sudoku.cellClick(cell);
-//            }
-        })
-        .on('mouseup', '.sudoku-numpad.popup .number.enabled', function() {
-            Sudoku.mouseup(this);
-        })
-        .on('mouseup', function() {
-            clearTimeout(Sudoku.pushTimer);
-            $('.pushed').removeClass('pushed');
-            Sudoku.hidePopupNumpad();
-        })
-    ;
+            .on('click', '.check-field', function() {
+                $Sudoku.checkBoard(this);
+            })
+            .on('click', '.clear-field', function() {
+                $Sudoku.clearBoard(this);
+            })
+            .on('click', '.undo-move', function() {
+                $Sudoku.undoMove(this);
+            })
+            .on('click', '.redo-move', function() {
+                $Sudoku.redoMove(this);
+            })
+            .on('mouseover', '.sudoku-numpad.popup .number.enabled', function() {
+                var el = $(this);
+                el.addClass('hover');
+            })
+            .on('mouseout', '.sudoku-numpad.popup .number.enabled', function() {
+                $Sudoku.table.find('.sudoku-numpad.popup .number.hover').removeClass('hover');
+            })
+            .on('keypress', function(e) {
+                $Sudoku.keyPress(el, e.charCode);
+            })
+            .on('mousedown', '.cell.open', function() {
+                $Sudoku.mouseDown(this);
+            })
+            .on('mouseup', '.sudoku-numpad.popup .number.enabled', function() {
+                $Sudoku.mouseUp(this);
+            })
+            .on('mouseup', function() {
+                clearTimeout($Sudoku.pushTimer);
+                $Sudoku.table.find('.cell.pushed').removeClass('pushed');
+                $Sudoku.hidePopupNumpad();
+            })
+        ;
 
-    $('.sudoku-table').each(function(i, el) {
-        $(el).on('game-win', function() {
-            Sudoku.win(this);
-        })
-    });
+        w.disableSelect($Sudoku.table);
 
-    w.disableSelect('.sudoku-table');
-
-    var Sudoku = {
-
-        pushTimer: 0,
-
-        popupNumpad: false,
-
-        findTable: function(el) {
-            el = $(el);
-            if (el.hasClass('sudoku-table')) {
-                return el;
-            }
-            var table = el.parents('.sudoku-table');
-            return table;
-        },
-
-        findBoard: function(el) {
-            el = $(el);
-            var board;
-            if (el.hasClass('sudoku-board')) {
-                return el;
-            }
-            if (el.hasClass('sudoku-table')) {
-                board = el.find('.sudoku-board');
-                return board;
-            }
-            board = el.parents('.sudoku-board');
-            if (!board.length) {
-                var table = Sudoku.findTable(el);
-                if (table.length) {
-                    board = table.find('.sudoku-board');
-                }
-            }
-            return board;
-        },
-
-        hoverNumber: function(el) {
-            el = $(el);
-            var number = el.data('number');
-            var board = Sudoku.findBoard(el);
-            board.find('.cell.empty.hovered').removeClass('hovered');
-            if (number) {
-                board.find('.hovered-number').val(number);
-                board.find('.cell').each(function(i, el) {
-                    el = $(el);
-                    if (el.data('number') == number) {
-                        el.addClass('hovered');
-                    } else {
-                        el.removeClass('hovered');
+        $Sudoku.hoverColAndRow = function(cell) {
+            cell = $(cell);
+            $Sudoku.table.find('.cell.hover').removeClass('hover');
+            if (cell.length) {
+                var row = cell.data('row'),
+                    col = cell.data('col')
+                ;
+                $Sudoku.table.find('.cell.row-' + row + ', .cell.col-' + col).each(function(i, c){
+                    c = $(c);
+                    if (c.data('row') != row || c.data('col') != col) {
+                        c.addClass('hover');
                     }
                 });
             }
-        },
+        };
 
-        cellClick: function(el) {
-            el = $(el);
-            if (el.hasClass('selected')) {
-                Sudoku.unselectCell(el);
-            } else {
-                Sudoku.selectCell(el);
+        $Sudoku.checkNumber = function(number) {
+            var cell = $Sudoku.getSelectedCell();
+            $Sudoku.saveMoveToHistory(cell, number, 'undo');
+            $Sudoku.setCellNumber(cell, number);
+            $Sudoku.clearHistory('redo');
+            $Sudoku.hoverNumber(cell);
+            $Sudoku.checkWinGame();
+        };
+
+        $Sudoku.hoverNumber = function(cell) {
+            cell = $(cell);
+            $Sudoku.table.find('.cell.hovered').removeClass('hovered');
+            var number = cell.data('number');
+            if (number) {
+                $Sudoku.table.find('.cell').each(function(i, c) {
+                    c = $(c);
+                    if (c.data('number') == number) {
+                        c.addClass('hovered');
+                    }
+                });
             }
-        },
+        };
 
-        selectCell: function(el) {
-            el = $(el);
-            var
-                table = Sudoku.findTable(el),
-                row = el.data('row'),
-                col = el.data('col')
+        $Sudoku.cellClick = function(cell) {
+            cell = $(cell);
+            if (cell.hasClass('selected')) {
+                $Sudoku.unselectCell(cell);
+            } else {
+                $Sudoku.selectCell(cell);
+            }
+        };
+
+        $Sudoku.selectCell = function(cell) {
+            cell = $(cell);
+            var row = cell.data('row'),
+                col = cell.data('col')
             ;
-            table.find('.selected-cell').val('' + row + col);
-            table.find('.cell').removeClass('selected');
-            table.find('.cell.row-' + row + '.col-' + col).addClass('selected');
-            Sudoku.openNumpad(el);
-        },
+            $Sudoku.table.data('selected-cell', '' + row + col);
+            $Sudoku.table.find('.cell.selected').removeClass('selected');
+            $Sudoku.table.find('.cell.row-' + row + '.col-' + col).addClass('selected');
+        };
 
-        unselectCell: function(el) {
-            el = $(el);
-            var table = Sudoku.findTable(el);
-            table.find('.cell').removeClass('selected');
-            table.find('.selected-cell').val('');
-            Sudoku.closeNumpad(el);
-        },
+        $Sudoku.unselectCell = function(cell) {
+            cell = $(cell);
+            $Sudoku.table.find('.cell.selected').removeClass('selected');
+            $Sudoku.table.data('selected-cell', '');
+        };
 
-        getSelectedCell: function(el) {
-            var table = Sudoku.findTable(el);
-            var coords = table.find('.selected-cell').val();
-            var cell = Sudoku.getCellByCoords(table, coords);
+        $Sudoku.getSelectedCell = function() {
+            var coords = $Sudoku.table.data('selected-cell'),
+                cell = $Sudoku.getCellByCoords(coords)
+            ;
             return cell;
-        },
+        };
 
-        getCellCoords: function(cell) {
+        $Sudoku.getCellCoords = function(cell) {
             var coords = '' + cell.data('row') + cell.data('col');
             return coords;
-        },
+        };
 
-        getCellByCoords: function(el, coords) {
-            var table = Sudoku.findTable(el);
-            coords = coords.split('');
-            var cell = table.find('.cell.row-' + coords[0] + '.col-' + coords[1]);
+        $Sudoku.getCellByCoords = function(coords) {
+            coords = coords.split(''); // '' + row + col
+            var cell = $Sudoku.table.find('.cell.row-' + coords[0] + '.col-' + coords[1]);
             return cell;
-        },
+        };
 
-        checkNumber: function(el, number) {
-            el = $(el);
-            var table = Sudoku.findTable(el);
-            var cell = Sudoku.getSelectedCell(table);
-            Sudoku.saveMoveToHistory(cell, number, 'undo');
-            Sudoku.setCellNumber(cell, number);
-            Sudoku.clearHistory(table, 'redo');
-            Sudoku.hoverNumber(cell);
-            Sudoku.checkWinGame(table);
-        },
-
-        setCellNumber: function(cell, number) {
+        $Sudoku.setCellNumber = function(cell, number) {
+            cell = $(cell);
+            number = '' + number;
             if (cell.hasClass('open')) {
                 cell.html(number).data('number', number);
                 if (number) {
@@ -205,25 +158,17 @@
                 } else {
                     cell.addClass('empty');
                 }
-                Sudoku.checkNumbersCount(cell);
+                $Sudoku.checkNumbersCount(cell);
             }
-        },
+        };
 
-        closeNumpad: function(el) {
-//            Sudoku.findTable(el).find('.sudoku-numpad').hide();
-        },
-        openNumpad: function(el) {
-//            Sudoku.findTable(el).find('.sudoku-numpad').show();
-        },
-
-        checkBoard: function(el) {
-            var board = Sudoku.findBoard(el);
+        $Sudoku.checkBoard = function() {
             var cells = {};
-            board.find('.cell').each(function(i, cell) {
+            $Sudoku.table.find('.cell').each(function(i, cell) {
                 cell = $(cell);
                 var number = cell.data('number');
                 if (number) {
-                    var coords = Sudoku.getCellCoords(cell);
+                    var coords = $Sudoku.getCellCoords(cell);
                     cells[coords] = number;
                 }
             });
@@ -234,99 +179,100 @@
                     cells: cells
                 },
                 success: function(response) {
-                    var table = Sudoku.findTable(board);
                     if (response.resolved) {
-                        table.trigger('game-win');
+                        $Sudoku.win();
                     } else if (typeof response.errors == 'undefined') {
+                        var board = $Sudoku.table.find('.sudoku-board');
                         board.addClass('no-errors');
                         setTimeout(function() {board.removeClass('no-errors');}, 2000);
                     } else {
                         $.each(response.errors, function(coords, number) {
                             coords = coords.split('');
-                            var
-                                row = coords[0],
+                            var row = coords[0],
                                 col = coords[1]
                             ;
-                            Sudoku.showError(board, row, col);
+                            $Sudoku.showError(row, col);
                         });
                     }
                 }
             });
-        },
+        };
 
-        showError: function(el, row, col) {
-            var board = Sudoku.findBoard(el);
-            var cell = board.find('.cell.row-' + row + '.col-' + col);
+        $Sudoku.showError = function(row, col) {
+            var cell = $Sudoku.table.find('.cell.row-' + row + '.col-' + col);
             if (cell.length) {
                 cell.addClass('error');
                 setTimeout(function() {cell.removeClass('error')}, 2000);
             }
-        },
+        };
 
-        clearBoard: function(el) {
-            var board = Sudoku.findBoard(el);
-            board.find('.cell.open').each(function(i, el) {
+        $Sudoku.clearBoard = function() {
+            $Sudoku.table.find('.cell.open').each(function(i, el) {
                 el = $(el);
                 el.data('number', '');
                 el.html('');
             });
-            Sudoku.clearHistory(board);
-        },
+            $Sudoku.clearHistory();
+        };
 
-        checkUndoRedoButtons: function(el) {
-            var table = Sudoku.findTable(el);
-            var undoButton = table.find('.undo-move');
-            var redoButton = table.find('.redo-move');
+        $Sudoku.checkUndoRedoButtons = function() {
+            var undoButton = $Sudoku.table.find('.undo-move'),
+                redoButton = $Sudoku.table.find('.redo-move')
+            ;
+
             if (undoButton.data('moves')) {
                 undoButton.removeClass('disabled');
             } else {
                 undoButton.addClass('disabled');
             }
+
             if (redoButton.data('moves')) {
                 redoButton.removeClass('disabled');
             } else {
                 redoButton.addClass('disabled');
             }
-        },
+        };
 
-        saveMoveToHistory: function(cell, number, historyType) {
+        $Sudoku.saveMoveToHistory = function(cell, newNumber, historyType) {
+            cell = $(cell);
+            historyType = historyType == 'redo' ? 'redo' : 'undo';
             if (!cell.hasClass('open')) {
                 return;
             }
-            var table = Sudoku.findTable(cell);
-            var coords = Sudoku.getCellCoords(cell);
-            historyType = historyType == 'redo' ? 'redo' : 'undo';
-            var historyButton = table.find('.' + historyType + '-move');
-            var history = historyButton.data('moves').split(';').clean(false);
-            var oldNumber = cell.data('number');
+            var coords = $Sudoku.getCellCoords(cell),
+                historyButton = $Sudoku.table.find('.' + historyType + '-move'),
+                history = historyButton.data('moves').split(';').clean(false),
+                oldNumber = cell.data('number')
+            ;
             if (typeof oldNumber == 'undefined') oldNumber = '';
-            var historyStep = '' + coords + ':' + oldNumber + '|' + number;
+            var historyStep = '' + coords + ':' + oldNumber + '|' + newNumber;
             history.push(historyStep);
             history = history.join(';');
             historyButton.data('moves', history);
-            Sudoku.checkUndoRedoButtons(table);
-        },
+            $Sudoku.checkUndoRedoButtons();
+        };
 
-        removeLastMoveFromHistory: function(historyButton) {
+        $Sudoku.removeLastMoveFromHistory = function(historyButton) {
+            historyButton = $(historyButton);
             var history = historyButton.data('moves').split(';').clean(false);
             history.pop(); // remove last element
             history = history.join(';');
             historyButton.data('moves', history);
-        },
+        };
 
-        clearHistory: function(el, historyType) {
-            var table = Sudoku.findTable(el);
+        $Sudoku.clearHistory = function(historyType) {
             if (historyType) {
                 historyType = historyType == 'redo' ? 'redo' : 'undo';
-                table.find('.' + historyType + '-move').data('moves', '');
+                $Sudoku.table.find('.' + historyType + '-move').data('moves', '');
             } else {
-                table.find('.undo-move').data('moves', '');
-                table.find('.redo-move').data('moves', '');
+                $Sudoku.table.find('.undo-move').data('moves', '');
+                $Sudoku.table.find('.redo-move').data('moves', '');
             }
-            Sudoku.checkUndoRedoButtons(table);
-        },
+            $Sudoku.checkUndoRedoButtons();
+        };
 
-        getLastMoveFromHistory: function(historyButton) {
+        $Sudoku.getLastMoveFromHistory = function(historyButton) {
+            historyButton = $(historyButton);
             var move = historyButton.data('moves').split(';').clean(false);
             move = move[move.length - 1];
             move = move.split(':');
@@ -338,57 +284,56 @@
                 number: move[1]
             }
             return moveData;
-        },
+        };
 
-        undoMove: function(undoButton) {
+        $Sudoku.undoMove = function(undoButton) {
             undoButton = $(undoButton);
             if (undoButton.hasClass('disabled')) {
                 return;
             }
-            var table = Sudoku.findTable(undoButton);
-            var move = Sudoku.getLastMoveFromHistory(undoButton);
-            var cell = Sudoku.getCellByCoords(table, move.coords);
-            Sudoku.saveMoveToHistory(cell, move.old_number, 'redo');
-            Sudoku.setCellNumber(cell, move.old_number);
-            Sudoku.removeLastMoveFromHistory(undoButton);
-            Sudoku.checkUndoRedoButtons(table);
+            var move = $Sudoku.getLastMoveFromHistory(undoButton),
+                cell = $Sudoku.getCellByCoords(move.coords)
+            ;
+            $Sudoku.saveMoveToHistory(cell, move.old_number, 'redo');
+            $Sudoku.setCellNumber(cell, move.old_number);
+            $Sudoku.removeLastMoveFromHistory(undoButton);
+            $Sudoku.checkUndoRedoButtons();
 
-            cell = Sudoku.getSelectedCell(table);
-            Sudoku.hoverNumber(cell);
-        },
+            cell = $Sudoku.getSelectedCell();
+            $Sudoku.hoverNumber(cell);
+        };
 
-        redoMove: function(redoButton) {
+        $Sudoku.redoMove = function(redoButton) {
             redoButton = $(redoButton);
             if (redoButton.hasClass('disabled')) {
                 return;
             }
-            var table = Sudoku.findTable(redoButton);
-            var move = Sudoku.getLastMoveFromHistory(redoButton);
-            var cell = Sudoku.getCellByCoords(table, move.coords);
-            Sudoku.saveMoveToHistory(cell, move.old_number, 'undo');
-            Sudoku.setCellNumber(cell, move.old_number);
-            Sudoku.removeLastMoveFromHistory(redoButton);
-            Sudoku.checkUndoRedoButtons(table);
+            var move = $Sudoku.getLastMoveFromHistory(redoButton),
+                cell = $Sudoku.getCellByCoords(move.coords)
+            ;
+            $Sudoku.saveMoveToHistory(cell, move.old_number, 'undo');
+            $Sudoku.setCellNumber(cell, move.old_number);
+            $Sudoku.removeLastMoveFromHistory(redoButton);
+            $Sudoku.checkUndoRedoButtons();
 
-            cell = Sudoku.getSelectedCell(table);
-            Sudoku.hoverNumber(cell);
-        },
+            cell = $Sudoku.getSelectedCell();
+            $Sudoku.hoverNumber(cell);
+        };
 
-        checkNumbersCount: function(el) {
-            var table = Sudoku.findTable(el);
+        $Sudoku.checkNumbersCount = function() {
             var numbersCount = {};
-            table.find('.cell').each(function(i, el) {
+            $Sudoku.table.find('.cell').each(function(i, el) {
                 el = $(el);
-                var number = el.data('number');
+                var number = '' + el.data('number');
                 if (number) {
-                    if (numbersCount['' + number]) {
-                        numbersCount['' + number]++;
+                    if (numbersCount[number]) {
+                        numbersCount[number]++;
                     } else {
-                        numbersCount['' + number] = 1;
+                        numbersCount[number] = 1;
                     }
                 }
             });
-            table.find('.sudoku-numpad .number').each(function(i, el) {
+            $Sudoku.table.find('.sudoku-numpad .number').each(function(i, el) {
                 el = $(el);
                 el.removeClass('disabled').addClass('enabled');
                 var number = el.data('number');
@@ -401,73 +346,66 @@
                     el.data('count', 0);
                 }
             });
-        },
+        };
 
-        checkWinGame: function(el) {
-            var table = Sudoku.findTable(el);
-            if (!table.find('.cell.empty').length) {
-                Sudoku.checkBoard(table);
+        $Sudoku.checkWinGame = function() {
+            if (!$Sudoku.table.find('.cell.empty').length) {
+                Sudoku.checkBoard();
             }
-        },
+        };
 
-        win: function(el) {
-            var table = Sudoku.findTable(el);
-            table.addClass('resolved');
-        },
+        $Sudoku.win = function() {
+            $Sudoku.table.addClass('resolved');
+        };
 
-        mousedown: function(cell) {
+        $Sudoku.mouseDown = function(cell) {
             cell = $(cell);
-            var table = Sudoku.findTable(cell);
             cell.addClass('pushed');
-            Sudoku.selectCell(cell);
-            Sudoku.pushTimer = setTimeout(function() {Sudoku.showPopupNumpad(table);}, 500);
-        },
+            $Sudoku.selectCell(cell);
+            $Sudoku.pushTimer = setTimeout(function() {$Sudoku.showPopupNumpad();}, 500);
+        };
 
-        mouseup: function(number) {
+        $Sudoku.mouseUp = function(number) {
             number = $(number);
-            var table = Sudoku.findTable(number);
-            var cell = Sudoku.getSelectedCell(table);
-            Sudoku.checkNumber(cell, number.data('number'));
-        },
+            $Sudoku.checkNumber(number.data('number'));
+        };
 
-        getPopupNumpad: function(el) {
-            var table = Sudoku.findTable(el);
-            var numpad = table.find('.sudoku-numpad.popup');
-            if (!numpad.length) {
-                numpad = table.find('.sudoku-numpad').clone().addClass('popup');
-                table.append(numpad);
-                w.disableSelect(numpad);
-            }
+        $Sudoku.getPopupNumpad = function() {
+            var numpad = $Sudoku.table.find('.sudoku-numpad').clone().addClass('popup');
+            $Sudoku.table.append(numpad);
+            w.disableSelect(numpad);
             return numpad;
-        },
+        };
 
-        showPopupNumpad: function(table) {
-            Sudoku.hidePopupNumpad();
-            var cell = table.find('.cell.pushed');
-            var popupNumpad = Sudoku.getPopupNumpad(table);
-            popupNumpad.show();
-            var coords = cell.position();
+        $Sudoku.showPopupNumpad = function() {
+            $Sudoku.hidePopupNumpad();
+            var cell = $Sudoku.table.find('.cell.pushed'),
+                coords = cell.position(),
+                popupNumpad = $Sudoku.getPopupNumpad().show()
+            ;
             coords.top = coords.top - (popupNumpad.outerHeight() / 2) + cell.outerHeight();
             coords.left = coords.left - (popupNumpad.outerWidth() / 2) + (cell.outerWidth() / 2);
             popupNumpad.offset(coords);
-            console.log(popupNumpad);
-        },
+        };
 
-        hidePopupNumpad: function() {
-            $('.sudoku-numpad.popup').hide();
-        },
+        $Sudoku.hidePopupNumpad = function() {
+            $Sudoku.table.find('.sudoku-numpad.popup').remove();
+        };
 
-        keyPress: function(table, charCode) {
-            var cell = Sudoku.getSelectedCell(table);
+        $Sudoku.keyPress = function(charCode) {
+            var cell = $Sudoku.getSelectedCell();
             if (cell.hasClass('open')) {
                 var number = String.fromCharCode(charCode);
                 if (number >= 1 && number <= 9) { // 1..9
-                    Sudoku.checkNumber(cell, number);
+                    $Sudoku.checkNumber(cell, number);
                 }
             }
-        }
+        };
 
-    };
+        $Sudoku.checkUndoRedoButtons();
+        $Sudoku.checkNumbersCount();
+
+    }
 
     w.Sudoku = Sudoku;
 

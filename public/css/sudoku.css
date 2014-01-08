@@ -125,9 +125,7 @@
 
 .sudoku-numpad.popup {
     position: absolute;
-    display: none;
 }
-
 
 /********************************** congratulations *********************************/
 .sudoku-table .congratulations {

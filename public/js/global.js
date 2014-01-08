@@ -11,10 +11,7 @@
     ;
 
     w.gogogo = function() {
-        $('.sudoku-table').each(function(i, el) {
-            w.Sudoku.checkUndoRedoButtons(el);
-            w.Sudoku.checkNumbersCount(el);
-        });
+
     };
 
     w.disableSelect = function(el) {
