@@ -48,6 +48,10 @@ class Application_Model_Auth extends Application_Model_Abstract
             self::ROLE_GUEST => 'GUEST',
             self::ROLE_USER  => 'USER',
         );
+        return self::ROLE_GUEST;
+
+        // TODO: finish it
+
         $auth = Zend_Auth::getInstance();
         $role = self::ROLE_GUEST;
         if ($auth->hasIdentity()) {
