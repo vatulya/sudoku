@@ -1,0 +1,22 @@
+<?php if ($this->user): ?>
+    Welcome, <?php echo $this->user['login']; ?>
+<?php else: ?>
+    Hello, Guest. Do you want <a href="" class="login-button">login</a>?
+<?php endif; ?>
+
+<div id="login-modal" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">close</button>
+        <h3>Login or Register?</h3>
+    </div>
+    <div class="modal-body">
+        <?php echo $this->render('_extra/login-register-form.phtml'); ?>
+    </div>
+</div>
+<?php $this->headScript()->appendScript('
+    $(\'#login-modal\').modal({show: false});
+    $(this.document).on(\'click\', \'.login-button\', function(e) {
+        e.preventDefault();
+        $(\'#login-modal\').modal(\'show\');
+    })
+'); ?>

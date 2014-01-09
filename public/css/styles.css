@@ -1,3 +1,98 @@
+/**************************************** navigation ***************************************/
+.navigation-panel {
+    background-color: #ffeedd;
+    border-bottom: 1px solid #998877;
+    /*height: 20px;*/
+    padding: 5px 0;
+}
+.navigation-panel .container {
+    vertical-align: middle;
+}
+
+.navigation-panel .page-title {
+    font-size: 2em;
+    line-height: 30px;
+    float: left;
+    width: 200px;
+}
+.navigation-panel .user-block {
+    line-height: 30px;
+    float: right;
+    width: 300px;
+    border-left: 1px solid #998877;
+    padding-left: 10px;
+}
+
+/**************************************** login and register ***************************************/
+
+#login-modal {
+    min-width: 560px;
+    margin-left: -270px;
+}
+#login-modal .modal-body {
+    padding: 15px 0 0 0;
+}
+#login-modal .container {
+    width: 560px;
+    height: 255px;
+}
+
+#login-modal .show-login {
+    float: left;
+}
+#login-modal .show-register {
+    float: right;
+}
+
+#login-modal .login-container {
+    width: 560px;
+    height: 255px;
+    float: left;
+    text-align: center;
+}
+#login-modal .register-container {
+    width: 560px;
+    height: 255px;
+    float: right;
+    text-align: center;
+}
+
+#login-modal .login-register.show-login-form .login-container,
+#login-modal .login-register.show-login-form .show-register {
+    display: block;
+}
+#login-modal .login-register.show-login-form .register-container,
+#login-modal .login-register.show-login-form .show-login {
+    display: none;
+}
+
+#login-modal .login-register.show-register-form .login-container,
+#login-modal .login-register.show-register-form .show-register {
+    display: none;
+}
+#login-modal .login-register.show-register-form .register-container,
+#login-modal .login-register.show-register-form .show-login {
+    display: block;
+}
+#login-modal .show-button {
+    width: 30%;
+    cursor: pointer;
+    margin: 3px;
+    padding: 0 20px;
+    border-top: 1px solid #eeeeee;
+}
+#login-modal .show-button:hover {
+    background-color: #f5f5f5;
+}
+#login-modal .show-button.show-register {
+    text-align: right;
+}
+
+#login-modal .register-container form {
+    margin: 0;
+}
+
+/**************************************** other ***************************************/
 .game-title {
     text-align: center;
     font-size: 1.5em;

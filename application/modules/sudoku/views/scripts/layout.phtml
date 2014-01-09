@@ -12,12 +12,16 @@
     <?php
     $this->headScript()
         ->prependFile('/js/sudoku.js')
+        ->prependFile('/js/user.js')
+        ->prependFile('/js/form.js')
         ->prependFile('/js/global.js')
         ->prependFile('/js/bootstrap.js')
         ->prependFile('/js/jquery-2.0.3.js')
 ?>
 </head>
 <body onload="gogogo();">
+
+<?php echo $this->render('_extra/navigation.phtml'); ?>
 
 <div class="container" id="container">
     <?php echo $this->layout()->content ?>

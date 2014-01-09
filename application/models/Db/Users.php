@@ -30,6 +30,32 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
         return $result;
     }
 
+    public function getUserByEmail($email)
+    {
+        $select = $this->_db->select()
+            ->from(array('u' => self::TABLE_NAME))
+            ->where('u.email = ?', $email);
+        $result = $this->_db->fetchRow($select);
+        if ($this->_hideFields) {
+            $result = $this->hideFields($result);
+            $this->_hideFields = true;
+        }
+        return $result;
+    }
+
+    public function getUserByLogin($login)
+    {
+        $select = $this->_db->select()
+            ->from(array('u' => self::TABLE_NAME))
+            ->where('u.login = ?', $login);
+        $result = $this->_db->fetchRow($select);
+        if ($this->_hideFields) {
+            $result = $this->hideFields($result);
+            $this->_hideFields = true;
+        }
+        return $result;
+    }
+
     public function getAllUsers()
     {
         $select = $this->_db->select()
@@ -48,6 +74,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
     public function withHiddenFields()
     {
         $this->_hideFields = false;
+        return $this;
     }
 
     public function hideFields(array $array)

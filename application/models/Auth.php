@@ -8,9 +8,9 @@ class Application_Model_Auth extends Application_Model_Abstract
     const ROLE_GUEST = 0;
     const ROLE_USER  = 20;
 
-    public function login($email, $password)
+    public function login($loginEmail, $password)
     {
-        $adapter = new Application_Model_AuthAdapter($email, $password);
+        $adapter = new Application_Model_AuthAdapter($loginEmail, $password);
         $auth = Zend_Auth::getInstance();
         $result = $auth->authenticate($adapter);
         if ($result->isValid()) {
