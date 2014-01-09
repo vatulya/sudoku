@@ -27,10 +27,12 @@
             }
         })
         .on('success', 'form.login', function() {
-            console.log('login success');
+            $('#login-modal').modal('hide');
+            location.reload();
         })
         .on('success', 'form.register', function() {
-            console.log('register success');
+            $('#login-modal').modal('hide');
+            location.reload();
         })
     ;
 

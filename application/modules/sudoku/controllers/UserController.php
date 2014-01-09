@@ -17,7 +17,7 @@ class Sudoku_UserController extends Zend_Controller_Action
 
     public function preDispatch()
     {
-
+        $this->_modelUser = Application_Model_User::getInstance();
     }
 
     public function indexAction()
@@ -29,16 +29,18 @@ class Sudoku_UserController extends Zend_Controller_Action
         $loginEmail = $this->_getParam('login_email');
         $password = $this->_getParam('password');
         /** @var Application_Model_Auth $auth */
-        $auth = Application_Model_Auth::getInstance();
-        $result = $auth->login($loginEmail, $password);
-        /** @var Application_Model_User $user */
-        $user = Application_Model_User::getInstance();
+        $user = Application_Model_Auth::getInstance()->login($loginEmail, $password);
+        $errors = array();
+        if (!$user) {
+            $errors[] = array(
+                'name'  => 'Login form',
+                'title' => 'Login',
+                'text'  => 'Wrong login or password',
+            );
+        }
 
-
-        if (is_array($errors)) {
+        if (!empty($errors)) {
             $this->view->errors = $errors;
-        } else {
-            $this->view->resolved = (bool)$errors; // TRUE if resolved
         }
     }
 

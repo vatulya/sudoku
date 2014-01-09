@@ -20,6 +20,13 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     }
 
+    public function postDispatch()
+    {
+        /** @var Application_Model_Auth $auth */
+        $auth = Application_Model_Auth::getInstance();
+        $this->view->user = $auth->getCurrentUser();
+    }
+
     public function indexAction()
     {
         /** @var Application_Model_Sudoku $sudoku */
