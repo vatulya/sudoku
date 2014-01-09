@@ -350,7 +350,7 @@
 
         $Sudoku.checkWinGame = function() {
             if (!$Sudoku.table.find('.cell.empty').length) {
-                Sudoku.checkBoard();
+                $Sudoku.checkBoard();
             }
         };
 
