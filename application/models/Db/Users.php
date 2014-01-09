@@ -23,7 +23,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
             ->from(array('u' => self::TABLE_NAME))
             ->where('u.id = ?', $id);
         $result = $this->_db->fetchRow($select);
-        if ($this->_hideFields) {
+        if ($result && $this->_hideFields) {
             $result = $this->hideFields($result);
             $this->_hideFields = true;
         }
@@ -36,7 +36,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
             ->from(array('u' => self::TABLE_NAME))
             ->where('u.email = ?', $email);
         $result = $this->_db->fetchRow($select);
-        if ($this->_hideFields) {
+        if ($result && $this->_hideFields) {
             $result = $this->hideFields($result);
             $this->_hideFields = true;
         }
@@ -49,7 +49,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
             ->from(array('u' => self::TABLE_NAME))
             ->where('u.login = ?', $login);
         $result = $this->_db->fetchRow($select);
-        if ($this->_hideFields) {
+        if ($result && $this->_hideFields) {
             $result = $this->hideFields($result);
             $this->_hideFields = true;
         }
@@ -62,12 +62,25 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
             ->from(array('u' => self::TABLE_NAME))
             ->order(array('u.full_name ASC'));
         $result = $this->_db->fetchAll($select);
-        if ($this->_hideFields) {
-            foreach ($result as $row) {
-                $result = $this->hideFields($result);
+        if ($result && $this->_hideFields) {
+            foreach ($result as $key => $row) {
+                $result[$key] = $this->hideFields($row);
             }
             $this->_hideFields = true;
         }
+        return $result;
+    }
+
+    public function insert(array $data)
+    {
+        $now = new \DateTime('NOW', new \DateTimeZone('UTC'));
+        $data = array(
+            'email' => isset($data['email']) ? $data['email'] : '',
+            'login' => isset($data['login']) ? $data['login'] : '',
+            'password' => isset($data['password']) ? $data['password'] : '',
+            'created' => $now->format('Y-m-d H:i:s'),
+        );
+        $result = $this->_db->insert(self::TABLE_NAME, $data);
         return $result;
     }
 

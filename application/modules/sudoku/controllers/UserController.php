@@ -8,6 +8,9 @@ class Sudoku_UserController extends Zend_Controller_Action
         'register' => array('json'),
     );
 
+    /**
+     * @var Application_Model_User
+     */
     protected $_modelUser;
 
     public function init()
@@ -37,6 +40,37 @@ class Sudoku_UserController extends Zend_Controller_Action
                 'title' => 'Login',
                 'text'  => 'Wrong login or password',
             );
+        }
+
+        if (!empty($errors)) {
+            $this->view->errors = $errors;
+        }
+    }
+
+    public function registerAction()
+    {
+        $login = $this->_getParam('login');
+        $email = $this->_getParam('email');
+        $password = $this->_getParam('password');
+        $password2 = $this->_getParam('password_repeat');
+        $userData = array(
+            'login'     => $login,
+            'email'     => $email,
+            'password'  => $password,
+            'password2' => $password2,
+        );
+        try {
+            $errors = $this->_modelUser->register($userData);
+        } catch (Exception $e) {
+            $errors[] = array(
+                'name' => '',
+                'title' => 'System error',
+                'text' => 'Something wrong. System error',
+            );
+        }
+        if (!$errors) {
+            /** @var Application_Model_Auth $auth */
+            $user = Application_Model_Auth::getInstance()->login($login, $password);
         }
 
         if (!empty($errors)) {

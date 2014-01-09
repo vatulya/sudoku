@@ -52,7 +52,7 @@
                  */
                 if (errors.hasOwnProperty(i)) {
                     var error = errors[i],
-                        field = form.find('field-' + error.name),
+                        field = form.find('.field-' + error.name),
                         fieldMessageBlock = field.find('.message'),
                         errorMessage = error.text
                     ;
