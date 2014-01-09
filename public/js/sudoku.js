@@ -397,7 +397,7 @@
         $Sudoku.keyPress = function(charCode) {
             var cell = $Sudoku.getSelectedCell();
             if (cell.hasClass('open')) {
-                var number = 0 + String.fromCharCode(charCode);
+                var number = String.fromCharCode(charCode) * 1;
                 if (number >= 1 && number <= 9) { // 1..9
                     $Sudoku.checkNumber(number);
                 }
