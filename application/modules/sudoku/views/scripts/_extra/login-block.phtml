@@ -1,5 +1,5 @@
 <?php if ($this->user): ?>
-    Welcome, <?php echo $this->user['login']; ?>
+    Welcome, <?php echo !empty($this->user['login']) ? $this->user['login'] : $this->user['email']; ?>
 <?php else: ?>
     Hello, Guest. Do you want <a href="" class="login-button">login</a>?
 <?php endif; ?>
