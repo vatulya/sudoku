@@ -48,9 +48,6 @@
             .on('mouseout', '.sudoku-numpad.popup .number.enabled', function() {
                 $Sudoku.table.find('.sudoku-numpad.popup .number.hover').removeClass('hover');
             })
-            .on('keypress', function(e) {
-                $Sudoku.keyPress(el, e.charCode);
-            })
             .on('mousedown', '.cell.open', function() {
                 $Sudoku.mouseDown(this);
             })
@@ -63,6 +60,11 @@
                 $Sudoku.hidePopupNumpad();
             })
         ;
+
+        $(d).on('keypress', function(e) {
+            $Sudoku.keyPress(e.charCode);
+        });
+
 
         w.disableSelect($Sudoku.table);
 
