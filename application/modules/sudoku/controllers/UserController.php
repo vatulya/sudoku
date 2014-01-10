@@ -31,14 +31,15 @@ class Sudoku_UserController extends Zend_Controller_Action
     {
         $loginEmail = $this->_getParam('login_email');
         $password = $this->_getParam('password');
-        /** @var Application_Model_Auth $auth */
-        $user = Application_Model_Auth::getInstance()->login($loginEmail, $password);
         $errors = array();
-        if (!$user) {
+        try {
+            /** @var Application_Model_Auth $auth */
+            $errors = Application_Model_Auth::getInstance()->login($loginEmail, $password);
+        } catch (Exception $e) {
             $errors[] = array(
                 'name'  => 'Login form',
-                'title' => 'Login',
-                'text'  => 'Wrong login or password',
+                'title' => 'System error',
+                'text'  => 'Something wrong. System error',
             );
         }
 
@@ -68,12 +69,10 @@ class Sudoku_UserController extends Zend_Controller_Action
                 'text' => 'Something wrong. System error',
             );
         }
-        if (!$errors) {
+        if (empty($errors)) {
             /** @var Application_Model_Auth $auth */
             $user = Application_Model_Auth::getInstance()->login($login, $password);
-        }
-
-        if (!empty($errors)) {
+        } else {
             $this->view->errors = $errors;
         }
     }

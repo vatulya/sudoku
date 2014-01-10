@@ -8,15 +8,41 @@ class Application_Model_Auth extends Application_Model_Abstract
     const ROLE_GUEST = 0;
     const ROLE_USER  = 20;
 
+    /**
+     * @param string $loginEmail
+     * @param string $password
+     * @return bool
+     */
     public function login($loginEmail, $password)
     {
-        $adapter = new Application_Model_AuthAdapter($loginEmail, $password);
-        $auth = Zend_Auth::getInstance();
-        $result = $auth->authenticate($adapter);
-        if ($result->isValid()) {
-            return $result->getIdentity();
+        $errors = array();
+        if (empty($loginEmail)) {
+            $errors[] = array(
+                'name'  => 'login-email',
+                'title' => 'Login or Email',
+                'text'  => 'Please enter Login or Email',
+            );
         }
-        return false;
+        if (empty($password)) {
+            $errors[] = array(
+                'name'  => 'password',
+                'title' => 'Password',
+                'text'  => 'Please enter Password',
+            );
+        }
+        if (empty($errors)) {
+            $adapter = new Application_Model_AuthAdapter($loginEmail, $password);
+            $auth = Zend_Auth::getInstance();
+            $result = $auth->authenticate($adapter);
+            if (!$result->isValid()) {
+                $errors[] = array(
+                    'name' => 'loginForm',
+                    'title' => 'Login form',
+                    'text' => 'Wrong Login data. No such user in database',
+                );
+            }
+        }
+        return $errors;
     }
 
     public function logout()

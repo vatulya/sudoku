@@ -23,6 +23,39 @@
     padding-left: 10px;
 }
 
+/**************************************** form messages ***************************************/
+
+.form-message {
+    display: none;
+    background-color: #ff9999;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.form-message ul {
+    list-style-type: none;
+    margin: 0;
+}
+
+.form-field .message {
+    display: none;
+    font-size: 12px;
+    border-radius: 5px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.form-field.error .message {
+    color: #b94a48;
+}
+.form-field.success .message {
+    color: #468847;
+}
+
+
 /**************************************** login and register ***************************************/
 
 #login-modal {
