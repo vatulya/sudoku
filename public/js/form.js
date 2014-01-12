@@ -1,6 +1,13 @@
 (function (w, d, $) {
 
     $(d)
+        .on('keypress', 'input', function(e) {
+            if (e.keyCode == '13') { // Enter button
+                e.preventDefault();
+                e.stopPropagation();
+                Form.clickSubmit(this);
+            }
+        })
         .on('click', '.submit-form', function() {
             Form.clickSubmit(this);
         })
