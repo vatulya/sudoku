@@ -18,10 +18,71 @@
 .navigation-panel .user-block {
     line-height: 30px;
     float: right;
-    width: 300px;
+    /*width: 300px;*/
     border-left: 1px solid #998877;
+    text-align: right;
     padding-left: 10px;
 }
+
+/**************************************** user info block ***************************************/
+
+.user-info-block.user-menu-closed .user-menu-open-icon {
+    display: inline-block;
+}
+.user-info-block.user-menu-closed .user-menu,
+.user-info-block.user-menu-closed .user-menu-close-icon {
+    display: none;
+}
+
+.user-info-block.user-menu-opened .user-menu-close-icon {
+    display: inline-block;
+}
+.user-info-block.user-menu-opened .user-menu {
+    display: block;
+}
+.user-info-block.user-menu-opened .user-menu-open-icon {
+    display: none;
+}
+
+.user-info-block .user-info-title-container,
+.user-info-block .user-menu li {
+    cursor: pointer;
+}
+
+.user-info-block .user-menu-container {
+    float: right;
+}
+.user-info-block .user-menu {
+    background-color: #ffeedd;
+    position: absolute;
+    margin-top: 5px;
+    margin-left: -120px;
+    width: 120px;
+    border: 1px solid #998877;
+    list-style-type: none;
+    text-align: left;
+}
+.user-info-block .user-menu ul {
+    margin: 0;
+}
+.user-info-block .user-menu li {
+    line-height: 30px;
+    padding-left: 10px;
+    border-bottom: 1px solid #ddd;
+}
+.user-info-block .user-menu li a {
+    color: #333333;
+    text-decoration: none;
+    display: block;
+}
+.user-info-block .user-menu li.logout {
+    border-top: 1px solid #eee;
+}
+.user-info-block .user-menu li:hover {
+    background-color: #fffeed;
+    padding-left: 12px;
+}
+
 
 /**************************************** form messages ***************************************/
 

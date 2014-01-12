@@ -26,6 +26,19 @@
                 });
             }
         })
+        .on('click', '.user-info-block .user-info-title-container', function(e) {
+            e.stopPropagation();
+            var userBlock = $(this).closest('.user-info-block');
+            if (userBlock.hasClass('user-menu-closed')) {
+                userBlock.removeClass('user-menu-closed').addClass('user-menu-opened');
+            } else {
+                userBlock.removeClass('user-menu-opened').addClass('user-menu-closed');
+            }
+        })
+        .on('click', function() {
+            var userBlock = $('.user-info-block');
+            userBlock.removeClass('user-menu-opened').addClass('user-menu-closed');
+        })
         .on('success', 'form.login', function() {
             $('#login-modal').modal('hide');
             location.reload();

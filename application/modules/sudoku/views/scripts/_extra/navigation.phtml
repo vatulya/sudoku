@@ -4,7 +4,11 @@
             <span class="title">Some title</span>
         </div>
         <div class="user-block">
-            <?php echo $this->render('_extra/login-block.phtml'); ?>
+            <?php if ($this->user): ?>
+                <?php echo $this->render('_extra/user-block.phtml'); ?>
+            <?php else: ?>
+                <?php echo $this->render('_extra/login-block.phtml'); ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>

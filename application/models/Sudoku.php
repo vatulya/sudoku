@@ -9,6 +9,7 @@ class Application_Model_Sudoku extends Application_Model_Abstract
     const EXPERT_DIFFICULTY    = 6;
     const NIGHTMARE_DIFFICULTY = 10;
     const RANDOM_DIFFICULTY    = 0;
+    const TEST_DIFFICULTY      = -1;
 
     const DEFAULT_GAME_DIFFICULTY = 2;
 
@@ -248,6 +249,7 @@ class Application_Model_Sudoku extends Application_Model_Abstract
             self::EXPERT_DIFFICULTY    => array('title' => 'Expert',    'openCells' => 25),
             self::NIGHTMARE_DIFFICULTY => array('title' => 'Nightmare', 'openCells' => 20),
             self::RANDOM_DIFFICULTY    => array('title' => 'Random',    'openCells' => array('min' => '20', 'max' => '30')),
+            self::TEST_DIFFICULTY      => array('title' => 'Test',      'openCells' => 78),
         );
         return $difficulties;
     }

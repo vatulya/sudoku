@@ -1,0 +1,27 @@
+<?php
+    $user = $this->user;
+?>
+<div class="user-info-block user-menu-closed">
+    <div class="user-info-title-container">
+        <span class="user-info-title">
+            Welcome, <?php echo !empty($user['login']) ? $user['login'] : $user['email']; ?>
+            <i class="user-menu-open-icon icon-chevron-down"></i>
+            <i class="user-menu-close-icon icon-chevron-up"></i>
+        </span>
+    </div>
+    <div class="user-menu-container">
+        <div class="user-menu">
+            <ul class="unstyled">
+                <li>
+                    <a href="">something</a>
+                </li>
+                <li>
+                    <a href="">something</a>
+                </li>
+                <li class="logout">
+                    <a href="/user/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

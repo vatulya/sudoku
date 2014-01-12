@@ -5,6 +5,7 @@ class Sudoku_UserController extends Zend_Controller_Action
 
     public $ajaxable = array(
         'login'    => array('json'),
+        'logout'   => array('html', 'json'),
         'register' => array('json'),
     );
 
@@ -46,6 +47,13 @@ class Sudoku_UserController extends Zend_Controller_Action
         if (!empty($errors)) {
             $this->view->errors = $errors;
         }
+    }
+
+    public function logoutAction()
+    {
+        $errors = Application_Model_Auth::getInstance()->logout();
+        $r = new Zend_Controller_Action_Helper_Redirector;
+        $r->gotoUrlAndExit('/');
     }
 
     public function registerAction()
