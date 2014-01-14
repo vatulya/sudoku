@@ -160,6 +160,12 @@
     text-align: center;
 }
 
+#login-modal .line-separator {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #login-modal .login-register.show-login-form .login-container,
 #login-modal .login-register.show-login-form .show-register {
     display: block;

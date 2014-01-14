@@ -6,7 +6,7 @@
 
 <div id="login-modal" class="modal hide fade">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">close</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
         <h3>Login or Register?</h3>
     </div>
     <div class="modal-body">
@@ -20,7 +20,7 @@
                         <script src="//ulogin.ru/js/ulogin.js"></script>
                         <div id="uLogin" data-ulogin="display=panel;fields=first_name,last_name;providers=google,vkontakte,facebook;;redirect_uri=http%3A%2F%2F"></div>
                     </div>
-                    <hr>
+                    <hr class="line-separator">
                     <div class="login-form">
                         <form class="login form-horizontal" method="post" action="/user/login">
                             <input type="hidden" name="submitted" value="1">
