@@ -16,6 +16,11 @@
                     <div class="title">
                         <h3>We know each other?</h3>
                     </div>
+                    <div class="other-authorizations">
+                        <script src="//ulogin.ru/js/ulogin.js"></script>
+                        <div id="uLogin" data-ulogin="display=panel;fields=first_name,last_name;providers=google,vkontakte,facebook;;redirect_uri=http%3A%2F%2F"></div>
+                    </div>
+                    <hr>
                     <div class="login-form">
                         <form class="login form-horizontal" method="post" action="/user/login">
                             <input type="hidden" name="submitted" value="1">

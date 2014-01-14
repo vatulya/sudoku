@@ -20,8 +20,11 @@
     float: right;
     /*width: 300px;*/
     border-left: 1px solid #998877;
-    text-align: right;
     padding-left: 10px;
+}
+.navigation-panel .user-login-block,
+.navigation-panel .user-info-title-container {
+    text-align: right;
 }
 
 /**************************************** user info block ***************************************/
@@ -140,13 +143,13 @@
 
 #login-modal .login-container {
     width: 560px;
-    height: 255px;
+    /*height: 255px;*/
     float: left;
     text-align: center;
 }
 #login-modal .register-container {
     width: 560px;
-    height: 255px;
+    /*height: 255px;*/
     float: right;
     text-align: center;
 }

@@ -44,7 +44,9 @@ class Sudoku_UserController extends Zend_Controller_Action
             );
         }
 
-        if (!empty($errors)) {
+        if (empty($errors)) {
+            $this->view->success = true;
+        } else {
             $this->view->errors = $errors;
         }
     }

@@ -19,6 +19,8 @@
 
     var Form = {
 
+        allowedMessageTypes: ['error', 'notice', 'success'],
+
         clickSubmit: function(button) {
             button = $(button);
             var form = button.closest('form');
@@ -36,39 +38,41 @@
                 url: form.attr('action'),
                 data: formData,
                 success: function(response) {
-                    if (typeof response.errors == 'undefined') {
+                    if (typeof response.success != 'undefined') {
                         form.trigger('success', response);
                     } else {
-                        Form.showErrors(form, response.errors);
+                        Form.showMessages(form, response.messages);
                     }
                 }
             });
         },
 
-        showErrors: function(form, errors) {
+        showMessages: function(form, messages) {
             form = $(form);
             Form.clearMessages(form);
             var formMessageBlock = '';
-            for (var i in errors) {
+            for (var i in messages) {
                 /*
                 errors = {
                     name: "login", // field name
                     title: "Login field", // field title
-                    text: "Wrong login" // error text
+                    text: "Wrong login", // error text
+                    type: "error" // error|notice|success
                 }
                  */
-                if (errors.hasOwnProperty(i)) {
-                    var error = errors[i],
-                        field = form.find('.field-' + error.name),
+                if (messages.hasOwnProperty(i)) {
+                    var message = messages[i],
+                        field = form.find('.field-' + message.name),
                         fieldMessageBlock = field.find('.message'),
-                        errorMessage = error.text
+                        messageText = message.text,
+                        messageType = Form.getMessageType(message);
                     ;
                     if (field.length && fieldMessageBlock.length) {
-                        field.addClass('error');
-                        fieldMessageBlock.html(errorMessage).show();
+                        field.addClass(messageType);
+                        fieldMessageBlock.html(messageText).show();
                     } else {
-                        errorMessage = error.title + ': ' + errorMessage;
-                        formMessageBlock += '<li>' + errorMessage + '</li>';
+                        messageText = message.title + ': ' + messageText;
+                        formMessageBlock += '<li>' + messageText + '</li>';
                     }
                 }
             }
@@ -82,6 +86,14 @@
             form.find(".form-message").removeClass('error').removeClass('success').html('').hide();
             form.find('.form-field').removeClass('error').removeClass('success');
             form.find('.form-field .message').html('').hide();
+        },
+
+        getMessageType: function(message) {
+            var i = Form.allowedMessageTypes.indexOf(message.type);
+            if (i == -1) {
+                i = 0;
+            }
+            return Form.allowedMessageTypes[i];
         }
 
     };
