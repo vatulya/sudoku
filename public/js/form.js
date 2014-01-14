@@ -11,6 +11,9 @@
         .on('click', '.submit-form', function() {
             Form.clickSubmit(this);
         })
+        .on('click', '.form-field .tooltip', function() {
+            $(this).closest('.form-field').find('.message-tooltip').tooltip('destroy');
+        })
     ;
 
     w.gogogo = function() {
@@ -62,15 +65,25 @@
                  */
                 if (messages.hasOwnProperty(i)) {
                     var message = messages[i],
-                        field = form.find('.field-' + message.name),
-                        fieldMessageBlock = field.find('.message'),
+                        fieldBlock = form.find('.field-' + message.name),
+                        field = fieldBlock.find('input'),
+                        fieldMessageBlock = fieldBlock.find('.message'),
                         messageText = message.text,
-                        messageType = Form.getMessageType(message);
+                        messageType = Form.getMessageType(message)
                     ;
-                    if (field.length && fieldMessageBlock.length) {
-                        field.addClass(messageType);
+                    fieldBlock.addClass(messageType);
+                    if (fieldMessageBlock.length) {
+                        // Show in special block
                         fieldMessageBlock.html(messageText).show();
+                    } else if (field.length && field.hasClass('message-tooltip')) {
+                        // Show as tooltip
+                        var options = {
+                            title: messageText,
+                            trigger: 'manual'
+                        };
+                        field.tooltip(options);
                     } else {
+                        // Show in common form message block
                         messageText = message.title + ': ' + messageText;
                         formMessageBlock += '<li>' + messageText + '</li>';
                     }
@@ -79,6 +92,7 @@
             if (formMessageBlock != '') {
                 form.find('.form-message').addClass('error').append('<ul>' + formMessageBlock + '</ul>').show();
             }
+            form.find('.message-tooltip').tooltip('show');
         },
 
         clearMessages: function(form) {
@@ -86,6 +100,7 @@
             form.find(".form-message").removeClass('error').removeClass('success').html('').hide();
             form.find('.form-field').removeClass('error').removeClass('success');
             form.find('.form-field .message').html('').hide();
+            form.find('.form-field .message-tooltip').tooltip('destroy');
         },
 
         getMessageType: function(message) {

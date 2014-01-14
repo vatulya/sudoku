@@ -115,6 +115,12 @@
 .form-field.error .message {
     color: #b94a48;
 }
+.form-field.error .tooltip-inner{
+    background-color: #b94a48;
+}
+.form-field.error .tooltip-arrow {
+    border-right-color: #b94a48;
+}
 .form-field.success .message {
     color: #468847;
 }

@@ -47,7 +47,7 @@ class Sudoku_UserController extends Zend_Controller_Action
         if (empty($errors)) {
             $this->view->success = true;
         } else {
-            $this->view->errors = $errors;
+            $this->view->messages = $errors;
         }
     }
 
@@ -83,7 +83,7 @@ class Sudoku_UserController extends Zend_Controller_Action
             /** @var Application_Model_Auth $auth */
             $user = Application_Model_Auth::getInstance()->login($login, $password);
         } else {
-            $this->view->errors = $errors;
+            $this->view->messages = $errors;
         }
     }
 
