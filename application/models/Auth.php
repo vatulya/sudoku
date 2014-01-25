@@ -47,7 +47,7 @@ class Application_Model_Auth extends Application_Model_Abstract
 
     public function loginOther(array $user)
     {
-        $errors = [];
+        $errors = array();
         $adapter = new Application_Model_AuthOtherAdapter($user);
         $auth = Zend_Auth::getInstance();
         $result = $auth->authenticate($adapter);

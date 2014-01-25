@@ -22,11 +22,11 @@ class Application_Model_ULogin extends Application_Model_Abstract
 
     public function convert(array $userData)
     {
-        $user = [
+        $user = array(
             'login'      => $userData['first_name'],
             'network'    => $userData['network'],
             'network_id' => $userData['uid'],
-        ];
+        );
         return $user;
     }
 
