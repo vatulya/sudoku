@@ -15,7 +15,7 @@ class Application_Model_ULogin extends Application_Model_Abstract
             }
             $user = $this->convert($user);
         } catch (Exception $e) {
-            $user = [];
+            $user = array();
         }
         return $user;
     }
