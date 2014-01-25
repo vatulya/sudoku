@@ -21,7 +21,10 @@ abstract class Application_Model_Abstract
         return Application_Model_Abstract::$_instances[$class];
     }
 
-    protected function __construct()
+    /**
+     * You can create new object, but you MUST call init() after that
+     */
+    public function __construct()
     {
     }
 

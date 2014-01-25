@@ -38,8 +38,8 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        /** @var Application_Model_Sudoku $sudoku */
-        $sudoku = Application_Model_Sudoku::getInstance();
+        /** @var Application_Model_Game_Abstract $sudoku */
+        $sudoku = Application_Model_Game_Abstract::factory(Application_Model_Game_Sudoku::GAME_CODE);
 
         $difficulties = $sudoku->getAllDifficulties();
         $this->view->difficulties = $difficulties;
@@ -47,20 +47,18 @@ class Sudoku_IndexController extends Zend_Controller_Action
         /** @var Zend_Controller_Request_Abstract $request */
         $request = $this->_request;
         $difficulty = $request->getParam('difficulty');
-        if (!isset($difficulties[$difficulty])) {
-            $difficulty = $sudoku::DEFAULT_GAME_DIFFICULTY;
-        }
-        $this->view->currentDifficulty = $difficulty;
+        $sudoku->setDifficulty($difficulty);
+        $this->view->currentDifficulty = $sudoku->getDifficulty();
 
-        $game = $sudoku->createGame($difficulty);
-        $this->view->sudoku = $game;
+        $sudoku->createGame();
+        $this->view->sudoku = $sudoku;
     }
 
     public function checkFieldAction()
     {
         $cells = $this->_getParam('cells');
-        /** @var Application_Model_Sudoku $sudoku */
-        $sudoku = Application_Model_Sudoku::getInstance();
+        /** @var Application_Model_Game_Abstract $sudoku */
+        $sudoku = Application_Model_Game_Abstract::factory(Application_Model_Game_Sudoku::GAME_CODE);
         $errors = $sudoku->checkGameSolution($cells);
         if (is_array($errors)) {
             $this->view->errors = $errors;

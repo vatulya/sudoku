@@ -1,25 +1,16 @@
 <?php
 
-class Application_Model_Sudoku extends Application_Model_Abstract
+class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
 {
-
-    const PRACTICE_DIFFICULTY  = 1;
-    const EASY_DIFFICULTY      = 2;
-    const NORMAL_DIFFICULTY    = 4;
-    const EXPERT_DIFFICULTY    = 6;
-    const NIGHTMARE_DIFFICULTY = 10;
-    const RANDOM_DIFFICULTY    = 0;
-    const TEST_DIFFICULTY      = -1;
-
-    const DEFAULT_GAME_DIFFICULTY = 2;
+    const GAME_CODE = 'sudoku';
 
     const SHUFFLE_COUNT = 20;
 
     const TOTAL_CELLS = 81;
 
-    public function createGame($difficulty)
+    public function createGame()
     {
-        $params = $this->getDifficultyParams($difficulty);
+        $params = $this->getDifficultyParams($this->getDifficulty());
         if (!$params) {
             $params = $this->getDifficultyParams(self::DEFAULT_GAME_DIFFICULTY);
         }
@@ -34,10 +25,9 @@ class Application_Model_Sudoku extends Application_Model_Abstract
         $board = $this->_getOpenCells($board, $openCellsCount);
         $board = $this->_normalizeBoardKeys($board);
 
-        $game = new Application_Model_Game('Sudoku', $difficulty);
-        $game->setParams(array('openCells' => $board));
+        $this->setParams(array('openCells' => $board));
 
-        return $game;
+        return $this;
     }
 
     protected function _getSimpleBoard()

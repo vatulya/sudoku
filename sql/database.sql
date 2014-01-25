@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(64) NOT NULL,
     created DATETIME NOT NULL,
     PRIMARY KEY (id),
-    INDEX(email),
-    INDEX(login)
+    INDEX (email),
+    INDEX (login)
 );
 
 CREATE TABLE IF NOT EXISTS users_other (
@@ -17,6 +17,19 @@ CREATE TABLE IF NOT EXISTS users_other (
     login VARCHAR(255) DEFAULT NULL,
     created DATETIME NOT NULL,
     PRIMARY KEY (id),
-    INDEX(email),
-    INDEX(login)
+    INDEX (email),
+    INDEX (login)
+);
+
+CREATE TABLE IF NOT EXISTS games_sudoku (
+    id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    started DATETIME NOT NULL,
+    ended DATETIME NOT NULL,
+    duration INT NOT NULL,
+    parameters TEXT NOT NULL,
+    PRIMARY KEY (id),
+    INDEX (user_id),
+    INDEX (started),
+    INDEX (duration)
 );
