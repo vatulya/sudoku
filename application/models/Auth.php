@@ -36,11 +36,27 @@ class Application_Model_Auth extends Application_Model_Abstract
             $result = $auth->authenticate($adapter);
             if (!$result->isValid()) {
                 $errors[] = array(
-                    'name' => 'loginForm',
+                    'name'  => 'loginForm',
                     'title' => 'Login form',
-                    'text' => 'Wrong Login data. No such user in database',
+                    'text'  => 'Wrong Login data. No such user in database',
                 );
             }
+        }
+        return $errors;
+    }
+
+    public function loginOther(array $user)
+    {
+        $errors = [];
+        $adapter = new Application_Model_AuthOtherAdapter($user);
+        $auth = Zend_Auth::getInstance();
+        $result = $auth->authenticate($adapter);
+        if (!$result->isValid()) {
+            $errors[] = array(
+                'name'  => 'LoginError',
+                'title' => 'Login error',
+                'text'  => 'Wrong Login data',
+            );
         }
         return $errors;
     }
@@ -54,11 +70,12 @@ class Application_Model_Auth extends Application_Model_Abstract
 
     public function getCurrentUser()
     {
+        $user = null;
         $auth = Zend_Auth::getInstance();
         if ($auth->hasIdentity()) {
-            return $auth->getIdentity();
+            $user = $auth->getIdentity();
         }
-        return null;
+        return $user;
     }
 
     public function _changePassword($userId, $newPassword)

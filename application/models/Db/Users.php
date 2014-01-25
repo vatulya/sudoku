@@ -75,12 +75,15 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
     {
         $now = new \DateTime('NOW', new \DateTimeZone('UTC'));
         $data = array(
-            'email' => isset($data['email']) ? $data['email'] : '',
-            'login' => isset($data['login']) ? $data['login'] : '',
+            'email'    => isset($data['email']) ? $data['email'] : '',
+            'login'    => isset($data['login']) ? $data['login'] : '',
             'password' => isset($data['password']) ? $data['password'] : '',
-            'created' => $now->format('Y-m-d H:i:s'),
+            'created'  => $now->format('Y-m-d H:i:s'),
         );
         $result = $this->_db->insert(self::TABLE_NAME, $data);
+        if ($result) {
+            $result = $this->_db->lastInsertId();
+        }
         return $result;
     }
 
