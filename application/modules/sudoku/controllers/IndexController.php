@@ -26,7 +26,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
             'sudoku',
             true
         );
-        $this->view->uLoginRedirectUrl = urlencode($uLoginRedirectUrl);
+        $this->view->uLoginData = Application_Model_ULogin::getLoginData($uLoginRedirectUrl);
     }
 
     public function postDispatch()

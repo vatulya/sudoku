@@ -30,4 +30,14 @@ class Application_Model_ULogin extends Application_Model_Abstract
         return $user;
     }
 
+    static public function getLoginData($redirectUrl)
+    {
+        $uLoginData = 'display=panel;';
+        $uLoginData .= 'fields=first_name;';
+        $uLoginData .= 'providers=google,facebook,odnoklassniki,mailru;';
+        // vkontakte,odnoklassniki,mailru,facebook,twitter,google,yandex,livejournal,openid,lastfm,linkedin,liveid,soundcloud,steam,flickr,vimeo,youtube,webmoney,foursquare,tumblr,googleplus,dudu
+        $uLoginData .= 'redirect_uri=' . urlencode($redirectUrl);
+        return $uLoginData;
+    }
+
 }
