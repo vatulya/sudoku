@@ -34,12 +34,26 @@ class Sudoku_UserController extends Zend_Controller_Action
         $uLoginModel = Application_Model_ULogin::getInstance();
         $user = $uLoginModel->login($_POST['token'], $this->view->getHelper('ServerUrl')->getHost());
         if (empty($user)) {
-            $this->redirect($this->_helper->Url->url(['controller' => 'index', 'action' => 'index'], 'sudoku', true));
+            $this->redirect($this->_helper->Url->url(
+                array(
+                    'controller' => 'index',
+                    'action'     => 'index'
+                ),
+                'sudoku',
+                true
+            ));
         }
         /** @var Application_Model_Auth $auth */
         $auth = Application_Model_Auth::getInstance();
         $auth->loginOther($user);
-        $this->redirect($this->_helper->Url->url(['controller' => 'index', 'action' => 'index'], 'sudoku', true));
+        $this->redirect($this->_helper->Url->url(
+            array(
+                'controller' => 'index',
+                'action'     => 'index'
+            ),
+            'sudoku',
+            true
+        ));
     }
 
     public function loginAction()
