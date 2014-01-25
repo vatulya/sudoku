@@ -18,7 +18,14 @@ class Sudoku_IndexController extends Zend_Controller_Action
     public function preDispatch()
     {
         $uLoginRedirectUrl = $this->view->serverUrl();
-        $uLoginRedirectUrl .= $this->_helper->Url->url(['controller' => 'user', 'action' => 'u-login'], 'sudoku', true);
+        $uLoginRedirectUrl .= $this->_helper->Url->url(
+            array(
+                'controller' => 'user',
+                'action'     => 'u-login'
+            ),
+            'sudoku',
+            true
+        );
         $this->view->uLoginRedirectUrl = urlencode($uLoginRedirectUrl);
     }
 
