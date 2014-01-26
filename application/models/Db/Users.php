@@ -17,7 +17,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
         'emergency_phone', 'emergency_full_name', 'birthday', 'owner', 'regular_work_hours',
     );
 
-    public function getUserById($id)
+    public function getById($id)
     {
         $select = $this->_db->select()
             ->from(array('u' => self::TABLE_NAME))
@@ -30,7 +30,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
         return $result;
     }
 
-    public function getUserByEmail($email)
+    public function getByEmail($email)
     {
         $select = $this->_db->select()
             ->from(array('u' => self::TABLE_NAME))
@@ -43,7 +43,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
         return $result;
     }
 
-    public function getUserByLogin($login)
+    public function getByLogin($login)
     {
         $select = $this->_db->select()
             ->from(array('u' => self::TABLE_NAME))
@@ -56,7 +56,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
         return $result;
     }
 
-    public function getAllUsers()
+    public function getAll()
     {
         $select = $this->_db->select()
             ->from(array('u' => self::TABLE_NAME))

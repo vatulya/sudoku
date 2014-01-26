@@ -5,7 +5,7 @@ class Application_Model_Db_UsersOther extends Application_Model_Db_Abstract
 
     const TABLE_NAME = 'users_other';
 
-    public function getUserById($id)
+    public function getById($id)
     {
         $select = $this->_db->select()
             ->from(array('u' => self::TABLE_NAME))
@@ -14,7 +14,7 @@ class Application_Model_Db_UsersOther extends Application_Model_Db_Abstract
         return $result;
     }
 
-    public function getUserByNetworkAndId($network, $id)
+    public function getByNetworkAndId($network, $id)
     {
         $select = $this->_db->select()
             ->from(array('u' => self::TABLE_NAME))
@@ -24,7 +24,7 @@ class Application_Model_Db_UsersOther extends Application_Model_Db_Abstract
         return $result;
     }
 
-    public function getAllUsers()
+    public function getAll()
     {
         $select = $this->_db->select()
             ->from(array('u' => self::TABLE_NAME))

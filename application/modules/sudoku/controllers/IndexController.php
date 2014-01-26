@@ -31,9 +31,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     public function postDispatch()
     {
-        /** @var Application_Model_Auth $auth */
-        $auth = Application_Model_Auth::getInstance();
-        $this->view->user = $auth->getCurrentUser();
+        $this->view->user = Application_Model_Auth::getInstance()->getCurrentUser();
     }
 
     public function indexAction()
@@ -50,7 +48,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $sudoku->setDifficulty($difficulty);
         $this->view->currentDifficulty = $sudoku->getDifficulty();
 
-        $sudoku->createGame();
+        $sudoku->createGame(Application_Model_Auth::getInstance()->getCurrentUser());
         $this->view->sudoku = $sudoku;
     }
 

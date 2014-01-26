@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class Application_Model_User
+ *
+ * @method Application_Model_Db_Users getModelDb()
+ */
 class Application_Model_User extends Application_Model_Abstract
 {
 
@@ -12,7 +17,7 @@ class Application_Model_User extends Application_Model_Abstract
 
     public function getById($id)
     {
-        return $this->_modelDb->getUserById($id);
+        return $this->getModelDb()->getById($id);
     }
 
     /**
@@ -54,7 +59,7 @@ class Application_Model_User extends Application_Model_Abstract
 
         if (empty($errors)) {
             if (!empty($userData['login'])) {
-                $check = $this->_modelDb->getUserByLogin($userData['login']);
+                $check = $this->getModelDb()->getByLogin($userData['login']);
                 if ($check) {
                     $errors[] = array(
                         'name' => 'login-email',
@@ -64,7 +69,7 @@ class Application_Model_User extends Application_Model_Abstract
                 }
             }
             if (!empty($userData['email'])) {
-                $check = $this->_modelDb->getUserByEmail($userData['email']);
+                $check = $this->getModelDb()->getByEmail($userData['email']);
                 if ($check) {
                     $errors[] = array(
                         'name' => 'login-email',
@@ -77,7 +82,7 @@ class Application_Model_User extends Application_Model_Abstract
             if (empty($errors)) {
                 $userData['password'] = Application_Model_AuthAdapter::encodePassword($userData['password']);
                 unset($userData['password2']);
-                $result = $this->_modelDb->insert($userData);
+                $result = $this->getModelDb()->insert($userData);
             }
         }
 

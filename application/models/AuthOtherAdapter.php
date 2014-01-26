@@ -14,13 +14,13 @@ class Application_Model_AuthOtherAdapter implements Zend_Auth_Adapter_Interface
     {
         if (isset($this->_user['network'], $this->_user['network_id'])) {
             $userOtherModel = new Application_Model_Db_UsersOther();
-            $user = $userOtherModel->getUserByNetworkAndId($this->_user['network'], $this->_user['network_id']);
+            $user = $userOtherModel->getByNetworkAndId($this->_user['network'], $this->_user['network_id']);
             if (!$user) {
                 $userId = $userOtherModel->insert($this->_user);
                 if (!$userId) {
                     throw new Exception('Something wrong!');
                 }
-                $user = $userOtherModel->getUserById($userId);
+                $user = $userOtherModel->getById($userId);
             }
             if (!$user) {
                 throw new Exception('Something wrong!');

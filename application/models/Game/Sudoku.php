@@ -8,24 +8,23 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
 
     const TOTAL_CELLS = 81;
 
-    public function createGame()
+    /**
+     * @param array $user
+     * @return $this
+     */
+    public function createGame(array $user)
     {
-        $params = $this->getDifficultyParams($this->getDifficulty());
-        if (!$params) {
-            $params = $this->getDifficultyParams(self::DEFAULT_GAME_DIFFICULTY);
-        }
-        $openCellsCount = $params['openCells'];
-        if (is_array($openCellsCount)) {
-            $openCellsCount = rand($openCellsCount['min'], $openCellsCount['max']);
-        }
-
+        $params = $this->getDifficulty();
         $board = $this->_getSimpleBoard();
         $board = $this->_shuffleBoard($board);
         $board = $this->_mergeBoardRows($board);
-        $board = $this->_getOpenCells($board, $openCellsCount);
+        $board = $this->_getOpenCells($board, $params['openCells']);
         $board = $this->_normalizeBoardKeys($board);
 
-        $this->setParams(array('openCells' => $board));
+        $game = array(
+            'openCells' => $board,
+        );
+        $this->_game = Application_Model_Game::create($user, self::GAME_CODE, $game);
 
         return $this;
     }
@@ -144,6 +143,9 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
 
     protected function _getOpenCells(array $board, $count)
     {
+        if (is_array($count)) {
+            $count = rand($count['min'], $count['max']);
+        }
         $keys = array_keys($board);
         shuffle($keys);
         $openCells = array();
@@ -238,7 +240,7 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
             self::NORMAL_DIFFICULTY    => array('title' => 'Normal',    'openCells' => 30),
             self::EXPERT_DIFFICULTY    => array('title' => 'Expert',    'openCells' => 25),
             self::NIGHTMARE_DIFFICULTY => array('title' => 'Nightmare', 'openCells' => 20),
-            self::RANDOM_DIFFICULTY    => array('title' => 'Random',    'openCells' => array('min' => '20', 'max' => '30')),
+            self::RANDOM_DIFFICULTY    => array('title' => 'Random',    'openCells' => array('min' => 20, 'max' => 30)),
             self::TEST_DIFFICULTY      => array('title' => 'Test',      'openCells' => 78),
         );
         return $difficulties;

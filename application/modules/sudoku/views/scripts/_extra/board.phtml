@@ -2,7 +2,9 @@
 $cols = 9; // 1..9
 $rows = 9;
 
-$game = $this->sudoku->getParams();
+/** @var Application_Model_Game_Sudoku $sudoku */
+$sudoku = $this->sudoku;
+$game = $sudoku->getGame()->getParams();
 
 /**
  * @param int $row

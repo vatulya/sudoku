@@ -17,13 +17,16 @@ abstract class Application_Model_Game_Abstract
 
     const DEFAULT_GAME_DIFFICULTY = 2;
 
+    /**
+     * @var Application_Model_Game
+     */
+    protected $_game;
+
     protected $_name;
 
     protected $_difficulty;
 
-    protected $_params = array();
-
-    abstract function createGame();
+    abstract function createGame(array $user);
 
     static public function factory($name)
     {
@@ -32,10 +35,12 @@ abstract class Application_Model_Game_Abstract
         if (class_exists($class)) {
             return new $class($name);
         }
+        return null;
     }
 
     protected function __construct($name)
     {
+        $name = strtolower($name);
         $this->_name = $name;
     }
 
@@ -54,9 +59,11 @@ abstract class Application_Model_Game_Abstract
     public function setDifficulty($difficulty)
     {
         $difficulty = (int)$difficulty;
-        if (!array_key_exists($difficulty, $this->getAllDifficulties())) {
+        $allDifficulties = $this->getAllDifficulties();
+        if (!isset($allDifficulties[$difficulty])) {
             $difficulty = self::DEFAULT_GAME_DIFFICULTY;
         }
+        $difficulty = $allDifficulties[$difficulty];
         $this->_difficulty = $difficulty;
         return $this;
     }
@@ -67,27 +74,9 @@ abstract class Application_Model_Game_Abstract
     public function getDifficulty()
     {
         if (is_null($this->_difficulty)) {
-            $this->_difficulty = self::DEFAULT_GAME_DIFFICULTY;
+            $this->_difficulty = $this->setDifficulty(self::DEFAULT_GAME_DIFFICULTY);
         }
         return $this->_difficulty;
-    }
-
-    /**
-     * @return array
-     */
-    public function getParams()
-    {
-        return $this->_params;
-    }
-
-    /**
-     * @param array $params
-     * @return $this
-     */
-    public function setParams(array $params)
-    {
-        $this->_params = $params;
-        return $this;
     }
 
     public function getAllDifficulties()
@@ -102,6 +91,24 @@ abstract class Application_Model_Game_Abstract
             self::TEST_DIFFICULTY      => array('title' => 'Test',),
         );
         return $difficulties;
+    }
+
+    /**
+     * @param Application_Model_Game $game
+     * @return $this
+     */
+    public function setGame(Application_Model_Game $game)
+    {
+        $this->_game = $game;
+        return $this;
+    }
+
+    /**
+     * @return Application_Model_Game
+     */
+    public function getGame()
+    {
+        return $this->_game;
     }
 
 }

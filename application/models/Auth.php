@@ -68,20 +68,20 @@ class Application_Model_Auth extends Application_Model_Abstract
         return true;
     }
 
+    /**
+     * @return array
+     */
     public function getCurrentUser()
     {
-        $user = null;
         $auth = Zend_Auth::getInstance();
-        if ($auth->hasIdentity()) {
-            $user = $auth->getIdentity();
-        }
+        $user = $auth->hasIdentity() ? $auth->getIdentity() : array();
         return $user;
     }
 
     public function _changePassword($userId, $newPassword)
     {
         $newPasswordEncoded = Application_Model_AuthAdapter::encodePassword($newPassword);
-        $result = $this->_modelDb->savePassword($userId, $newPasswordEncoded);
+        $result = $this->getModelDb()->savePassword($userId, $newPasswordEncoded);
         return $result;
     }
 
