@@ -5,32 +5,9 @@ class Application_Model_Db_UsersOther extends Application_Model_Db_Abstract
 
     const TABLE_NAME = 'users_other';
 
-    public function getById($id)
+    public function getAll(array $parameters = array(), array $order = array('email ASC', 'login ASC'))
     {
-        $select = $this->_db->select()
-            ->from(array('u' => self::TABLE_NAME))
-            ->where('u.id = ?', $id);
-        $result = $this->_db->fetchRow($select);
-        return $result;
-    }
-
-    public function getByNetworkAndId($network, $id)
-    {
-        $select = $this->_db->select()
-            ->from(array('u' => self::TABLE_NAME))
-            ->where('u.network = ?', $network)
-            ->where('u.network_id = ?', $id);
-        $result = $this->_db->fetchRow($select);
-        return $result;
-    }
-
-    public function getAll()
-    {
-        $select = $this->_db->select()
-            ->from(array('u' => self::TABLE_NAME))
-            ->order(array('u.email ASC', 'u.login ASC'));
-        $result = $this->_db->fetchAll($select);
-        return $result;
+        return parent::getAll($parameters, $order);
     }
 
     public function insert(array $data)
@@ -48,6 +25,26 @@ class Application_Model_Db_UsersOther extends Application_Model_Db_Abstract
             $result = $this->_db->lastInsertId();
         }
         return $result;
+    }
+
+    public function update($id, array $data)
+    {
+        $update = array();
+        foreach (array('password') as $field) {
+            if (isset($data[$field])) {
+                $update[$field] = $data[$field];
+            }
+        }
+        $result = false;
+        if (!empty($update)) {
+            $result = (bool)$this->_db->update(static::TABLE_NAME, $data, array('id' => $id));
+        }
+        return $result;
+    }
+
+    public function delete($id)
+    {
+        return false;
     }
 
 }

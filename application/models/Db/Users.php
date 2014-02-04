@@ -11,18 +11,9 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
 
     protected $_hideFields = true;
 
-    protected $_allowedSaveFields = array(
-        'email',
-        'full_name', 'address', 'phone',
-        'emergency_phone', 'emergency_full_name', 'birthday', 'owner', 'regular_work_hours',
-    );
-
-    public function getById($id)
+    public function getOne(array $parameters = array())
     {
-        $select = $this->_db->select()
-            ->from(array('u' => self::TABLE_NAME))
-            ->where('u.id = ?', $id);
-        $result = $this->_db->fetchRow($select);
+        $result = parent::getOne($parameters);
         if ($result && $this->_hideFields) {
             $result = $this->hideFields($result);
             $this->_hideFields = true;
@@ -30,38 +21,9 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
         return $result;
     }
 
-    public function getByEmail($email)
+    public function getAll(array $parameters = array(), array $order = array('full_name ASC'))
     {
-        $select = $this->_db->select()
-            ->from(array('u' => self::TABLE_NAME))
-            ->where('u.email = ?', $email);
-        $result = $this->_db->fetchRow($select);
-        if ($result && $this->_hideFields) {
-            $result = $this->hideFields($result);
-            $this->_hideFields = true;
-        }
-        return $result;
-    }
-
-    public function getByLogin($login)
-    {
-        $select = $this->_db->select()
-            ->from(array('u' => self::TABLE_NAME))
-            ->where('u.login = ?', $login);
-        $result = $this->_db->fetchRow($select);
-        if ($result && $this->_hideFields) {
-            $result = $this->hideFields($result);
-            $this->_hideFields = true;
-        }
-        return $result;
-    }
-
-    public function getAll()
-    {
-        $select = $this->_db->select()
-            ->from(array('u' => self::TABLE_NAME))
-            ->order(array('u.full_name ASC'));
-        $result = $this->_db->fetchAll($select);
+        $result = parent::getAll($parameters, $order);
         if ($result && $this->_hideFields) {
             foreach ($result as $key => $row) {
                 $result[$key] = $this->hideFields($row);
@@ -80,11 +42,21 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
             'password' => isset($data['password']) ? $data['password'] : '',
             'created'  => $now->format('Y-m-d H:i:s'),
         );
-        $result = $this->_db->insert(self::TABLE_NAME, $data);
+        $result = $this->_db->insert(static::TABLE_NAME, $data);
         if ($result) {
             $result = $this->_db->lastInsertId();
         }
         return $result;
+    }
+
+    public function update($id, array $data)
+    {
+        return false;
+    }
+
+    public function delete($id)
+    {
+        return false;
     }
 
     /**

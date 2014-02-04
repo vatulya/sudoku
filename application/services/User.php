@@ -11,11 +11,6 @@ class Application_Service_User extends Application_Service_Abstract
     const DB_MODEL_NAME = 'Users';
 
     /**
-     * @var array
-     */
-    protected $_user = array();
-
-    /**
      * @return array
      */
     public function getCurrentUser()
@@ -29,7 +24,25 @@ class Application_Service_User extends Application_Service_Abstract
      */
     public function getById($id)
     {
-        return $this->getModelDb()->getById($id);
+        return $this->getModelDb()->getOne(array('id' => $id));
+    }
+
+    /**
+     * @param $login
+     * @return array
+     */
+    public function getByLogin($login)
+    {
+        return $this->getModelDb()->getOne(array('login' => $login));
+    }
+
+    /**
+     * @param $email
+     * @return array
+     */
+    public function getByEmail($email)
+    {
+        return $this->getModelDb()->getOne(array('email' => $email));
     }
 
     /**
@@ -71,7 +84,7 @@ class Application_Service_User extends Application_Service_Abstract
 
         if (empty($errors)) {
             if (!empty($userData['login'])) {
-                $check = $this->getModelDb()->getByLogin($userData['login']);
+                $check = $this->getModelDb()->getOne(array('login' => $userData['login']));
                 if ($check) {
                     $errors[] = array(
                         'name' => 'login-email',
@@ -81,7 +94,7 @@ class Application_Service_User extends Application_Service_Abstract
                 }
             }
             if (!empty($userData['email'])) {
-                $check = $this->getModelDb()->getByEmail($userData['email']);
+                $check = $this->getModelDb()->getOne(array('email' => $userData['email']));
                 if ($check) {
                     $errors[] = array(
                         'name' => 'login-email',
@@ -120,14 +133,14 @@ class Application_Service_User extends Application_Service_Abstract
     }
 
     /**
-     * @param $userId
-     * @param $newPassword
-     * @return mixed
+     * @param int $userId
+     * @param string $newPassword
+     * @return bool
      */
     public function changePassword($userId, $newPassword)
     {
         $newPasswordEncoded = My_Auth_Adapter_Main::encodePassword($newPassword);
-        $result = $this->getModelDb()->savePassword($userId, $newPasswordEncoded);
+        $result = $this->getModelDb()->update($userId, array('password' => $newPasswordEncoded));
         return $result;
     }
 

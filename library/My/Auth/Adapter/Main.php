@@ -28,15 +28,16 @@ class My_Auth_Adapter_Main implements Zend_Auth_Adapter_Interface
      */
     public function authenticate()
     {
-        $users = new Application_Model_Db_Users();
+        $usersDbModel = new Application_Model_Db_Users();
         $emailValidator = new Zend_Validate_EmailAddress();
+        $user = array();
         if ($emailValidator->isValid($this->loginOrEmail)) {
-            $user = $users->withHiddenFields()->getByEmail($this->loginOrEmail);
-        } else {
-            $user = $users->withHiddenFields()->getByLogin($this->loginOrEmail);
+            $user = $usersDbModel->getOne(array('email' => $this->loginOrEmail, 'password' => $this->password));
         }
-        if ($user['password'] === $this->password) {
-            $user = $users->hideFields($user);
+        if (empty($user)) {
+            $user = $usersDbModel->getOne(array('login' => $this->loginOrEmail, 'password' => $this->password));
+        }
+        if (!empty($user)) {
             return new Zend_Auth_Result(Zend_Auth_Result::SUCCESS, $user);
         }
         return new Zend_Auth_Result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, null);

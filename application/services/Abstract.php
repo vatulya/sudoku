@@ -45,7 +45,7 @@ abstract class Application_Service_Abstract
     /**
      * @return Application_Model_Db_Abstract
      */
-    protected function getModelDb()
+    public function getModelDb()
     {
         if (is_null($this->_modelDb)) {
             $this->initModelDb();
