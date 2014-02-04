@@ -3,9 +3,8 @@
 abstract class Application_Model_Game_Abstract
 {
 
-    const GAME_CODE = '';
-
-    const GAME_MODEL_NAME_TEMPLATE = 'Application_Model_Game_%s';
+    const NAME = '';
+    const CODE = '';
 
     const PRACTICE_DIFFICULTY  = 1;
     const EASY_DIFFICULTY      = 2;
@@ -17,39 +16,34 @@ abstract class Application_Model_Game_Abstract
 
     const DEFAULT_GAME_DIFFICULTY = 2;
 
+    protected $difficulty;
+
+    protected $state;
+
+    protected $params = array();
+
     /**
-     * @var Application_Model_Game
+     * @param array $user
+     * @return Application_Model_Game_Abstract
      */
-    protected $_game;
-
-    protected $_name;
-
-    protected $_difficulty;
-
     abstract function createGame(array $user);
 
-    static public function factory($name)
+    /**
+     * @param array $params
+     * @return $this
+     */
+    public function setParams($params)
     {
-        $name = strtolower($name);
-        $class = sprintf(self::GAME_MODEL_NAME_TEMPLATE, ucfirst($name));
-        if (class_exists($class)) {
-            return new $class($name);
-        }
-        return null;
-    }
-
-    protected function __construct($name)
-    {
-        $name = strtolower($name);
-        $this->_name = $name;
+        $this->params = $params;
+        return $this;
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getName()
+    public function getParams()
     {
-        return $this->_name;
+        return $this->params;
     }
 
     /**
@@ -64,7 +58,7 @@ abstract class Application_Model_Game_Abstract
             $difficulty = self::DEFAULT_GAME_DIFFICULTY;
         }
         $difficulty = $allDifficulties[$difficulty];
-        $this->_difficulty = $difficulty;
+        $this->difficulty = $difficulty;
         return $this;
     }
 
@@ -73,13 +67,13 @@ abstract class Application_Model_Game_Abstract
      */
     public function getDifficulty()
     {
-        if (is_null($this->_difficulty)) {
-            $this->_difficulty = $this->setDifficulty(self::DEFAULT_GAME_DIFFICULTY);
+        if (is_null($this->difficulty)) {
+            $this->difficulty = $this->setDifficulty(self::DEFAULT_GAME_DIFFICULTY);
         }
-        return $this->_difficulty;
+        return $this->difficulty;
     }
 
-    public function getAllDifficulties()
+    public static function getAllDifficulties()
     {
         $difficulties = array(
             self::PRACTICE_DIFFICULTY  => array('title' => 'Practice',),
@@ -91,24 +85,6 @@ abstract class Application_Model_Game_Abstract
             self::TEST_DIFFICULTY      => array('title' => 'Test',),
         );
         return $difficulties;
-    }
-
-    /**
-     * @param Application_Model_Game $game
-     * @return $this
-     */
-    public function setGame(Application_Model_Game $game)
-    {
-        $this->_game = $game;
-        return $this;
-    }
-
-    /**
-     * @return Application_Model_Game
-     */
-    public function getGame()
-    {
-        return $this->_game;
     }
 
 }

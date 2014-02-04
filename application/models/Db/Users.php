@@ -87,12 +87,19 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
         return $result;
     }
 
+    /**
+     * @return Application_Model_Db_Users
+     */
     public function withHiddenFields()
     {
         $this->_hideFields = false;
         return $this;
     }
 
+    /**
+     * @param array $array
+     * @return array
+     */
     public function hideFields(array $array)
     {
         foreach ($this->_hiddenFields as $field) {

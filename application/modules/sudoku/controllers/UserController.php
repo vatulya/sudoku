@@ -10,9 +10,9 @@ class Sudoku_UserController extends Zend_Controller_Action
     );
 
     /**
-     * @var Application_Model_User
+     * @var Application_Service_User
      */
-    protected $_modelUser;
+    protected $_serviceUser;
 
     public function init()
     {
@@ -21,7 +21,7 @@ class Sudoku_UserController extends Zend_Controller_Action
 
     public function preDispatch()
     {
-        $this->_modelUser = Application_Model_User::getInstance();
+        $this->_serviceUser = Application_Service_User::getInstance();
     }
 
     public function indexAction()
@@ -30,9 +30,10 @@ class Sudoku_UserController extends Zend_Controller_Action
 
     public function uLoginAction()
     {
-        /** @var Application_Model_ULogin $uLoginModel */
-        $uLoginModel = Application_Model_ULogin::getInstance();
-        $user = $uLoginModel->login($_POST['token'], $this->view->getHelper('ServerUrl')->getHost());
+        $token = $this->_request->getPost('token');
+        $host  = $this->view->getHelper('ServerUrl')->getHost();
+
+        $user = Application_Service_ULogin::getInstance()->login($token, $host);
         if (empty($user)) {
             $this->redirect($this->_helper->Url->url(
                 array(
@@ -43,9 +44,8 @@ class Sudoku_UserController extends Zend_Controller_Action
                 true
             ));
         }
-        /** @var Application_Model_Auth $auth */
-        $auth = Application_Model_Auth::getInstance();
-        $auth->loginOther($user);
+
+        My_Auth_User::getInstance()->loginOther($user);
         $this->redirect($this->_helper->Url->url(
             array(
                 'controller' => 'index',
@@ -58,12 +58,11 @@ class Sudoku_UserController extends Zend_Controller_Action
 
     public function loginAction()
     {
-        $loginEmail = $this->_getParam('login_email');
-        $password = $this->_getParam('password');
-        $errors = array();
+        $loginOrEmail = $this->_getParam('login_email');
+        $password     = $this->_getParam('password');
+
         try {
-            /** @var Application_Model_Auth $auth */
-            $errors = Application_Model_Auth::getInstance()->login($loginEmail, $password);
+            $errors = My_Auth_User::getInstance()->login($loginOrEmail, $password);
         } catch (Exception $e) {
             $errors[] = array(
                 'name'  => 'Login form',
@@ -81,25 +80,15 @@ class Sudoku_UserController extends Zend_Controller_Action
 
     public function logoutAction()
     {
-        $errors = Application_Model_Auth::getInstance()->logout();
-        $r = new Zend_Controller_Action_Helper_Redirector;
-        $r->gotoUrlAndExit('/');
+        $errors = My_Auth_User::getInstance()->logout();
+        $redirector = new Zend_Controller_Action_Helper_Redirector();
+        $redirector->gotoUrlAndExit('/');
     }
 
     public function registerAction()
     {
-        $login = $this->_getParam('login');
-        $email = $this->_getParam('email');
-        $password = $this->_getParam('password');
-        $password2 = $this->_getParam('password_repeat');
-        $userData = array(
-            'login'     => $login,
-            'email'     => $email,
-            'password'  => $password,
-            'password2' => $password2,
-        );
         try {
-            $errors = $this->_modelUser->register($userData);
+            $errors = $this->_serviceUser->register($this->getAllParams());
         } catch (Exception $e) {
             $errors[] = array(
                 'name' => '',
@@ -107,10 +96,7 @@ class Sudoku_UserController extends Zend_Controller_Action
                 'text' => 'Something wrong. System error',
             );
         }
-        if (empty($errors)) {
-            /** @var Application_Model_Auth $auth */
-            $user = Application_Model_Auth::getInstance()->login($login, $password);
-        } else {
+        if (!empty($errors)) {
             $this->view->messages = $errors;
         }
     }

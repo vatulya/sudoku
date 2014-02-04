@@ -1,10 +1,15 @@
 <?php
 
-class Application_Model_ULogin extends Application_Model_Abstract
+class Application_Service_ULogin extends Application_Service_Abstract
 {
 
     const ULOGIN_HOST = 'http://ulogin.ru';
 
+    /**
+     * @param string $token
+     * @param string $host
+     * @return array
+     */
     public function login($token, $host)
     {
         $s = file_get_contents(self::ULOGIN_HOST . '/token.php?token=' . $token . '&host=' . $host);
@@ -20,6 +25,10 @@ class Application_Model_ULogin extends Application_Model_Abstract
         return $user;
     }
 
+    /**
+     * @param array $userData
+     * @return array
+     */
     public function convert(array $userData)
     {
         $user = array(
@@ -30,12 +39,23 @@ class Application_Model_ULogin extends Application_Model_Abstract
         return $user;
     }
 
+    /**
+     * @param string $redirectUrl
+     * @return string
+     */
     static public function getLoginData($redirectUrl)
     {
         $uLoginData = 'display=panel;';
         $uLoginData .= 'fields=first_name;';
         $uLoginData .= 'providers=google,facebook,odnoklassniki,mailru;';
-        // vkontakte,odnoklassniki,mailru,facebook,twitter,google,yandex,livejournal,openid,lastfm,linkedin,liveid,soundcloud,steam,flickr,vimeo,youtube,webmoney,foursquare,tumblr,googleplus,dudu
+        // vkontakte,odnoklassniki,mailru,
+        // facebook,twitter,google,
+        // yandex,livejournal,openid,
+        // lastfm,linkedin,liveid,
+        // soundcloud,steam,flickr,
+        // vimeo,youtube,webmoney,
+        // foursquare,tumblr,googleplus,
+        // dudu
         $uLoginData .= 'redirect_uri=' . urlencode($redirectUrl);
         return $uLoginData;
     }

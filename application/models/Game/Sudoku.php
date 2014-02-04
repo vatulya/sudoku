@@ -2,7 +2,9 @@
 
 class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
 {
-    const GAME_CODE = 'sudoku';
+
+    const NAME = 'Sudoku';
+    const CODE = 'sudoku';
 
     const SHUFFLE_COUNT = 20;
 
@@ -15,20 +17,32 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
     public function createGame(array $user)
     {
         $params = $this->getDifficulty();
-        $board = $this->_getSimpleBoard();
-        $board = $this->_shuffleBoard($board);
-        $board = $this->_mergeBoardRows($board);
+        $board = $this->generateBoard();
         $board = $this->_getOpenCells($board, $params['openCells']);
         $board = $this->_normalizeBoardKeys($board);
 
         $game = array(
             'openCells' => $board,
         );
-        $this->_game = Application_Model_Game::create($user, self::GAME_CODE, $game);
+        $this->setParams($game);
 
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function generateBoard()
+    {
+        $board = $this->_getSimpleBoard();
+        $board = $this->_shuffleBoard($board);
+        $board = $this->_mergeBoardRows($board);
+        return $board;
+    }
+
+    /**
+     * @return array
+     */
     protected function _getSimpleBoard()
     {
         $board = array();
@@ -47,6 +61,10 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $board;
     }
 
+    /**
+     * @param array $board
+     * @return array
+     */
     protected function _shuffleBoard(array $board)
     {
         $shuffledBoard = $board;
@@ -63,6 +81,9 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $shuffledBoard;
     }
 
+    /**
+     * @return array
+     */
     public function getAllowedShuffleMethods()
     {
         return array(
@@ -74,6 +95,10 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         );
     }
 
+    /**
+     * @param array $board
+     * @return mixed
+     */
     protected function _shuffleBoardTypeTransposing(array $board)
     {
         // I don't understand this magic. Thx Stackoverflow :)
@@ -81,6 +106,10 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return call_user_func_array('array_map', $board);
     }
 
+    /**
+     * @param array $board
+     * @return array
+     */
     protected function _shuffleBoardTypeSwapRows(array $board)
     {
         $rowToShuffleNumber = rand(1, 9); // 8
@@ -100,6 +129,10 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $board;
     }
 
+    /**
+     * @param array $board
+     * @return array
+     */
     protected function _shuffleBoardTypeSwapCols(array $board)
     {
         $board = $this->_shuffleBoardTypeTransposing($board);
@@ -108,6 +141,10 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $board;
     }
 
+    /**
+     * @param array $board
+     * @return array
+     */
     protected function _shuffleBoardTypeSwapSquareRows(array $board)
     {
         $squareToShuffleNumber = rand(1, 3); // 2
@@ -124,6 +161,10 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $board;
     }
 
+    /**
+     * @param array $board
+     * @return array
+     */
     protected function _shuffleBoardTypeSwapSquareCols(array $board)
     {
         $board = $this->_shuffleBoardTypeTransposing($board);
@@ -132,6 +173,10 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $board;
     }
 
+    /**
+     * @param array $board
+     * @return array
+     */
     protected function _mergeBoardRows(array $board)
     {
         $mergedBoard = array();
@@ -141,6 +186,11 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $mergedBoard;
     }
 
+    /**
+     * @param array $board
+     * @param $count
+     * @return array
+     */
     protected function _getOpenCells(array $board, $count)
     {
         if (is_array($count)) {
@@ -157,6 +207,10 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $openCells;
     }
 
+    /**
+     * @param array $board
+     * @return array
+     */
     protected function _normalizeBoardKeys(array $board)
     {
         $normalizedBoard = array();
@@ -171,7 +225,11 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $normalizedBoard;
     }
 
-    public function checkFields(array $cells)
+    /**
+     * @param array $cells
+     * @return array
+     */
+    public static function checkFields(array $cells)
     {
         $errors = array();
         $openCellsPerRows = $openCellsPerCols = $openCellsPerSquares = array();
@@ -220,9 +278,13 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $errors;
     }
 
-    public function checkGameSolution(array $cells)
+    /**
+     * @param array $cells
+     * @return array|bool
+     */
+    public static function checkGameSolution(array $cells)
     {
-        $errors = $this->checkFields($cells);
+        $errors = self::checkFields($cells);
         if (!empty($errors)) {
             return $errors;
         }
@@ -232,7 +294,10 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return false;
     }
 
-    public function getAllDifficulties()
+    /**
+     * @return array
+     */
+    public static function getAllDifficulties()
     {
         $difficulties = array(
             self::PRACTICE_DIFFICULTY  => array('title' => 'Practice',  'openCells' => 40),
@@ -246,6 +311,10 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return $difficulties;
     }
 
+    /**
+     * @param $difficulty
+     * @return array
+     */
     public function getDifficultyParams($difficulty)
     {
         $difficulties = $this->getAllDifficulties();

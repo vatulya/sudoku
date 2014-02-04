@@ -3,10 +3,15 @@
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
 
+    protected function _initAutoload()
+    {
+        $this->getApplication()->getAutoloader()->registerNamespace('My');
+    }
+
     protected function _initUserSession()
     {
         $session = new Zend_Session_Namespace();
-        $session->authRole = Application_Model_Auth::getRole();
+        $session->authRole = My_Auth_User::getRole();
     }
 
     protected function _initAcl()

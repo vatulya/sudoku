@@ -4,11 +4,9 @@ class Sudoku_IndexController extends Zend_Controller_Action
 {
 
     public $ajaxable = array(
-        'index' => array('html'),
+        'index'       => array('html'),
         'check-field' => array('json'),
     );
-
-    protected $_modelUser;
 
     public function init()
     {
@@ -16,6 +14,10 @@ class Sudoku_IndexController extends Zend_Controller_Action
     }
 
     public function preDispatch()
+    {
+    }
+
+    public function postDispatch()
     {
         $uLoginRedirectUrl = $this->view->serverUrl();
         $uLoginRedirectUrl .= $this->_helper->Url->url(
@@ -26,38 +28,33 @@ class Sudoku_IndexController extends Zend_Controller_Action
             'sudoku',
             true
         );
-        $this->view->uLoginData = Application_Model_ULogin::getLoginData($uLoginRedirectUrl);
-    }
-
-    public function postDispatch()
-    {
-        $this->view->user = Application_Model_Auth::getInstance()->getCurrentUser();
+        $this->view->assign(array(
+            'uLoginData'   => Application_Service_ULogin::getLoginData($uLoginRedirectUrl),
+            'difficulties' => Application_Model_Game_Abstract::getAllDifficulties(),
+            'user'         => Application_Service_User::getInstance()->getCurrentUser(),
+        ));
     }
 
     public function indexAction()
     {
         /** @var Application_Model_Game_Abstract $sudoku */
-        $sudoku = Application_Model_Game_Abstract::factory(Application_Model_Game_Sudoku::GAME_CODE);
+        $sudoku = Application_Service_Game::factory(Application_Model_Game_Sudoku::CODE);
 
-        $difficulties = $sudoku->getAllDifficulties();
-        $this->view->difficulties = $difficulties;
-
-        /** @var Zend_Controller_Request_Abstract $request */
-        $request = $this->_request;
-        $difficulty = $request->getParam('difficulty');
+        $difficulty = $this->_request->getParam('difficulty');
         $sudoku->setDifficulty($difficulty);
-        $this->view->currentDifficulty = $sudoku->getDifficulty();
 
-        $sudoku->createGame(Application_Model_Auth::getInstance()->getCurrentUser());
-        $this->view->sudoku = $sudoku;
+        $sudoku->createGame(Application_Service_User::getInstance()->getCurrentUser());
+
+        $this->view->assign(array(
+            'sudoku'            => $sudoku,
+            'currentDifficulty' => $sudoku->getDifficulty(),
+        ));
     }
 
     public function checkFieldAction()
     {
         $cells = $this->_getParam('cells');
-        /** @var Application_Model_Game_Abstract $sudoku */
-        $sudoku = Application_Model_Game_Abstract::factory(Application_Model_Game_Sudoku::GAME_CODE);
-        $errors = $sudoku->checkGameSolution($cells);
+        $errors = Application_Model_Game_Sudoku::checkGameSolution($cells);
         if (is_array($errors)) {
             $this->view->errors = $errors;
         } else {

@@ -1,17 +1,35 @@
 <?php
 
-class Application_Model_Auth extends Application_Model_Abstract
+class My_Auth_User
 {
 
-    const DB_MODEL_NAME = 'Users';
+    /**
+     * @var My_Auth_User
+     */
+    protected static $_instance;
 
     const ROLE_GUEST = 0;
     const ROLE_USER  = 20;
 
     /**
+     * @return My_Auth_User
+     */
+    public static function getInstance()
+    {
+        if (!isset(self::$_instance)) {
+            self::$_instance = new self();
+        }
+        return self::$_instance;
+    }
+
+    protected function __construct()
+    {
+    }
+
+    /**
      * @param string $loginEmail
      * @param string $password
-     * @return bool
+     * @return array
      */
     public function login($loginEmail, $password)
     {
@@ -31,7 +49,7 @@ class Application_Model_Auth extends Application_Model_Abstract
             );
         }
         if (empty($errors)) {
-            $adapter = new Application_Model_AuthAdapter($loginEmail, $password);
+            $adapter = new My_Auth_Adapter_Main($loginEmail, $password);
             $auth = Zend_Auth::getInstance();
             $result = $auth->authenticate($adapter);
             if (!$result->isValid()) {
@@ -45,10 +63,14 @@ class Application_Model_Auth extends Application_Model_Abstract
         return $errors;
     }
 
+    /**
+     * @param array $user
+     * @return array
+     */
     public function loginOther(array $user)
     {
         $errors = array();
-        $adapter = new Application_Model_AuthOtherAdapter($user);
+        $adapter = new My_Auth_Adapter_Other($user);
         $auth = Zend_Auth::getInstance();
         $result = $auth->authenticate($adapter);
         if (!$result->isValid()) {
@@ -61,6 +83,9 @@ class Application_Model_Auth extends Application_Model_Abstract
         return $errors;
     }
 
+    /**
+     * @return bool
+     */
     public function logout()
     {
         $auth = Zend_Auth::getInstance();
@@ -76,13 +101,6 @@ class Application_Model_Auth extends Application_Model_Abstract
         $auth = Zend_Auth::getInstance();
         $user = $auth->hasIdentity() ? $auth->getIdentity() : array();
         return $user;
-    }
-
-    public function _changePassword($userId, $newPassword)
-    {
-        $newPasswordEncoded = Application_Model_AuthAdapter::encodePassword($newPassword);
-        $result = $this->getModelDb()->savePassword($userId, $newPasswordEncoded);
-        return $result;
     }
 
     static public function getRole($asString = false)

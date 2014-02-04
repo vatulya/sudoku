@@ -1,22 +1,32 @@
 <?php
 
-class Application_Model_AuthOtherAdapter implements Zend_Auth_Adapter_Interface
+class My_Auth_Adapter_Other implements Zend_Auth_Adapter_Interface
 {
 
-    protected $_user;
+    /**
+     * @var array
+     */
+    protected $user;
 
+    /**
+     * @param array $user
+     */
     public function __construct(array $user)
     {
-        $this->_user = $user;
+        $this->user = $user;
     }
 
+    /**
+     * @return Zend_Auth_Result
+     * @throws Exception
+     */
     public function authenticate()
     {
-        if (isset($this->_user['network'], $this->_user['network_id'])) {
+        if (isset($this->user['network'], $this->user['network_id'])) {
             $userOtherModel = new Application_Model_Db_UsersOther();
-            $user = $userOtherModel->getByNetworkAndId($this->_user['network'], $this->_user['network_id']);
+            $user = $userOtherModel->getByNetworkAndId($this->user['network'], $this->user['network_id']);
             if (!$user) {
-                $userId = $userOtherModel->insert($this->_user);
+                $userId = $userOtherModel->insert($this->user);
                 if (!$userId) {
                     throw new Exception('Something wrong!');
                 }
