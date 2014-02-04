@@ -30,7 +30,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
         );
         $this->view->assign(array(
             'uLoginData'   => Application_Service_ULogin::getLoginData($uLoginRedirectUrl),
-            'difficulties' => Application_Model_Game_Abstract::getAllDifficulties(),
+            'difficulties' => Application_Model_Game_Sudoku::getAllDifficulties(),
             'user'         => Application_Service_User::getInstance()->getCurrentUser(),
         ));
     }

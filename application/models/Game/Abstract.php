@@ -16,6 +16,16 @@ abstract class Application_Model_Game_Abstract
 
     const DEFAULT_GAME_DIFFICULTY = 2;
 
+    protected static $difficulties = array(
+        self::PRACTICE_DIFFICULTY  => array('title' => 'Practice',),
+        self::EASY_DIFFICULTY      => array('title' => 'Easy',),
+        self::NORMAL_DIFFICULTY    => array('title' => 'Normal',),
+        self::EXPERT_DIFFICULTY    => array('title' => 'Expert',),
+        self::NIGHTMARE_DIFFICULTY => array('title' => 'Nightmare',),
+        self::RANDOM_DIFFICULTY    => array('title' => 'Random',),
+        self::TEST_DIFFICULTY      => array('title' => 'Test',),
+    );
+
     protected $difficulty;
 
     protected $state;
@@ -47,17 +57,38 @@ abstract class Application_Model_Game_Abstract
     }
 
     /**
-     * @param int $difficulty
+     * @param string $key
+     * @param mixed $value
      * @return $this
      */
-    public function setDifficulty($difficulty)
+    public function setParam($key, $value)
     {
-        $difficulty = (int)$difficulty;
+        $this->params[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function getParam($key)
+    {
+        return isset($this->params[$key]) ? $this->params[$key] : null;
+    }
+
+    /**
+     * @param int $code
+     * @return $this
+     */
+    public function setDifficulty($code)
+    {
+        $code = (int)$code;
         $allDifficulties = $this->getAllDifficulties();
-        if (!isset($allDifficulties[$difficulty])) {
+        if (!isset($allDifficulties[$code])) {
             $difficulty = self::DEFAULT_GAME_DIFFICULTY;
         }
-        $difficulty = $allDifficulties[$difficulty];
+        $difficulty = $allDifficulties[$code];
+        $difficulty['code'] = $code;
         $this->difficulty = $difficulty;
         return $this;
     }
@@ -73,18 +104,12 @@ abstract class Application_Model_Game_Abstract
         return $this->difficulty;
     }
 
+    /**
+     * @return array
+     */
     public static function getAllDifficulties()
     {
-        $difficulties = array(
-            self::PRACTICE_DIFFICULTY  => array('title' => 'Practice',),
-            self::EASY_DIFFICULTY      => array('title' => 'Easy',),
-            self::NORMAL_DIFFICULTY    => array('title' => 'Normal',),
-            self::EXPERT_DIFFICULTY    => array('title' => 'Expert',),
-            self::NIGHTMARE_DIFFICULTY => array('title' => 'Nightmare',),
-            self::RANDOM_DIFFICULTY    => array('title' => 'Random',),
-            self::TEST_DIFFICULTY      => array('title' => 'Test',),
-        );
-        return $difficulties;
+        return static::$difficulties;
     }
 
 }

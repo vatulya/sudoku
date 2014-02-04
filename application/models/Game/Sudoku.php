@@ -10,6 +10,16 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
 
     const TOTAL_CELLS = 81;
 
+    protected static $difficulties = array(
+        self::PRACTICE_DIFFICULTY  => array('title' => 'Practice',  'openCells' => 40),
+        self::EASY_DIFFICULTY      => array('title' => 'Easy',      'openCells' => 35),
+        self::NORMAL_DIFFICULTY    => array('title' => 'Normal',    'openCells' => 30),
+        self::EXPERT_DIFFICULTY    => array('title' => 'Expert',    'openCells' => 25),
+        self::NIGHTMARE_DIFFICULTY => array('title' => 'Nightmare', 'openCells' => 20),
+        self::RANDOM_DIFFICULTY    => array('title' => 'Random',    'openCells' => array('min' => 20, 'max' => 30)),
+        self::TEST_DIFFICULTY      => array('title' => 'Test',      'openCells' => 78),
+    );
+
     /**
      * @param array $user
      * @return $this
@@ -292,23 +302,6 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
             return true;
         }
         return false;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getAllDifficulties()
-    {
-        $difficulties = array(
-            self::PRACTICE_DIFFICULTY  => array('title' => 'Practice',  'openCells' => 40),
-            self::EASY_DIFFICULTY      => array('title' => 'Easy',      'openCells' => 35),
-            self::NORMAL_DIFFICULTY    => array('title' => 'Normal',    'openCells' => 30),
-            self::EXPERT_DIFFICULTY    => array('title' => 'Expert',    'openCells' => 25),
-            self::NIGHTMARE_DIFFICULTY => array('title' => 'Nightmare', 'openCells' => 20),
-            self::RANDOM_DIFFICULTY    => array('title' => 'Random',    'openCells' => array('min' => 20, 'max' => 30)),
-            self::TEST_DIFFICULTY      => array('title' => 'Test',      'openCells' => 78),
-        );
-        return $difficulties;
     }
 
     /**
