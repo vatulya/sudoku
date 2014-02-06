@@ -38,12 +38,13 @@ class Sudoku_IndexController extends Zend_Controller_Action
     public function indexAction()
     {
         /** @var Application_Model_Game_Abstract $sudoku */
-        $sudoku = Application_Service_Game::factory(Application_Model_Game_Sudoku::CODE);
+        $sudoku = new Application_Model_Game_Sudoku();
 
         $difficulty = $this->_request->getParam('difficulty');
         $sudoku->setDifficulty($difficulty);
 
         $sudoku->createGame(Application_Service_User::getInstance()->getCurrentUser());
+        $sudoku->setState(Application_Model_Game_Abstract::STATE_IN_PROGRESS);
 
         $this->view->assign(array(
             'sudoku'            => $sudoku,

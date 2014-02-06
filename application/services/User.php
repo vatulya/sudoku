@@ -10,6 +10,9 @@ class Application_Service_User extends Application_Service_Abstract
 
     const DB_MODEL_NAME = 'Users';
 
+    const USER_TYPE_MAIN  = '';
+    const USER_TYPE_OTHER = 'other';
+
     /**
      * @return array
      */

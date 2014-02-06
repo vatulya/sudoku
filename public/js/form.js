@@ -16,10 +16,6 @@
         })
     ;
 
-    w.gogogo = function() {
-
-    };
-
     var Form = {
 
         allowedMessageTypes: ['error', 'notice', 'success'],

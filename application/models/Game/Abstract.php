@@ -1,36 +1,44 @@
 <?php
 
-abstract class Application_Model_Game_Abstract
+abstract class Application_Model_Game_Abstract extends Application_Model_Abstract
 {
 
     const NAME = '';
     const CODE = '';
 
-    const PRACTICE_DIFFICULTY  = 1;
-    const EASY_DIFFICULTY      = 2;
-    const NORMAL_DIFFICULTY    = 4;
-    const EXPERT_DIFFICULTY    = 6;
-    const NIGHTMARE_DIFFICULTY = 10;
-    const RANDOM_DIFFICULTY    = 0;
-    const TEST_DIFFICULTY      = -1;
+    const STATE_NEW         = 0;
+    const STATE_IN_PROGRESS = 1;
+    const STATE_PAUSED      = 2;
+    const STATE_REJECTED    = 3;
+    const STATE_FINISHED    = 4;
+
+    const DIFFICULTY_PRACTICE  = 1;
+    const DIFFICULTY_EASY      = 2;
+    const DIFFICULTY_NORMAL    = 4;
+    const DIFFICULTY_EXPERT    = 6;
+    const DIFFICULTY_NIGHTMARE = 10;
+    const DIFFICULTY_RANDOM    = 0;
+    const DIFFICULTY_TEST      = -1;
 
     const DEFAULT_GAME_DIFFICULTY = 2;
 
+    protected $id;
+
     protected static $difficulties = array(
-        self::PRACTICE_DIFFICULTY  => array('title' => 'Practice',),
-        self::EASY_DIFFICULTY      => array('title' => 'Easy',),
-        self::NORMAL_DIFFICULTY    => array('title' => 'Normal',),
-        self::EXPERT_DIFFICULTY    => array('title' => 'Expert',),
-        self::NIGHTMARE_DIFFICULTY => array('title' => 'Nightmare',),
-        self::RANDOM_DIFFICULTY    => array('title' => 'Random',),
-        self::TEST_DIFFICULTY      => array('title' => 'Test',),
+        self::DIFFICULTY_PRACTICE  => array('title' => 'Practice',),
+        self::DIFFICULTY_EASY      => array('title' => 'Easy',),
+        self::DIFFICULTY_NORMAL    => array('title' => 'Normal',),
+        self::DIFFICULTY_EXPERT    => array('title' => 'Expert',),
+        self::DIFFICULTY_NIGHTMARE => array('title' => 'Nightmare',),
+        self::DIFFICULTY_RANDOM    => array('title' => 'Random',),
+        self::DIFFICULTY_TEST      => array('title' => 'Test',),
     );
 
     protected $difficulty;
 
-    protected $state;
+    protected $state = 0;
 
-    protected $params = array();
+    protected $parameters = array();
 
     /**
      * @param array $user
@@ -42,18 +50,18 @@ abstract class Application_Model_Game_Abstract
      * @param array $params
      * @return $this
      */
-    public function setParams($params)
+    public function setParameters($params)
     {
-        $this->params = $params;
+        $this->parameters = $params;
         return $this;
     }
 
     /**
      * @return array
      */
-    public function getParams()
+    public function getParameters()
     {
-        return $this->params;
+        return $this->parameters;
     }
 
     /**
@@ -61,9 +69,9 @@ abstract class Application_Model_Game_Abstract
      * @param mixed $value
      * @return $this
      */
-    public function setParam($key, $value)
+    public function setParameter($key, $value)
     {
-        $this->params[$key] = $value;
+        $this->parameters[$key] = $value;
         return $this;
     }
 
@@ -71,9 +79,9 @@ abstract class Application_Model_Game_Abstract
      * @param string $key
      * @return mixed
      */
-    public function getParam($key)
+    public function getParameter($key)
     {
-        return isset($this->params[$key]) ? $this->params[$key] : null;
+        return isset($this->parameters[$key]) ? $this->parameters[$key] : null;
     }
 
     /**
@@ -85,7 +93,7 @@ abstract class Application_Model_Game_Abstract
         $code = (int)$code;
         $allDifficulties = $this->getAllDifficulties();
         if (!isset($allDifficulties[$code])) {
-            $difficulty = self::DEFAULT_GAME_DIFFICULTY;
+            $code = self::DEFAULT_GAME_DIFFICULTY;
         }
         $difficulty = $allDifficulties[$code];
         $difficulty['code'] = $code;
@@ -110,6 +118,51 @@ abstract class Application_Model_Game_Abstract
     public static function getAllDifficulties()
     {
         return static::$difficulties;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getStates()
+    {
+        return array(
+            self::STATE_NEW,
+            self::STATE_IN_PROGRESS,
+            self::STATE_PAUSED,
+            self::STATE_REJECTED,
+            self::STATE_FINISHED,
+        );
+    }
+
+    /**
+     * @param int $oldState
+     * @param int $newState
+     * @return bool
+     */
+    public static function checkState($oldState, $newState)
+    {
+        return true;
+    }
+
+    /**
+     * @param int $state
+     * @return bool
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
+     */
+    public function setState($state)
+    {
+        if (!$this->id) {
+            throw new RuntimeException('This game isn\'t created yet.');
+        }
+        if (!in_array($state, $this->getStates())) {
+            throw new InvalidArgumentException('Wrong State "' . $state . '".');
+        }
+        if (!$this->checkState($this->state, $state)) {
+            throw new RuntimeException('Game can\'t move from state "' . $this->state . '" to state "' . $state . '".');
+        }
+        $result = $this->getModelDb()->update($this->id, array('state' => $state));
+        return $result;
     }
 
 }

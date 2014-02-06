@@ -8,17 +8,16 @@
 class Application_Service_Game extends Application_Service_Abstract
 {
 
-    const GAME_MODEL_NAME_TEMPLATE = 'Application_Model_Game_%s';
+    const GAME_MODEL_NAME = 'Application_Model_Game_%s';
 
     /**
-     * @param $name
+     * @param string $name
      * @return Application_Model_Game_Abstract|null
      * @throws RuntimeException
      */
     static public function factory($name)
     {
-        $name = strtolower($name);
-        $class = sprintf(self::GAME_MODEL_NAME_TEMPLATE, ucfirst($name));
+        $class = sprintf(self::GAME_MODEL_NAME_TEMPLATE, $name);
         if (!class_exists($class)) {
             throw new RuntimeException('Wrong game name: "' . $name . '".');
         }

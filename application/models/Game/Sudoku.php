@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class Application_Model_Game_Sudoku
+ *
+ * @method Application_Model_Db_SudokuGames getModelDb()
+ */
 class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
 {
 
@@ -10,14 +15,16 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
 
     const TOTAL_CELLS = 81;
 
+    protected $modelDb = 'SudokuGames';
+
     protected static $difficulties = array(
-        self::PRACTICE_DIFFICULTY  => array('title' => 'Practice',  'openCells' => 40),
-        self::EASY_DIFFICULTY      => array('title' => 'Easy',      'openCells' => 35),
-        self::NORMAL_DIFFICULTY    => array('title' => 'Normal',    'openCells' => 30),
-        self::EXPERT_DIFFICULTY    => array('title' => 'Expert',    'openCells' => 25),
-        self::NIGHTMARE_DIFFICULTY => array('title' => 'Nightmare', 'openCells' => 20),
-        self::RANDOM_DIFFICULTY    => array('title' => 'Random',    'openCells' => array('min' => 20, 'max' => 30)),
-        self::TEST_DIFFICULTY      => array('title' => 'Test',      'openCells' => 78),
+        self::DIFFICULTY_PRACTICE  => array('title' => 'Practice',  'openCells' => 40),
+        self::DIFFICULTY_EASY      => array('title' => 'Easy',      'openCells' => 35),
+        self::DIFFICULTY_NORMAL    => array('title' => 'Normal',    'openCells' => 30),
+        self::DIFFICULTY_EXPERT    => array('title' => 'Expert',    'openCells' => 25),
+        self::DIFFICULTY_NIGHTMARE => array('title' => 'Nightmare', 'openCells' => 20),
+        self::DIFFICULTY_RANDOM    => array('title' => 'Random',    'openCells' => array('min' => 20, 'max' => 30)),
+        self::DIFFICULTY_TEST      => array('title' => 'Test',      'openCells' => 78),
     );
 
     /**
@@ -34,7 +41,15 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         $game = array(
             'openCells' => $board,
         );
-        $this->setParams($game);
+        $this->setParameters($game);
+
+        $data = array(
+            'user'       => $user,
+            'difficulty' => $this->difficulty,
+            'parameters' => $this->parameters,
+        );
+        $this->id = $this->getModelDb()->insert($data);
+        $this->state = Application_Model_Game_Abstract::STATE_NEW;
 
         return $this;
     }
