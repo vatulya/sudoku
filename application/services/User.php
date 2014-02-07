@@ -10,15 +10,26 @@ class Application_Service_User extends Application_Service_Abstract
 
     const DB_MODEL_NAME = 'Users';
 
-    const USER_TYPE_MAIN  = '';
-    const USER_TYPE_OTHER = 'other';
+    const ROLE_GUEST = 0;
+    const ROLE_USER  = 20;
+
+    /**
+     * @var My_Auth_User
+     */
+    protected $auth;
 
     /**
      * @return array
      */
     public function getCurrentUser()
     {
-        return My_Auth_User::getInstance()->getCurrentUser();
+        $user = $this->getAuth()->getCurrentUser();
+        if (empty($user)) {
+            $userId = $this->registerGuest();
+            $this->getAuth()->login(array('id' => $userId));
+            $user = $this->getAuth()->getCurrentUser();
+        }
+        return $user;
     }
 
     /**
@@ -31,108 +42,107 @@ class Application_Service_User extends Application_Service_Abstract
     }
 
     /**
-     * @param $login
+     * @param array $data
      * @return array
      */
-    public function getByLogin($login)
+    public function getByData(array $data)
     {
-        return $this->getModelDb()->getOne(array('login' => $login));
+        $user = array();
+        if (!empty($data['id'])) {
+            $user = $this->getModelDb()->getOne(array('id' => $data['id']));
+        }
+        if (!$user && !empty($data['login'])) {
+            $user = $this->getModelDb()->getOne(array('login' => $data['login']));
+        }
+        if (!$user && !empty($data['email'])) {
+            $user = $this->getModelDb()->getOne(array('email' => $data['email']));
+        }
+        if (!$user && !empty($data['network']) && !empty($data['network_id'])) {
+            $user = $this->getModelDb()->getOne(array('network' => $data['network'], 'network_id' => $data['network_id']));
+        }
+        return $user;
     }
 
     /**
-     * @param $email
+     * @param string $token
+     * @param string $host
      * @return array
      */
-    public function getByEmail($email)
+    public function ULogin($token, $host)
     {
-        return $this->getModelDb()->getOne(array('email' => $email));
+        $s = file_get_contents('http://ulogin.ru/token.php?token=' . $token . '&host=' . $host);
+        try {
+            $user = Zend_Json::decode($s);
+            if (!empty($user['error'])) {
+                throw new Exception('uLogin error: "' . $user['error'] . '".');
+            }
+            $user = $this->convertULoginData($user);
+        } catch (Exception $e) {
+            $user = array();
+        }
+        return $user;
     }
 
     /**
      * @param array $userData
      * @return array
      */
+    public function convertULoginData(array $userData)
+    {
+        $user = array(
+            'full_name'  => $userData['first_name'],
+            'network'    => $userData['network'],
+            'network_id' => $userData['uid'],
+        );
+        return $user;
+    }
+
+    /**
+     * @param string $redirectUrl
+     * @return string
+     */
+    static public function getULoginData($redirectUrl)
+    {
+        $uLoginData = 'display=panel;';
+        $uLoginData .= 'fields=first_name;';
+        $uLoginData .= 'providers=google,facebook,odnoklassniki,mailru;';
+        // vkontakte,odnoklassniki,mailru,
+        // facebook,twitter,google,
+        // yandex,livejournal,openid,
+        // lastfm,linkedin,liveid,
+        // soundcloud,steam,flickr,
+        // vimeo,youtube,webmoney,
+        // foursquare,tumblr,googleplus,
+        // dudu
+        $uLoginData .= 'redirect_uri=' . urlencode($redirectUrl);
+        return $uLoginData;
+    }
+
+    /**
+     * @param array $userData
+     * @return int|bool
+     */
     public function register(array $userData)
     {
-        $errors = array();
-        if (empty($userData['login']) && empty($userData['email'])) {
-            $errors[] = array(
-                'name' => 'login-email',
-                'title' => 'Login or Email',
-                'text' => 'You should enter Login or Email',
-            );
-        } elseif (!empty($userData['email'])) {
-            $emailValidator = new Zend_Validate_EmailAddress();
-            if (!$emailValidator->isValid($userData['email'])) {
-                $errors[] = array(
-                    'name' => 'login-email',
-                    'title' => 'Email',
-                    'text' => 'Incorrect Email',
-                );
-            }
+        $userData['role_id'] = self::ROLE_GUEST;
+        if (!empty($userData['login']) || !empty($userData['email']) || (!empty($userData['network']) && !empty($userData['network_id']))) {
+            $userData['role_id'] = self::ROLE_USER;
         }
-        if (empty($userData['password']) || empty($userData['password_repeat'])) {
-            $errors[] = array(
-                'name' => 'password',
-                'title' => 'Password',
-                'text' => 'You should enter Password and repeat password.',
-            );
-        } elseif ($userData['password'] != $userData['password_repeat']) {
-            $errors[] = array(
-                'name' => 'password-repeat',
-                'title' => 'Password',
-                'text' => 'Repeat password must be the same as Password',
-            );
+        if (isset($userData['password'])) {
+            $userData['password'] = self::encodePassword($userData['password']);
         }
+        $userId = $this->getModelDb()->insert($userData);
+        return $userId;
+    }
 
-        if (empty($errors)) {
-            if (!empty($userData['login'])) {
-                $check = $this->getModelDb()->getOne(array('login' => $userData['login']));
-                if ($check) {
-                    $errors[] = array(
-                        'name' => 'login-email',
-                        'title' => 'Login',
-                        'text' => 'Sorry. This Login already exists in database. Please choose another.',
-                    );
-                }
-            }
-            if (!empty($userData['email'])) {
-                $check = $this->getModelDb()->getOne(array('email' => $userData['email']));
-                if ($check) {
-                    $errors[] = array(
-                        'name' => 'login-email',
-                        'title' => 'Email',
-                        'text' => 'Sorry. This Email already exists in database. Please choose another.',
-                    );
-                }
-            }
-
-            $nonEncodedPassword = $userData['password'];
-            if (empty($errors)) {
-                $userData['password'] = My_Auth_Adapter_Main::encodePassword($userData['password']);
-                $result = $this->getModelDb()->insert($userData);
-                if (!$result) {
-                    $errors[] = array(
-                        'name' => 'register',
-                        'title' => 'System',
-                        'text' => 'Something wrong. Error.',
-                    );
-                }
-            }
-            if (empty($errors)) {
-                $loginOrEmail = $userData['login'] ?: $userData['email'];
-                $errors = My_Auth_User::getInstance()->login($loginOrEmail, $nonEncodedPassword);
-                if (!empty($errors)) {
-                    array_unshift($errors, array(
-                        'name' => 'system',
-                        'title' => 'System',
-                        'text' => 'Something wrong. You have registered. Auto-login error. Please try login manually.',
-                    ));
-                }
-            }
-        }
-
-        return $errors;
+    /**
+     * @return int
+     */
+    public function registerGuest()
+    {
+        $userData = array('role_id' => self::ROLE_USER);
+        $userId = $this->getModelDb()->insert($userData);
+        return $userId;
     }
 
     /**
@@ -142,9 +152,52 @@ class Application_Service_User extends Application_Service_Abstract
      */
     public function changePassword($userId, $newPassword)
     {
-        $newPasswordEncoded = My_Auth_Adapter_Main::encodePassword($newPassword);
-        $result = $this->getModelDb()->update($userId, array('password' => $newPasswordEncoded));
+        $newPassword = self::encodePassword($newPassword);
+        $result = $this->getModelDb()->update($userId, array('password' => $newPassword));
         return $result;
+    }
+
+    /**
+     * @param string $password
+     * @return string
+     */
+    static public function encodePassword($password)
+    {
+        return sha1($password);
+    }
+
+    /**
+     * @return My_Auth_User
+     */
+    public function getAuth()
+    {
+        if (is_null($this->auth)) {
+            $this->auth = My_Auth_User::getInstance();
+        }
+        return $this->auth;
+    }
+
+    /**
+     * @param int $roleId
+     * @return string
+     */
+    static public function getRoleName($roleId)
+    {
+        $roles = self::getAllowedRoles();
+        $role = isset($roles[$roleId]) ? $roles[$roleId] : $roles[self::ROLE_GUEST];
+        return $role;
+    }
+
+    /**
+     * @return array
+     */
+    static public function getAllowedRoles()
+    {
+        $roles = array(
+            self::ROLE_GUEST => 'Guest',
+            self::ROLE_USER  => 'User',
+        );
+        return $roles;
     }
 
 }

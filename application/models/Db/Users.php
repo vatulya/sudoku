@@ -5,6 +5,8 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
 
     const TABLE_NAME = 'users';
 
+    const DEFAULT_USER_FULL_NAME = 'mr. Anonymous';
+
     protected $_hiddenFields = array(
         'password',
     );
@@ -37,10 +39,14 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
     {
         $now = new \DateTime('NOW', new \DateTimeZone('UTC'));
         $data = array(
-            'email'    => isset($data['email']) ? $data['email'] : '',
-            'login'    => isset($data['login']) ? $data['login'] : '',
-            'password' => isset($data['password']) ? $data['password'] : '',
-            'created'  => $now->format('Y-m-d H:i:s'),
+            'role_id'    => isset($data['role_id']) ? $data['role_id'] : Application_Service_User::ROLE_GUEST,
+            'email'      => isset($data['email']) ? $data['email'] : '',
+            'login'      => isset($data['login']) ? $data['login'] : '',
+            'network'    => isset($data['network']) ? $data['network'] : '',
+            'network_id' => isset($data['network_id']) ? $data['network_id'] : '',
+            'full_name'  => isset($data['full_name']) ? $data['full_name'] : self::DEFAULT_USER_FULL_NAME,
+            'password'   => isset($data['password']) ? $data['password'] : '',
+            'created'    => $now->format('Y-m-d H:i:s'),
         );
         $result = $this->_db->insert(static::TABLE_NAME, $data);
         if ($result) {

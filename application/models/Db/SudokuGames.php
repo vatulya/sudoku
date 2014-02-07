@@ -9,8 +9,7 @@ class Application_Model_Db_SudokuGames extends Application_Model_Db_Abstract
     {
         $now = new \DateTime('NOW', new \DateTimeZone('UTC'));
         $data = array(
-            'user_id'    => $data['user']['id'] ?: 0,
-            'user_type'  => !empty($data['network_id']) ? Application_Service_User::USER_TYPE_OTHER : Application_Service_User::USER_TYPE_MAIN,
+            'user_id'    => $data['user']['id'],
             'difficulty' => $data['difficulty']['code'],
             'parameters' => isset($data['parameters']) ? $data['parameters'] : array(),
             'created'    => $now->format('Y-m-d H:i:s'),

@@ -12,7 +12,7 @@ class Sudoku_UserController extends Zend_Controller_Action
     /**
      * @var Application_Service_User
      */
-    protected $_serviceUser;
+    protected $serviceUser;
 
     public function init()
     {
@@ -21,7 +21,7 @@ class Sudoku_UserController extends Zend_Controller_Action
 
     public function preDispatch()
     {
-        $this->_serviceUser = Application_Service_User::getInstance();
+        $this->serviceUser = Application_Service_User::getInstance();
     }
 
     public function indexAction()
@@ -33,8 +33,8 @@ class Sudoku_UserController extends Zend_Controller_Action
         $token = $this->_request->getPost('token');
         $host  = $this->view->getHelper('ServerUrl')->getHost();
 
-        $user = Application_Service_ULogin::getInstance()->login($token, $host);
-        if (empty($user)) {
+        $uLoginUser = $this->serviceUser->ULogin($token, $host);
+        if (empty($uLoginUser)) {
             $this->redirect($this->_helper->Url->url(
                 array(
                     'controller' => 'index',
@@ -44,8 +44,17 @@ class Sudoku_UserController extends Zend_Controller_Action
                 true
             ));
         }
+        $user = $this->serviceUser->getByData($uLoginUser);
+        if (empty($user)) {
+            $userId = $this->serviceUser->register($uLoginUser);
+            if ($userId) {
+                $user = $this->serviceUser->getById($userId);
+            }
+        }
 
-        My_Auth_User::getInstance()->loginOther($user);
+        if (!empty($user)) {
+            $this->serviceUser->getAuth()->login($user);
+        }
         $this->redirect($this->_helper->Url->url(
             array(
                 'controller' => 'index',
@@ -61,8 +70,14 @@ class Sudoku_UserController extends Zend_Controller_Action
         $loginOrEmail = $this->_getParam('login_email');
         $password     = $this->_getParam('password');
 
+        $userData = array(
+            'login'    => $loginOrEmail,
+            'email'    => $loginOrEmail,
+            'password' => $password,
+        );
+
         try {
-            $errors = My_Auth_User::getInstance()->login($loginOrEmail, $password);
+            $errors = $this->serviceUser->getAuth()->login($userData);
         } catch (Exception $e) {
             $errors[] = array(
                 'name'  => 'Login form',
@@ -80,15 +95,42 @@ class Sudoku_UserController extends Zend_Controller_Action
 
     public function logoutAction()
     {
-        $errors = My_Auth_User::getInstance()->logout();
+        $errors = $this->serviceUser->getAuth()->logout();
         $redirector = new Zend_Controller_Action_Helper_Redirector();
         $redirector->gotoUrlAndExit('/');
     }
 
     public function registerAction()
     {
+        $errors = array();
         try {
-            $errors = $this->_serviceUser->register($this->getAllParams());
+            $userData = $this->getAllParams();
+            $check = $this->serviceUser->getByData($userData);
+            if (empty($check)) {
+                throw new RuntimeException('User exists');
+            }
+            if (!empty($userData['email'])) {
+                $emailValidator = new Zend_Validate_EmailAddress();
+                if (!$emailValidator->isValid($userData['email'])) {
+                    throw new RuntimeException('Email invalid');
+                }
+            }
+            if (isset($userData['password']) && isset($userData['password_repeat'])) {
+                if ($userData['password'] != $userData['password_repeat']) {
+                    throw new RuntimeException('Password wrong');
+                }
+            }
+
+            $userId = $this->serviceUser->register($userData);
+            if ($userId) {
+                $errors = $this->serviceUser->getAuth()->login(array('id' => $userId));
+            }
+        } catch (Zend_Controller_Exception $ze) {
+            $errors[] = array(
+                'name' => '',
+                'title' => 'System error',
+                'text' => $ze->getMessage(),
+            );
         } catch (Exception $e) {
             $errors[] = array(
                 'name' => '',
