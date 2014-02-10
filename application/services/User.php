@@ -140,7 +140,7 @@ class Application_Service_User extends Application_Service_Abstract
      */
     public function registerGuest()
     {
-        $userData = array('role_id' => self::ROLE_USER);
+        $userData = array('role_id' => self::ROLE_GUEST);
         $userId = $this->getModelDb()->insert($userData);
         return $userId;
     }

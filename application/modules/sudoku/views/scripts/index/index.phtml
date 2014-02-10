@@ -13,7 +13,7 @@
                         $openCells = $openCells['min'] . '..' . $openCells['max'];
                     }
                     $title = sprintf($titleTemplate, $difficulty['title'], $openCells);
-                    $selected = $currentDifficulty['code'] == $code ? ' selected="selected"' : '';
+                    $selected = $currentDifficulty == $code ? ' selected="selected"' : '';
                 ?>
                 <option value="<?php echo $code; ?>"<?php echo $selected; ?>><?php echo $title; ?></option>
             <?php endforeach; ?>

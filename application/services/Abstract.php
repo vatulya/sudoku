@@ -7,12 +7,12 @@ abstract class Application_Service_Abstract
 
     const DB_MODEL_NAME_TEMPLATE = 'Application_Model_Db_%s';
 
-    private static $_instances = array();
+    private static $instances = array();
 
     /**
      * @var Application_Model_Db_Abstract
      */
-    protected $_modelDb;
+    protected $modelDb;
 
     /**
      * @return $this
@@ -20,10 +20,10 @@ abstract class Application_Service_Abstract
     public static function getInstance()
     {
         $class = get_called_class();
-        if (!isset(Application_Service_Abstract::$_instances[$class])) {
-            Application_Service_Abstract::$_instances[$class] = new $class();
+        if (!isset(Application_Service_Abstract::$instances[$class])) {
+            Application_Service_Abstract::$instances[$class] = new $class();
         }
-        return Application_Service_Abstract::$_instances[$class];
+        return Application_Service_Abstract::$instances[$class];
     }
 
     protected function __construct()
@@ -37,7 +37,7 @@ abstract class Application_Service_Abstract
     {
         if ($model = static::DB_MODEL_NAME) {
             $model = sprintf(static::DB_MODEL_NAME_TEMPLATE, $model);
-            $this->_modelDb = new $model();
+            $this->modelDb = new $model();
         }
         return $this;
     }
@@ -47,10 +47,10 @@ abstract class Application_Service_Abstract
      */
     public function getModelDb()
     {
-        if (is_null($this->_modelDb)) {
+        if (is_null($this->modelDb)) {
             $this->initModelDb();
         }
-        return $this->_modelDb;
+        return $this->modelDb;
     }
 
 }

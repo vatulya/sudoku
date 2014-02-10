@@ -6,6 +6,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
     public $ajaxable = array(
         'index'       => array('html'),
         'check-field' => array('json'),
+        'user-action' => array('json'),
     );
 
     public function init()
@@ -30,37 +31,48 @@ class Sudoku_IndexController extends Zend_Controller_Action
         );
         $this->view->assign(array(
             'uLoginData'   => Application_Service_User::getULoginData($uLoginRedirectUrl),
-            'difficulties' => Application_Model_Game_Sudoku::getAllDifficulties(),
+            'difficulties' => Application_Service_Game_Sudoku::getAllDifficulties(),
             'user'         => Application_Service_User::getInstance()->getCurrentUser(),
         ));
     }
 
     public function indexAction()
     {
-        /** @var Application_Model_Game_Abstract $sudoku */
-        $sudoku = new Application_Model_Game_Sudoku();
-
         $difficulty = $this->_request->getParam('difficulty');
-        $sudoku->setDifficulty($difficulty);
+        $user = Application_Service_User::getInstance()->getCurrentUser();
 
-        $sudoku->createGame(Application_Service_User::getInstance()->getCurrentUser());
-        $sudoku->setState(Application_Model_Game_Abstract::STATE_IN_PROGRESS);
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+        $sudokuGame = $sudokuService->create($user['id'], array('difficulty' => $difficulty));
+        $sudokuGame->start();
 
         $this->view->assign(array(
-            'sudoku'            => $sudoku,
-            'currentDifficulty' => $sudoku->getDifficulty(),
+            'sudoku' => $sudokuGame,
         ));
     }
 
     public function checkFieldAction()
     {
-        $cells = $this->_getParam('cells');
-        $errors = Application_Model_Game_Sudoku::checkGameSolution($cells);
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+        $game = $this->_getParam('game_id');
+        $game = $sudokuService->load($game);
+        $errors = $sudokuService->checkGameSolution($game);
         if (is_array($errors)) {
             $this->view->errors = $errors;
         } else {
             $this->view->resolved = (bool)$errors; // TRUE if resolved
         }
+    }
+
+    public function userActionAction()
+    {
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+
+        $game       = $this->_getParam('game_id');
+        $action     = $this->_getParam('user_action');
+        $parameters = $this->_getParam('parameters');
+
+        $game = $sudokuService->load($game);
+        $game->logUserAction($action, $parameters);
     }
 
 }

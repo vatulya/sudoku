@@ -160,25 +160,17 @@
                 } else {
                     cell.addClass('empty');
                 }
+                $Sudoku.logUserAction('setCellNumber', {cell: $Sudoku.getCellCoords(cell), number: number})
                 $Sudoku.checkNumbersCount(cell);
             }
         };
 
         $Sudoku.checkBoard = function() {
-            var cells = {};
-            $Sudoku.table.find('.cell').each(function(i, cell) {
-                cell = $(cell);
-                var number = cell.data('number');
-                if (number) {
-                    var coords = $Sudoku.getCellCoords(cell);
-                    cells[coords] = number;
-                }
-            });
             $.ajax({
                 url: '/index/check-field',
                 data: {
                     format: 'json',
-                    cells: cells
+                    game_id: $Sudoku.table.data('game-id')
                 },
                 success: function(response) {
                     if (response.resolved) {
@@ -402,6 +394,21 @@
                     $Sudoku.checkNumber(number);
                 }
             }
+        };
+
+        $Sudoku.logUserAction = function(action, parameters) {
+            $.ajax({
+                url: '/index/user-action',
+                data: {
+                    format: 'json',
+                    game_id: $Sudoku.table.data('game-id'),
+                    user_action: action,
+                    parameters: parameters
+                },
+                success: function(response) {
+                    console.log(response);
+                }
+            });
         };
 
         $Sudoku.checkUndoRedoButtons();

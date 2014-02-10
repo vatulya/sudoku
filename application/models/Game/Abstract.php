@@ -3,48 +3,146 @@
 abstract class Application_Model_Game_Abstract extends Application_Model_Abstract
 {
 
-    const NAME = '';
-    const CODE = '';
+    protected static $service;
 
-    const STATE_NEW         = 0;
-    const STATE_IN_PROGRESS = 1;
-    const STATE_PAUSED      = 2;
-    const STATE_REJECTED    = 3;
-    const STATE_FINISHED    = 4;
-
-    const DIFFICULTY_PRACTICE  = 1;
-    const DIFFICULTY_EASY      = 2;
-    const DIFFICULTY_NORMAL    = 4;
-    const DIFFICULTY_EXPERT    = 6;
-    const DIFFICULTY_NIGHTMARE = 10;
-    const DIFFICULTY_RANDOM    = 0;
-    const DIFFICULTY_TEST      = -1;
-
-    const DEFAULT_GAME_DIFFICULTY = 2;
-
+    /**
+     * @var int
+     */
     protected $id;
 
-    protected static $difficulties = array(
-        self::DIFFICULTY_PRACTICE  => array('title' => 'Practice',),
-        self::DIFFICULTY_EASY      => array('title' => 'Easy',),
-        self::DIFFICULTY_NORMAL    => array('title' => 'Normal',),
-        self::DIFFICULTY_EXPERT    => array('title' => 'Expert',),
-        self::DIFFICULTY_NIGHTMARE => array('title' => 'Nightmare',),
-        self::DIFFICULTY_RANDOM    => array('title' => 'Random',),
-        self::DIFFICULTY_TEST      => array('title' => 'Test',),
-    );
-
+    /**
+     * @var int
+     */
     protected $difficulty;
 
+    /**
+     * @var int
+     */
     protected $state = 0;
 
+    /**
+     * @var array
+     */
     protected $parameters = array();
 
     /**
-     * @param array $user
-     * @return Application_Model_Game_Abstract
+     * @param int $id
+     * @throws RuntimeException
      */
-    abstract function createGame(array $user);
+    protected function __construct($id)
+    {
+        $game = self::getModelDb()->getOne(array('id' => $id));
+        if (!$game) {
+            throw new RuntimeException('Wrong game ID "' . $id . '".');
+        }
+        $this->id         = $game['id'];
+        $this->difficulty = $game['difficulty'];
+        $this->state      = $game['state'];
+        $this->parameters = $game['parameters'];
+    }
+
+    /**
+     * @param array $parameters
+     * @return $this
+     */
+    public static function create(array $parameters)
+    {
+        $id = self::getModelDb()->insert($parameters);
+        $game = new static($id);
+        return $game;
+    }
+
+    /**
+     * @param int $id
+     * @return Application_Model_Game_Sudoku
+     */
+    public static function load($id)
+    {
+        $game = new static($id);
+        return $game;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDifficulty()
+    {
+        return $this->difficulty;
+    }
+
+    /**
+     * @param int $state
+     * @return bool
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
+     */
+    protected function setState($state)
+    {
+        $service = $this->getService();
+        if ($service->checkState($this->getState(), $state)) {
+            $this->state = $state;
+            $this->save();
+        } else {
+            throw new RuntimeException('Wrong game state. Game ID "' . $this->getId() . '". Old state "' . $this->getState() . '". New state "' . $state . '".');
+        }
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function start()
+    {
+        $service = $this->getService();
+        $this->setState($service::STATE_IN_PROGRESS);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function pause()
+    {
+        $service = $this->getService();
+        $this->setState($service::STATE_PAUSED);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function reject()
+    {
+        $service = $this->getService();
+        $this->setState($service::STATE_REJECTED);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function finish()
+    {
+        $service = $this->getService();
+        $this->setState($service::STATE_FINISHED);
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
 
     /**
      * @param array $params
@@ -53,6 +151,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     public function setParameters($params)
     {
         $this->parameters = $params;
+        $this->save();
         return $this;
     }
 
@@ -72,6 +171,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     public function setParameter($key, $value)
     {
         $this->parameters[$key] = $value;
+        $this->save();
         return $this;
     }
 
@@ -85,84 +185,65 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     }
 
     /**
-     * @param int $code
-     * @return $this
-     */
-    public function setDifficulty($code)
-    {
-        $code = (int)$code;
-        $allDifficulties = $this->getAllDifficulties();
-        if (!isset($allDifficulties[$code])) {
-            $code = self::DEFAULT_GAME_DIFFICULTY;
-        }
-        $difficulty = $allDifficulties[$code];
-        $difficulty['code'] = $code;
-        $this->difficulty = $difficulty;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getDifficulty()
-    {
-        if (is_null($this->difficulty)) {
-            $this->difficulty = $this->setDifficulty(self::DEFAULT_GAME_DIFFICULTY);
-        }
-        return $this->difficulty;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getAllDifficulties()
-    {
-        return static::$difficulties;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getStates()
-    {
-        return array(
-            self::STATE_NEW,
-            self::STATE_IN_PROGRESS,
-            self::STATE_PAUSED,
-            self::STATE_REJECTED,
-            self::STATE_FINISHED,
-        );
-    }
-
-    /**
-     * @param int $oldState
-     * @param int $newState
+     * @param string $action
+     * @param array $parameters
      * @return bool
      */
-    public static function checkState($oldState, $newState)
+    public function logUserAction($action, array $parameters = array())
     {
+        // TODO: finish it
         return true;
     }
 
     /**
-     * @param int $state
-     * @return bool
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @return $this
      */
-    public function setState($state)
+    public function save()
     {
-        if (!$this->id) {
-            throw new RuntimeException('This game isn\'t created yet.');
+        $this->getModelDb()->update($this->id, $this->toArray());
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        $data = array(
+            'id'         => $this->id,
+//            'user_id'    => $this->userId,
+            'state'      => $this->state,
+            'difficulty' => $this->difficulty,
+//            'created'    => $this->created,
+//            'started'    => $this->started,
+//            'ended'      => $this->ended,
+//            'duration'   => $this->duration,
+            'parameters' => $this->parameters,
+        );
+        return $data;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function initService()
+    {
+        if (is_string(static::$service)) {
+            $service = 'Application_Service_Game_' . static::$service;
+            static::$service = $service::getInstance();
         }
-        if (!in_array($state, $this->getStates())) {
-            throw new InvalidArgumentException('Wrong State "' . $state . '".');
+        return $this;
+    }
+
+    /**
+     * @return Application_Service_Game_Abstract
+     */
+    public function getService()
+    {
+        if (is_string(static::$service)) {
+            $this->initService();
         }
-        if (!$this->checkState($this->state, $state)) {
-            throw new RuntimeException('Game can\'t move from state "' . $this->state . '" to state "' . $state . '".');
-        }
-        $result = $this->getModelDb()->update($this->id, array('state' => $state));
-        return $result;
+        return static::$service;
     }
 
 }

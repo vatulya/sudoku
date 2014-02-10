@@ -1,0 +1,106 @@
+<?php
+
+abstract class Application_Service_Game_Abstract extends Application_Service_Abstract
+{
+
+    const STATE_NEW         = 0;
+    const STATE_IN_PROGRESS = 1;
+    const STATE_PAUSED      = 2;
+    const STATE_REJECTED    = 3;
+    const STATE_FINISHED    = 4;
+
+    const DIFFICULTY_PRACTICE  = 1;
+    const DIFFICULTY_EASY      = 2;
+    const DIFFICULTY_NORMAL    = 4;
+    const DIFFICULTY_EXPERT    = 6;
+    const DIFFICULTY_NIGHTMARE = 10;
+    const DIFFICULTY_RANDOM    = 0;
+    const DIFFICULTY_TEST      = -1;
+
+    const DEFAULT_GAME_DIFFICULTY = 2;
+
+    protected static $difficulties;
+
+    /**
+     * @param int $userId
+     * @param array $parameters
+     * @return Application_Model_Game_Abstract
+     */
+    abstract public function create($userId, array $parameters = array());
+
+    /**
+     * @param int $id
+     * @return Application_Model_Game_Abstract
+     */
+    abstract public function load($id);
+
+    /**
+     * @param Application_Model_Game_Abstract $game
+     * @return array|bool
+     */
+    abstract public function checkGameSolution(Application_Model_Game_Abstract $game);
+
+    /**
+     * @param int $oldState
+     * @param int $newState
+     * @return bool
+     */
+    public function checkState($oldState, $newState)
+    {
+        // TODO: finish it
+        return true;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getStates()
+    {
+        return array(
+            self::STATE_NEW,
+            self::STATE_IN_PROGRESS,
+            self::STATE_PAUSED,
+            self::STATE_REJECTED,
+            self::STATE_FINISHED,
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllDifficulties()
+    {
+        if (is_null(static::$difficulties)) {
+            static::initDifficulties();
+        }
+        return static::$difficulties;
+    }
+
+    /**
+     * @param int $difficulty
+     * @return array
+     */
+    public function getDifficulty($difficulty)
+    {
+        $difficulties = static::getAllDifficulties();
+        if (isset($difficulties[$difficulty])) {
+            return $difficulties[$difficulty];
+        } else {
+            return array();
+        }
+    }
+
+    protected static function initDifficulties()
+    {
+        static::$difficulties = array(
+            self::DIFFICULTY_PRACTICE  => array('code' => self::DIFFICULTY_PRACTICE, 'title' => 'Practice',),
+            self::DIFFICULTY_EASY      => array('code' => self::DIFFICULTY_EASY, 'title' => 'Easy',),
+            self::DIFFICULTY_NORMAL    => array('code' => self::DIFFICULTY_NORMAL, 'title' => 'Normal',),
+            self::DIFFICULTY_EXPERT    => array('code' => self::DIFFICULTY_EXPERT, 'title' => 'Expert',),
+            self::DIFFICULTY_NIGHTMARE => array('code' => self::DIFFICULTY_NIGHTMARE, 'title' => 'Nightmare',),
+            self::DIFFICULTY_RANDOM    => array('code' => self::DIFFICULTY_RANDOM, 'title' => 'Random',),
+            self::DIFFICULTY_TEST      => array('code' => self::DIFFICULTY_TEST, 'title' => 'Test',),
+        );
+    }
+
+}

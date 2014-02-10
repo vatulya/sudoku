@@ -3,26 +3,25 @@
 abstract class Application_Model_Abstract
 {
 
-    protected $modelDb;
+    protected static $modelDb;
 
-    protected function initModelDb()
+    protected static function initModelDb()
     {
-        if (is_string($this->modelDb)) {
-            $class = 'Application_Model_Db_' . $this->modelDb;
-            $this->modelDb = new $class();
+        if (is_string(static::$modelDb)) {
+            $class = 'Application_Model_Db_' . static::$modelDb;
+            static::$modelDb = new $class();
         }
-        return $this;
     }
 
     /**
      * @return Application_Model_Db_Abstract
      */
-    protected function getModelDb()
+    protected static function getModelDb()
     {
-        if (is_string($this->modelDb)) {
-            $this->initModelDb();
+        if (is_string(static::$modelDb)) {
+            static::initModelDb();
         }
-        return $this->modelDb;
+        return static::$modelDb;
     }
 
 }
