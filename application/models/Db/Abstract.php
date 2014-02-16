@@ -38,7 +38,8 @@ abstract class Application_Model_Db_Abstract
     {
         $select = $this->_db->select()->from(static::TABLE_NAME);
         foreach ($parameters as $field => $value) {
-            $select->where($field . ' = ?', $value);
+            $expression = is_array($value) ? ' IN (?)' : ' = ?';
+            $select->where($field . $expression, $value);
         }
         if (!empty($order)) {
             $select->order($order);

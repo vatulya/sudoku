@@ -1,6 +1,6 @@
 <?php
 
-class Application_Model_Db_SudokuGames extends Application_Model_Db_Abstract
+class Application_Model_Db_SudokuGames extends Application_Model_Db_GameAbstract
 {
 
     const TABLE_NAME = 'sudoku_games';
@@ -62,14 +62,9 @@ class Application_Model_Db_SudokuGames extends Application_Model_Db_Abstract
         }
         $result = false;
         if (!empty($update)) {
-            $result = (bool)$this->_db->update(static::TABLE_NAME, $update, array('id' => $id));
+            $result = (bool)$this->_db->update(static::TABLE_NAME, $update, array('id = ?' => $id));
         }
         return $result;
-    }
-
-    public function delete($id)
-    {
-        return false;
     }
 
 }

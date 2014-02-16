@@ -8,10 +8,10 @@
 class Application_Service_User extends Application_Service_Abstract
 {
 
-    const DB_MODEL_NAME = 'Users';
-
     const ROLE_GUEST = 0;
     const ROLE_USER  = 20;
+
+    protected $modelDb = 'Users';
 
     /**
      * @var My_Auth_User

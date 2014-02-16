@@ -1,3 +1,7 @@
+.sudoku-table {
+    float: left;
+    width: 550px;
+}
 .sudoku-board {
     float: left;
     margin: 0 5px;
@@ -129,7 +133,7 @@
 
 /********************************** congratulations *********************************/
 .sudoku-table .congratulations {
-    width: 940px;
+    width: 550px;
     display: none;
     position: absolute;
     z-index: 10;

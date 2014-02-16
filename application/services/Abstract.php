@@ -3,10 +3,6 @@
 abstract class Application_Service_Abstract
 {
 
-    const DB_MODEL_NAME = '';
-
-    const DB_MODEL_NAME_TEMPLATE = 'Application_Model_Db_%s';
-
     private static $instances = array();
 
     /**
@@ -35,8 +31,8 @@ abstract class Application_Service_Abstract
      */
     protected function initModelDb()
     {
-        if ($model = static::DB_MODEL_NAME) {
-            $model = sprintf(static::DB_MODEL_NAME_TEMPLATE, $model);
+        if (is_string($this->modelDb)) {
+            $model = 'Application_Model_Db_' . $this->modelDb;
             $this->modelDb = new $model();
         }
         return $this;
@@ -47,7 +43,7 @@ abstract class Application_Service_Abstract
      */
     public function getModelDb()
     {
-        if (is_null($this->modelDb)) {
+        if (is_string($this->modelDb)) {
             $this->initModelDb();
         }
         return $this->modelDb;

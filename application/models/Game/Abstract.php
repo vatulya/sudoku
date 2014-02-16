@@ -102,6 +102,12 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     public function start()
     {
         $service = $this->getService();
+        $otherGames = $this->getModelDb()->getAll(array('state' => array($service::STATE_IN_PROGRESS, $service::STATE_NEW)));
+        foreach ($otherGames as $otherGame) {
+            /** @var Application_Model_Game_Abstract $game */
+            $game = self::load($otherGame['id']);
+            $game->setState($service::STATE_PAUSED);
+        }
         $this->setState($service::STATE_IN_PROGRESS);
         return $this;
     }
