@@ -22,7 +22,7 @@ production:
         db:
             adapter: pdo_mysql
             params:
-                host: kv.kirby.pp.ua
+                host: kv2.kirby.pp.ua
                 username: sudoku
                 password: sudoku
                 dbname: sudoku
