@@ -39,6 +39,10 @@
 
     };
 
+    w.test = function(data) {
+        w.socket.send(data);
+    };
+
     w.disableSelect = function(el) {
         el = $(el);
         el
