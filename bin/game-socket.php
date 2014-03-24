@@ -7,11 +7,11 @@ defined('LOG_FILE') ||
 
 echo 'Start' . PHP_EOL;
 
-$log = new My_WebSocket_Log(LOG_FILE);
-
 $server = new My_WebSocket_Server(9900);
-$server->addListener($log);
 
-$server->startLoop();
+// Hint: Status application should not be removed as it displays usefull server informations:
+$server->addLogger(new My_WebSocket_Logger_File(LOG_FILE));
+$server->addLogger(new My_WebSocket_Logger_Console());
 
+$server->run();
 echo 'Finish' . PHP_EOL;
