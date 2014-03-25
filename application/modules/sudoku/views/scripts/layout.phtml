@@ -13,6 +13,7 @@
     $this->headScript()
         ->prependFile('/js/sudoku.js')
         ->prependFile('/js/user.js')
+        ->prependFile('/js/websocket.js')
         ->prependFile('/js/form.js')
         ->prependFile('/js/global.js')
         ->prependFile('/js/bootstrap.js')
@@ -24,11 +25,12 @@
 <?php echo $this->render('_extra/navigation.phtml'); ?>
 
 <div class="container" id="container">
-    <button onclick="window.gogogo();">connect</button>
+    <button onclick="window.websocket = new window.WS();">connect</button>
     <button onclick="window.test('123123');">test</button>
     <?php echo $this->layout()->content ?>
 </div>
 
+<?php $this->headScript()->appendScript('window.websocket = new window.WS();'); ?>
 <?php echo $this->headScript(); ?>
 </body>
 </html>

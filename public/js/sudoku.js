@@ -61,9 +61,20 @@
             })
         ;
 
-        $(d).on('keypress', function(e) {
-            $Sudoku.keyPress(e.charCode);
-        });
+        $(d)
+            .on('keypress', function(e) {
+                $Sudoku.keyPress(e.charCode);
+            })
+            .on('websocket.open', function(e) {
+                $Sudoku.startPing();
+            })
+            .on('websocket.close', function(e) {
+                $Sudoku.stopPing();
+            })
+            .on('websocket.message.sudoku.checkFields', function(e, data) {
+                $Sudoku.checkBoardResponse(data);
+            })
+        ;
 
 
         w.disableSelect($Sudoku.table);
@@ -165,7 +176,14 @@
             }
         };
 
+        /************************* CHECK BOARD ***************************/
         $Sudoku.checkBoard = function() {
+            var data = {
+                game_id: $Sudoku.table.data('game-id'),
+                action: 'checkField'
+            };
+            w.websocket.send(data);
+            /*
             $.ajax({
                 url: '/index/check-field',
                 data: {
@@ -173,24 +191,30 @@
                     game_id: $Sudoku.table.data('game-id')
                 },
                 success: function(response) {
-                    if (response.resolved) {
-                        $Sudoku.win();
-                    } else if (typeof response.errors == 'undefined') {
-                        var board = $Sudoku.table.find('.sudoku-board');
-                        board.addClass('no-errors');
-                        setTimeout(function() {board.removeClass('no-errors');}, 2000);
-                    } else {
-                        $.each(response.errors, function(coords, number) {
-                            coords = coords.split('');
-                            var row = coords[0],
-                                col = coords[1]
-                            ;
-                            $Sudoku.showError(row, col);
-                        });
-                    }
+                    $Sudoku.checkBoardResponse(response);
                 }
             });
+            */
         };
+
+        $Sudoku.checkBoardResponse = function(response) {
+            if (response.resolved) {
+                $Sudoku.win();
+            } else if (typeof response.errors == 'undefined' || response.errors.length == 0 || !response.errors) {
+                var board = $Sudoku.table.find('.sudoku-board');
+                board.addClass('no-errors');
+                setTimeout(function() {board.removeClass('no-errors');}, 2000);
+            } else {
+                $.each(response.errors, function(coords, number) {
+                    coords = coords.split('');
+                    var row = coords[0],
+                        col = coords[1]
+                        ;
+                    $Sudoku.showError(row, col);
+                });
+            }
+        };
+        /************************* /CHECK BOARD ***************************/
 
         $Sudoku.showError = function(row, col) {
             var cell = $Sudoku.table.find('.cell.row-' + row + '.col-' + col);
@@ -396,6 +420,7 @@
             }
         };
 
+        /**************************** LOG USER ACTION **********************/
         $Sudoku.logUserAction = function(action, parameters) {
             $.ajax({
                 url: '/index/user-action',
@@ -410,10 +435,25 @@
                 }
             });
         };
+        /**************************** /LOG USER ACTION **********************/
+
+        $Sudoku.startPing = function() {
+            $Sudoku.stopPing();
+            $Sudoku.ping = setInterval(function() {
+                var data = {
+                    game_id: $Sudoku.table.data('game-id'),
+                    action: 'ping'
+                };
+                w.websocket.send(data);
+            }, 3000);
+        };
+
+        $Sudoku.stopPing = function() {
+            clearInterval($Sudoku.ping);
+        };
 
         $Sudoku.checkUndoRedoButtons();
         $Sudoku.checkNumbersCount();
-
     }
 
     w.Sudoku = Sudoku;

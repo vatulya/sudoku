@@ -265,7 +265,7 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
             $openCellsPerSquares[$square][$coords] = $value;
         }
 
-        function checkCells(array $cells) {
+        $checkCells = function (array $cells) {
             $errors = array();
             foreach ($cells as $data) {
                 $exists = array();
@@ -282,11 +282,11 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
                 }
             }
             return $errors;
-        }
+        };
 
-        $errors += checkCells($openCellsPerRows);
-        $errors += checkCells($openCellsPerCols);
-        $errors += checkCells($openCellsPerSquares);
+        $errors += $checkCells($openCellsPerRows);
+        $errors += $checkCells($openCellsPerCols);
+        $errors += $checkCells($openCellsPerSquares);
         return $errors;
     }
 
@@ -296,8 +296,8 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      */
     public function checkGameSolution(Application_Model_Game_Abstract $game)
     {
-        $openCells = $game->getParameter('openCells');
-        $checkedCells = $game->getParameter('checkedCells');
+        $openCells = (array)$game->getParameter('openCells');
+        $checkedCells = (array)$game->getParameter('checkedCells');
         $cells = $openCells + $checkedCells;
         $errors = $this->checkFields($cells);
         if (!empty($errors)) {

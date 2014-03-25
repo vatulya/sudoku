@@ -112,6 +112,11 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
         return $this;
     }
 
+    public function ping()
+    {
+        $this->getModelDb()->update($this->id, []);
+    }
+
     /**
      * @return $this
      */

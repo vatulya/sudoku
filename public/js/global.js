@@ -11,36 +11,11 @@
     ;
 
     w.gogogo = function() {
-        w.socket = new WebSocket("ws://sudoku.lan:9900/");
-        w.socket.onopen = function() {
-            alert("connection.");
-        };
-
-        w.socket.onclose = function(event) {
-            console.log(event);
-            if (event.wasClean) {
-                alert('connection closed clear');
-            } else {
-                alert('connection die');
-            }
-            alert('Code: ' + event.code + ' Reason: ' + event.reason);
-        };
-
-        w.socket.onmessage = function(event) {
-            console.log(event);
-            alert("Data: " + event.data);
-        };
-
-        w.socket.onerror = function(error) {
-            console.log(error);
-            alert("Error: " + error.message);
-        };
-
 
     };
 
     w.test = function(data) {
-        w.socket.send(data);
+        w.websocket.send(data);
     };
 
     w.disableSelect = function(el) {

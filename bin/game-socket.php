@@ -9,9 +9,8 @@ echo 'Start' . PHP_EOL;
 
 $server = new My_WebSocket_Server(9900);
 
-// Hint: Status application should not be removed as it displays usefull server informations:
-$server->addLogger(new My_WebSocket_Logger_File(LOG_FILE));
-$server->addLogger(new My_WebSocket_Logger_Console());
+$server->setLogger(new My_WebSocket_Logger_FileConsole(LOG_FILE));
+$server->addListener(new My_WebSocket_Listener_Sudoku(LOG_FILE));
 
 $server->run();
 echo 'Finish' . PHP_EOL;

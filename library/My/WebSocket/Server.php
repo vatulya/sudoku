@@ -17,6 +17,10 @@ class My_WebSocket_Server
     const EVENT_CLIENT_RECEIVED_DATA     = 'clientReceivedData';
     const EVENT_CLIENT_CLOSED_CONNECTION = 'clientClosedConnection';
 
+    const LEVEL_FATAL = 1;
+    const LEVEL_ERROR = 2;
+    const LEVEL_DEBUG = 3;
+
     protected $master;
     protected $sockets = [];
     /**
@@ -28,10 +32,13 @@ class My_WebSocket_Server
     protected $headerSecWebSocketProtocolRequired = false;
     protected $headerSecWebSocketExtensionsRequired = false;
 
+    protected $logLevel = self::LEVEL_ERROR;
+
     /**
-     * @var My_WebSocket_Logger_Abstract[]
+     * @var My_WebSocket_Logger_Abstract
      */
-    protected $loggers = [];
+    protected $logger;
+
     /**
      * @var My_WebSocket_Listener_Abstract[]
      */
@@ -54,7 +61,7 @@ class My_WebSocket_Server
             $secs = time() - $start;
         }
         if (!$this->master) {
-            $this->fatal('Error! Can\'t create new WebSocket connection on port "' . $port . '"');
+            $this->getLogger()->fatal('Error! Can\'t create new WebSocket connection on port "' . $port . '"');
             throw new Exception('Error! Can\'t create new WebSocket connection on port "' . $port . '"');
         }
         $this->sockets[] = $this->master;
@@ -95,7 +102,6 @@ class My_WebSocket_Server
                         $this->disconnect($socket);
                     } else {
                         $user = $this->getUserBySocket($socket);
-                        $this->trigger(self::EVENT_CLIENT_CONNECTED, ['client' => $user]);
                         if (!$user->getHandshake()) {
                             $tmp = str_replace("\r", '', $buffer);
                             if (strpos($tmp, "\n\n") === false) {
@@ -138,17 +144,23 @@ class My_WebSocket_Server
      */
     protected function process($user, $message)
     {
-        $this->trigger(self::EVENT_CLIENT_RECEIVED_DATA, ['client' => $user, 'data' => $message]);
+        try {
+            $message = Zend_Json::decode($message);
+            $this->trigger(self::EVENT_CLIENT_RECEIVED_DATA, $user, $message);
+        } catch (Exception $e) {
+            $this->getLogger()->error('Message process error: ' . $e->getMessage());
+        }
     }
 
     /**
      * @param My_WebSocket_User $user
-     * @param string $message
+     * @param string|array $message
      */
-    protected function send($user, $message)
+    public function send(My_WebSocket_User $user, $message)
     {
-        // TODO: check this method
-        //$this->stdout("> $message");
+        if (is_array($message)) {
+            $message = Zend_Json::encode($message);
+        }
         $message = $this->frame($message, $user);
         $result  = @socket_write($user->getSocket(), $message, strlen($message));
     }
@@ -161,7 +173,7 @@ class My_WebSocket_Server
         $user = new My_WebSocket_User(uniqid(), $socket);
         $this->users[] = $user;
         $this->sockets[] = $socket;
-        $this->trigger(self::EVENT_CLIENT_CONNECTED, ['client' => $user]);
+        $this->trigger(self::EVENT_CLIENT_CONNECTED, $user);
     }
 
     /**
@@ -194,9 +206,11 @@ class My_WebSocket_Server
         if ($foundSocket !== null) {
             unset($this->sockets[$foundSocket]);
             $this->sockets = array_values($this->sockets);
-            $this->trigger(self::EVENT_CLIENT_CLOSED_CONNECTION, ['client' => $socket]);
         }
 
+        if ($disconnectedUser) {
+            $this->trigger(self::EVENT_CLIENT_CLOSED_CONNECTION, $disconnectedUser);
+        }
     }
 
     /**
@@ -276,7 +290,7 @@ class My_WebSocket_Server
         // TODO: sendData
         socket_write($user->getSocket(), $handshakeResponse, strlen($handshakeResponse));
 
-        $this->trigger(self::EVENT_CLIENT_HANDSHAKE, ['client' => $user]);
+        $this->trigger(self::EVENT_CLIENT_HANDSHAKE, $user);
     }
 
     /**
@@ -671,48 +685,18 @@ class My_WebSocket_Server
      * @param My_WebSocket_Logger_Abstract $logger
      * @return $this
      */
-    public function addLogger(My_WebSocket_Logger_Abstract $logger)
+    public function setLogger(My_WebSocket_Logger_Abstract $logger)
     {
-        $this->loggers[] = $logger;
+        $this->logger = $logger;
         return $this;
     }
 
-    /**
-     * @param string $message
-     * @param null $type
-     */
-    public function log($message, $type = null)
+    public function getLogger()
     {
-        foreach ($this->loggers as $logger) {
-            $logger->log($message, $type);
+        if (!$this->logger) {
+            $this->logger = new My_WebSocket_Logger_Null();
         }
-    }
-
-    /**
-     * @param string $message
-     */
-    public function fatal($message) {
-        foreach ($this->loggers as $logger) {
-            $logger->fatal($message);
-        }
-    }
-
-    /**
-     * @param string $message
-     */
-    public function error($message) {
-        foreach ($this->loggers as $logger) {
-            $logger->error($message);
-        }
-    }
-
-    /**
-     * @param string $message
-     */
-    public function debug($message) {
-        foreach ($this->loggers as $logger) {
-            $logger->debug($message);
-        }
+        return $this->logger;
     }
 
     /*********************** LISTENERS *********************/
@@ -723,26 +707,30 @@ class My_WebSocket_Server
      */
     public function addListener(My_WebSocket_Listener_Abstract $listener)
     {
-        $this->listeners[] = $listener;
+        $this->getLogger()->debug('Added listener "' . get_class($listener) . '"');
+        $this->listeners[] = $listener->setServer($this);
         return $this;
     }
 
     /**
      * @param string $event
+     * @param My_WebSocket_User $user
      * @param array $additionalData
      * @return $this
      * @throws Exception
      */
-    protected function trigger($event, array $additionalData = [])
+    protected function trigger($event, My_WebSocket_User $user = null, array $additionalData = [])
     {
-        $this->debug('TRIGGER ' . $event . '. Data: ' . var_export($additionalData, true));
+        $this->getLogger()->debug('TRIGGER ' . $event . '. Data: ' . Zend_Json::encode($additionalData));
         if (!in_array($event, $this->getAllowedEvents())) {
-            $this->fatal('Error! Unknown event "' . $event . '"');
+            $this->getLogger()->fatal('Error! Unknown event "' . $event . '"');
             throw new Exception('Error! Unknown event "' . $event . '"');
         }
         $method = 'on' . ucfirst($event);
         foreach ($this->listeners as $listener) {
-            $listener->$method($this, $additionalData);
+            if (method_exists($listener, $method)) {
+                $listener->setUser($user)->$method($additionalData);
+            }
         }
         return $this;
     }

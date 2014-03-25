@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS sudoku_games (
     ended DATETIME DEFAULT NULL,
     duration INT NOT NULL,
     parameters TEXT NOT NULL,
+    updated TIMESTAMP NOT NULL,
     PRIMARY KEY (id),
     INDEX (user_id),
     INDEX (state),
