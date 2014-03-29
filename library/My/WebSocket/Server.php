@@ -7,15 +7,16 @@ class My_WebSocket_Server
 
     const WEBSOCKET_GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 
-    const EVENT_SERVER_CREATED           = 'serverCreated';
-    const EVENT_SERVER_LOOP_STARTED      = 'serverLoopStarted';
-    const EVENT_SERVER_LOOP_STOPPED      = 'serverLoopStopped';
-    const EVENT_SERVER_STOPPED           = 'serverStopped';
-    const EVENT_SERVER_CLOSED_CONNECTION = 'serverClosedConnection';
-    const EVENT_CLIENT_CONNECTED         = 'clientConnected';
-    const EVENT_CLIENT_HANDSHAKE         = 'clientHandshake';
-    const EVENT_CLIENT_RECEIVED_DATA     = 'clientReceivedData';
-    const EVENT_CLIENT_CLOSED_CONNECTION = 'clientClosedConnection';
+    const EVENT_SERVER_CREATED                   = 'serverCreated';
+    const EVENT_SERVER_LOOP_STARTED              = 'serverLoopStarted';
+    const EVENT_SERVER_LOOP_STOPPED              = 'serverLoopStopped';
+    const EVENT_SERVER_STOPPED                   = 'serverStopped';
+    const EVENT_SERVER_CLOSED_CONNECTION         = 'serverClosedConnection';
+    const EVENT_CLIENT_CONNECTED                 = 'clientConnected';
+    const EVENT_CLIENT_HANDSHAKE                 = 'clientHandshake';
+    const EVENT_CLIENT_RECEIVED_DATA_FROM_CLIENT = 'clientReceivedDataFromClient';
+    const EVENT_CLIENT_SEND_DATA_TO_CLIENT       = 'clientSendDataToClient';
+    const EVENT_CLIENT_CLOSED_CONNECTION         = 'clientClosedConnection';
 
     const LEVEL_FATAL = 1;
     const LEVEL_ERROR = 2;
@@ -145,8 +146,8 @@ class My_WebSocket_Server
     protected function process($user, $message)
     {
         try {
-            $message = Zend_Json::decode($message);
-            $this->trigger(self::EVENT_CLIENT_RECEIVED_DATA, $user, $message);
+            $message = (array)Zend_Json::decode($message);
+            $this->trigger(self::EVENT_CLIENT_RECEIVED_DATA_FROM_CLIENT, $user, $message);
         } catch (Exception $e) {
             $this->getLogger()->error('Message process error: ' . $e->getMessage());
         }
@@ -747,7 +748,8 @@ class My_WebSocket_Server
             self::EVENT_SERVER_STOPPED,
             self::EVENT_CLIENT_CONNECTED,
             self::EVENT_CLIENT_HANDSHAKE,
-            self::EVENT_CLIENT_RECEIVED_DATA,
+            self::EVENT_CLIENT_RECEIVED_DATA_FROM_CLIENT,
+            self::EVENT_CLIENT_SEND_DATA_TO_CLIENT,
             self::EVENT_CLIENT_CLOSED_CONNECTION,
         ];
     }

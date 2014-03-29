@@ -48,6 +48,11 @@ abstract class Application_Model_Db_Abstract
         return $result;
     }
 
+    public function getNow()
+    {
+        return (new \DateTime('NOW', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+    }
+
     /**
      * @param array $data
      * @return int

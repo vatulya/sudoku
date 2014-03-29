@@ -1,6 +1,6 @@
 <?php
 
-class Application_Model_Db_SudokuGames extends Application_Model_Db_GameAbstract
+class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstract
 {
 
     const TABLE_NAME = 'sudoku_games';
@@ -34,7 +34,7 @@ class Application_Model_Db_SudokuGames extends Application_Model_Db_GameAbstract
 
     public function insert(array $data)
     {
-        $now = (new \DateTime('NOW', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+        $now = $this->getNow();
         $data = array(
             'user_id'    => $data['user_id'],
             'difficulty' => $data['difficulty']['code'],
@@ -61,7 +61,7 @@ class Application_Model_Db_SudokuGames extends Application_Model_Db_GameAbstract
         if (isset($update['parameters'])) {
             $update['parameters'] = Zend_Json::encode($update['parameters']);
         }
-        $update['updated'] = (new \DateTime('NOW', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+        $update['updated'] = $this->getNow();
         $result = false;
         if (!empty($update)) {
             $result = (bool)$this->_db->update(static::TABLE_NAME, $update, array('id = ?' => $id));

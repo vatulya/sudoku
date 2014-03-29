@@ -37,7 +37,6 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
 
     public function insert(array $data)
     {
-        $now = new \DateTime('NOW', new \DateTimeZone('UTC'));
         $data = array(
             'role_id'    => isset($data['role_id']) ? $data['role_id'] : Application_Service_User::ROLE_GUEST,
             'email'      => isset($data['email']) ? $data['email'] : '',
@@ -46,7 +45,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
             'network_id' => isset($data['network_id']) ? $data['network_id'] : '',
             'full_name'  => isset($data['full_name']) ? $data['full_name'] : self::DEFAULT_USER_FULL_NAME,
             'password'   => isset($data['password']) ? $data['password'] : '',
-            'created'    => $now->format('Y-m-d H:i:s'),
+            'created'    => $this->getNow(),
         );
         $result = $this->_db->insert(static::TABLE_NAME, $data);
         if ($result) {

@@ -6,7 +6,7 @@
 
         $this.socket = new WebSocket("ws://sudoku.lan:9900/");
         $this.socket.onopen = function() {
-            $(d).trigger('websocket.open');
+            $(d).trigger('websocket_open');
         };
 
         $this.socket.onclose = function(event) {
@@ -19,27 +19,28 @@
             }
             message +=' Code: ' + event.code + ' Reason: ' + event.reason;
             alert(message);
-            $(d).trigger('websocket.close');
+            $(d).trigger('websocket_close');
         };
 
         $this.socket.onmessage = function(event) {
             var data = event.data;
-            $(d).trigger('websocket.message', $.parseJSON(data));
+            $(d).trigger('websocket_message', $.parseJSON(data));
 
             var complex = '';
             if (data._module != null) {
                 complex += '.' + data._module;
+                $(d).trigger('websocket_message' + complex, $.parseJSON(data)); // websocket_message.sudoku
                 if (data._action != null) {
-                    complex += '.' + data._action;
+                    complex += '_' + data._action;
                 }
-                $(d).trigger('websocket.message' + complex, $.parseJSON(data));
+                $(d).trigger('websocket_message' + complex, $.parseJSON(data)); // websocket_message.sudoku_someAction
             }
         };
 
         $this.socket.onerror = function(error) {
             console.log(error);
             alert("Error: " + error.message);
-            $(d).trigger('websocket.error');
+            $(d).trigger('websocket_error');
         };
 
         $this.send = function(data) {

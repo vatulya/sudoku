@@ -310,6 +310,20 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
         return false;
     }
 
+    /**
+     * @param string $coords
+     * @return bool
+     */
+    public function checkCoords($coords) {
+        list($col, $row) = str_split($coords);
+        if ($col >= 1 && $col <= 9) {
+            if ($row >= 1 && $row <= 9) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected static function initDifficulties()
     {
         parent::initDifficulties();
