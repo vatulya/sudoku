@@ -159,11 +159,11 @@ class My_WebSocket_Server
      */
     public function send(My_WebSocket_User $user, $message)
     {
-        if (is_array($message)) {
-            $message = Zend_Json::encode($message);
-        }
-        $message = $this->frame($message, $user);
-        $result  = @socket_write($user->getSocket(), $message, strlen($message));
+        $messageString = is_array($message) ? Zend_Json::encode($message) : $message;
+        $messageString = $this->frame($messageString, $user);
+
+        $result = @socket_write($user->getSocket(), $messageString, strlen($messageString));
+        $this->trigger(self::EVENT_CLIENT_SEND_DATA_TO_CLIENT, $user, $message);
     }
 
     /**

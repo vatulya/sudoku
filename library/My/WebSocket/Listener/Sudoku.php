@@ -69,7 +69,7 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
             'errors'   => $errors,
             'resolved' => $resolved,
         ];
-        $this->send('sudoku', 'checkField', $data);
+        $this->send('sudoku', 'checkField', $data, $this->getSystemData($gameId));
         return true;
     }
 
@@ -83,6 +83,7 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
         $coords = !empty($data['coords']) ? $data['coords'] : '';
         $number = !empty($data['number']) ? $data['number'] : '';
         $this->service->load($gameId)->setCellNumber($coords, $number);
+        $this->send('sudoku', 'setCellNumber', [], $this->getSystemData($gameId));
         return true;
     }
 
@@ -94,7 +95,47 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
     protected function clearBoardAction($gameId, array $data)
     {
         $this->service->load($gameId)->clearBoard();
+        $this->send('sudoku', 'clearBoard', [], $this->getSystemData($gameId));
         return true;
+    }
+
+    /**
+     * @param $gameId
+     * @param array $data
+     * @return bool
+     */
+    protected function undoMoveAction($gameId, array $data)
+    {
+        $this->service->load($gameId)->undoMove();
+        $this->send('sudoku', 'undoMove', [], $this->getSystemData($gameId));
+        return true;
+    }
+
+    /**
+     * @param $gameId
+     * @param array $data
+     * @return bool
+     */
+    protected function redoMoveAction($gameId, array $data)
+    {
+        $this->service->load($gameId)->redoMove();
+        $this->send('sudoku', 'redoMove', [], $this->getSystemData($gameId));
+        return true;
+    }
+
+    /**
+     * @param int $gameId
+     * @return array
+     */
+    protected function getSystemData($gameId)
+    {
+        $data = [];
+        $game = $this->service->load($gameId);
+        $moves = $game->getUndoRedoMoves();
+        $data['gameHash'] = $game->getHash();
+        $data['undoMove'] = $moves['undo'];
+        $data['redoMove'] = $moves['redo'];
+        return $data;
     }
 
 }

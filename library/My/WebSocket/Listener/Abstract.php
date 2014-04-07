@@ -3,6 +3,10 @@
 abstract class My_WebSocket_Listener_Abstract
 {
 
+    const DATA_KEY_MODULE = '_module';
+    const DATA_KEY_ACTION = '_action';
+    const DATA_KEY_SYSTEM = '_system';
+
     /**
      * @var \My_WebSocket_Server
      */
@@ -33,13 +37,15 @@ abstract class My_WebSocket_Listener_Abstract
     /**
      * @param string $module
      * @param string $action
-     * @param string|array $data
+     * @param array $data
+     * @param array $system
      */
-    protected function send($module, $action, $data)
+    protected function send($module, $action, $data, $system = [])
     {
         if ($user = $this->getUser()) {
-            $data['_module'] = $module;
-            $data['_action'] = $action;
+            $data[static::DATA_KEY_MODULE] = $module;
+            $data[static::DATA_KEY_ACTION] = $action;
+            $data[static::DATA_KEY_SYSTEM] = $system;
             $this->getServer()->send($user, $data);
         }
     }

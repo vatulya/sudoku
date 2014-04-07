@@ -23,17 +23,25 @@
         };
 
         $this.socket.onmessage = function(event) {
-            var data = event.data;
-            $(d).trigger('websocket_message', $.parseJSON(data));
+            var data = $.parseJSON(event.data);
+            $(d).trigger('websocket:message', data);
 
-            var complex = '';
-            if (data._module != null) {
-                complex += '.' + data._module;
-                $(d).trigger('websocket_message' + complex, $.parseJSON(data)); // websocket_message.sudoku
-                if (data._action != null) {
-                    complex += '_' + data._action;
+            var module = '';
+            if (data['_module'] != null) {
+                module += ':' + data._module;
+
+                // websocket_message.sudoku
+                $(d).trigger('websocket:message' + module, data);
+
+                if (data['_system'] != null) {
+                    // websocket_message.sudoku_systemData
+                    $(d).trigger('websocket:message' + module + ':systemData', data);
                 }
-                $(d).trigger('websocket_message' + complex, $.parseJSON(data)); // websocket_message.sudoku_someAction
+
+                if (data['_action'] != null) {
+                    // websocket_message.sudoku_someAction
+                    $(d).trigger('websocket:message' + module + ':' + data._action, data);
+                }
             }
         };
 

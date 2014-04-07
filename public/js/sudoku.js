@@ -65,16 +65,16 @@
             .on('keypress', function(e) {
                 $Sudoku.keyPress(e.charCode);
             })
-            .on('websocket_open', function(e) {
+            .on('websocket:open', function(e) {
                 $Sudoku.startPing();
             })
-            .on('websocket_close', function(e) {
+            .on('websocket:close', function(e) {
                 $Sudoku.stopPing();
             })
-            .on('websocket_message.sudoku', function(e, data) {
-                $Sudoku.checkGameStateResponse(data);
+            .on('websocket:message:sudoku:systemData', function(e, data) {
+                $Sudoku.systemDataResponse(data['_system'] || {});
             })
-            .on('websocket_message.sudoku_checkFields', function(e, data) {
+            .on('websocket:message:sudoku:checkFields', function(e, data) {
                 $Sudoku.checkBoardResponse(data);
             })
         ;
@@ -82,26 +82,45 @@
         w.disableSelect($Sudoku.table);
 
         /**************************** SEND USER ACTION **********************/
+
         $Sudoku.sendUserAction = function(action, parameters) {
             var data = $.extend({
                 '_game_id': $Sudoku.table.data('game-id'),
                 '_action': action
-            }, parameters);
+            }, parameters || {});
             w.websocket.send(data);
         };
+
         /**************************** /SEND USER ACTION *********************/
 
-        /**************************** CHECK GAME STATE **********************/
-        $Sudoku.checkGameStateResponse = function(response) {
-            // TODO: check game state by board's hash
+        /**************************** SYSTEM DATA RESPONSE ******************/
+
+        $Sudoku.systemDataResponse = function(response) {
+            $Sudoku.checkGameHash(response['gameHash'] || '');
+            $Sudoku.setHistoryButton('undo', response['undoMove'] || {});
+            $Sudoku.setHistoryButton('redo', response['redoMove'] || {});
+            $Sudoku.checkHistoryButtons();
         };
-        /**************************** /CHECK GAME STATE *********************/
+
+        /**************************** /SYSTEM DATA RESPONSE *****************/
 
         /************************ SET CELL NUMBER ***********************/
 
         $Sudoku.setCellNumber = function(cell, number) {
             cell = $(cell);
-            number = '' + number;
+            if ($Sudoku._setCellNumber(cell, number)) {
+                var coords = '' + $Sudoku.getCellCoords(cell);
+                var data = {
+                    'coords': coords,
+                    'number': number
+                };
+                $Sudoku.sendUserAction('setCellNumber', data);
+            }
+        };
+
+        $Sudoku._setCellNumber = function(cell, number) {
+            cell = $(cell);
+            number = number ? '' + number : '';
             if (cell.hasClass('open')) {
                 cell.html(number).data('number', number);
                 if (number) {
@@ -109,14 +128,10 @@
                 } else {
                     cell.addClass('empty');
                 }
-                var coords = '' + $Sudoku.getCellCoords(cell);
-                var data = {
-                    'coords': coords,
-                    'number': number
-                };
-                $Sudoku.sendUserAction('setCellNumber', data);
                 $Sudoku.checkNumbersCount(cell);
+                return true;
             }
+            return false;
         };
 
         /************************ /SET CELL NUMBER ***********************/
@@ -136,6 +151,7 @@
         /************************ /CLEAR BOARD ****************************/
 
         /************************* CHECK BOARD ****************************/
+
         $Sudoku.checkBoard = function() {
             $Sudoku.sendUserAction('checkBoard');
         };
@@ -153,6 +169,7 @@
                 });
             }
         };
+
         /************************* /CHECK BOARD ****************************/
 
         /**************************** PING **********************************/
@@ -169,6 +186,10 @@
         };
 
         /**************************** /PING **********************************/
+
+        $Sudoku.checkGameHash = function(hash) {
+            return true;
+        };
 
         $Sudoku.hoverColAndRow = function(cell) {
             cell = $(cell);
@@ -188,7 +209,6 @@
 
         $Sudoku.checkNumber = function(number) {
             var cell = $Sudoku.getSelectedCell();
-            $Sudoku.saveMoveToHistory(cell, number, 'undo');
             $Sudoku.setCellNumber(cell, number);
             $Sudoku.clearHistory('redo');
             $Sudoku.hoverNumber(cell);
@@ -242,6 +262,7 @@
         };
 
         $Sudoku.getCellCoords = function(cell) {
+            cell = $(cell);
             var coords = '' + cell.data('row') + cell.data('col');
             return coords;
         };
@@ -260,7 +281,16 @@
             }
         };
 
-        $Sudoku.checkUndoRedoButtons = function() {
+        /******************************** UNDO REDO HISTORY *****************************/
+
+        $Sudoku.setHistoryButton = function(historyType, move) {
+            move = Object.keys(move).length ? JSON.stringify(move) : '';
+            historyType = historyType == 'redo' ? 'redo' : 'undo';
+            $Sudoku.table.find('.' + historyType + '-move').data('moves', move);
+            return $Sudoku;
+        };
+
+        $Sudoku.checkHistoryButtons = function() {
             var undoButton = $Sudoku.table.find('.undo-move'),
                 redoButton = $Sudoku.table.find('.redo-move')
             ;
@@ -276,33 +306,11 @@
             } else {
                 redoButton.addClass('disabled');
             }
-        };
-
-        $Sudoku.saveMoveToHistory = function(cell, newNumber, historyType) {
-            cell = $(cell);
-            historyType = historyType == 'redo' ? 'redo' : 'undo';
-            if (!cell.hasClass('open')) {
-                return;
-            }
-            var coords = $Sudoku.getCellCoords(cell),
-                historyButton = $Sudoku.table.find('.' + historyType + '-move'),
-                history = historyButton.data('moves').split(';').clean(false),
-                oldNumber = cell.data('number')
-            ;
-            if (typeof oldNumber == 'undefined') oldNumber = '';
-            var historyStep = '' + coords + ':' + oldNumber + '|' + newNumber;
-            history.push(historyStep);
-            history = history.join(';');
-            historyButton.data('moves', history);
-            $Sudoku.checkUndoRedoButtons();
+            return $Sudoku;
         };
 
         $Sudoku.removeLastMoveFromHistory = function(historyButton) {
-            historyButton = $(historyButton);
-            var history = historyButton.data('moves').split(';').clean(false);
-            history.pop(); // remove last element
-            history = history.join(';');
-            historyButton.data('moves', history);
+            $(historyButton).data('moves', '');
         };
 
         $Sudoku.clearHistory = function(historyType) {
@@ -313,22 +321,23 @@
                 $Sudoku.table.find('.undo-move').data('moves', '');
                 $Sudoku.table.find('.redo-move').data('moves', '');
             }
-            $Sudoku.checkUndoRedoButtons();
+            $Sudoku.checkHistoryButtons();
         };
 
         $Sudoku.getLastMoveFromHistory = function(historyButton) {
             historyButton = $(historyButton);
-            var move = historyButton.data('moves').split(';').clean(false);
-            move = move[move.length - 1];
-            move = move.split(':');
-            var coords = move[0];
-            move = move[1].split('|');
-            var moveData = {
-                coords: coords,
-                old_number: move[0],
-                number: move[1]
+            var moves = JSON.parse(historyButton.data('moves'))['cells'] || {},
+                movesData = []
+            ;
+            for (var coords in moves) {
+                if (moves.hasOwnProperty(coords)) {
+                    movesData.push({
+                        'coords': coords,
+                        'number': moves[coords]
+                    });
+                }
             }
-            return moveData;
+            return movesData;
         };
 
         $Sudoku.undoMove = function(undoButton) {
@@ -336,16 +345,17 @@
             if (undoButton.hasClass('disabled')) {
                 return;
             }
-            var move = $Sudoku.getLastMoveFromHistory(undoButton),
-                cell = $Sudoku.getCellByCoords(move.coords)
-            ;
-            $Sudoku.saveMoveToHistory(cell, move.old_number, 'redo');
-            $Sudoku.setCellNumber(cell, move.old_number);
+            var moves = $Sudoku.getLastMoveFromHistory(undoButton);
+            $.each(moves, function (i, move) {
+                var cell = $Sudoku.getCellByCoords(move['coords']);
+                $Sudoku._setCellNumber(cell, move['number']);
+            });
             $Sudoku.removeLastMoveFromHistory(undoButton);
-            $Sudoku.checkUndoRedoButtons();
+            $Sudoku.checkHistoryButtons();
+            $Sudoku.sendUserAction('undoMove');
 
-            cell = $Sudoku.getSelectedCell();
-            $Sudoku.hoverNumber(cell);
+//            cell = $Sudoku.getSelectedCell();
+//            $Sudoku.hoverNumber(cell);
         };
 
         $Sudoku.redoMove = function(redoButton) {
@@ -353,17 +363,20 @@
             if (redoButton.hasClass('disabled')) {
                 return;
             }
-            var move = $Sudoku.getLastMoveFromHistory(redoButton),
-                cell = $Sudoku.getCellByCoords(move.coords)
-            ;
-            $Sudoku.saveMoveToHistory(cell, move.old_number, 'undo');
-            $Sudoku.setCellNumber(cell, move.old_number);
+            var moves = $Sudoku.getLastMoveFromHistory(redoButton);
+            $.each(moves, function (i, move) {
+                var cell = $Sudoku.getCellByCoords(move['coords']);
+                $Sudoku._setCellNumber(cell, move['number']);
+            });
             $Sudoku.removeLastMoveFromHistory(redoButton);
-            $Sudoku.checkUndoRedoButtons();
+            $Sudoku.checkHistoryButtons();
+            $Sudoku.sendUserAction('redoMove');
 
-            cell = $Sudoku.getSelectedCell();
-            $Sudoku.hoverNumber(cell);
+//            cell = $Sudoku.getSelectedCell();
+//            $Sudoku.hoverNumber(cell);
         };
+
+        /******************************** /UNDO REDO HISTORY ****************************/
 
         $Sudoku.checkNumbersCount = function() {
             var numbersCount = {};
@@ -447,7 +460,7 @@
             }
         };
 
-        $Sudoku.checkUndoRedoButtons();
+        $Sudoku.checkHistoryButtons();
         $Sudoku.checkNumbersCount();
     }
 
