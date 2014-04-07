@@ -4,6 +4,8 @@
 
         var $Sudoku = this;
 
+        var S = w.websocket.S || '|';
+
         $Sudoku.table = $(table);
         $Sudoku.pushTimer = false;
 
@@ -65,17 +67,14 @@
             .on('keypress', function(e) {
                 $Sudoku.keyPress(e.charCode);
             })
-            .on('websocket:open', function(e) {
+            .on('websocket' + S + 'open', function(e) {
                 $Sudoku.startPing();
             })
-            .on('websocket:close', function(e) {
+            .on('websocket' + S + 'close', function(e) {
                 $Sudoku.stopPing();
             })
-            .on('websocket:message:sudoku:systemData', function(e, data) {
+            .on('websocket' + S + 'message' + S + 'sudoku' + S + 'systemData', function(e, data) {
                 $Sudoku.systemDataResponse(data['_system'] || {});
-            })
-            .on('websocket:message:sudoku:checkFields', function(e, data) {
-                $Sudoku.checkBoardResponse(data);
             })
         ;
 
@@ -83,12 +82,16 @@
 
         /**************************** SEND USER ACTION **********************/
 
-        $Sudoku.sendUserAction = function(action, parameters) {
-            var data = $.extend({
+        $Sudoku.sendUserAction = function(action, parameters, withQueue, callback) {
+            parameters = $.extend({
                 '_game_id': $Sudoku.table.data('game-id'),
                 '_action': action
             }, parameters || {});
-            w.websocket.send(data);
+            var config = {
+                'data': parameters,
+                'callback': callback
+            };
+            w.websocket.send(config, withQueue ? 'sudoku' : '');
         };
 
         /**************************** /SEND USER ACTION *********************/
@@ -153,7 +156,7 @@
         /************************* CHECK BOARD ****************************/
 
         $Sudoku.checkBoard = function() {
-            $Sudoku.sendUserAction('checkBoard');
+            $Sudoku.sendUserAction('checkBoard', {}, true, $Sudoku.checkBoardResponse);
         };
 
         $Sudoku.checkBoardResponse = function(response) {

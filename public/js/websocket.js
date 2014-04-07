@@ -1,12 +1,18 @@
-(function (w, d, $) {
+(function (w, d, $, undefined) {
 
     function WS() {
 
-        $this = this;
+
+        var $this = this;
+
+        $this.S = '|'; // trigger name parts' separator
+
+        $this.requestsQueue = {};
+        $this.sentRequests = {};
 
         $this.socket = new WebSocket("ws://sudoku.lan:9900/");
         $this.socket.onopen = function() {
-            $(d).trigger('websocket_open');
+            $(d).trigger('websocket' + $this.S + 'open');
         };
 
         $this.socket.onclose = function(event) {
@@ -19,28 +25,32 @@
             }
             message +=' Code: ' + event.code + ' Reason: ' + event.reason;
             alert(message);
-            $(d).trigger('websocket_close');
+            $(d).trigger('websocket' + $this.S + 'close');
         };
 
         $this.socket.onmessage = function(event) {
             var data = $.parseJSON(event.data);
-            $(d).trigger('websocket:message', data);
+
+            var triggerName = 'websocket' + $this.S + 'message';
+            // websocket|message
+            $(d).trigger(triggerName, data);
 
             var module = '';
             if (data['_module'] != null) {
-                module += ':' + data._module;
+                module = '' + data['_module'];
+                $this._processedRequestQueue(data, module);
 
-                // websocket_message.sudoku
-                $(d).trigger('websocket:message' + module, data);
+                // websocket|message|sudoku
+                $(d).trigger(triggerName + $this.S + module, data);
 
                 if (data['_system'] != null) {
-                    // websocket_message.sudoku_systemData
-                    $(d).trigger('websocket:message' + module + ':systemData', data);
+                    // websocket|message|sudoku|systemData
+                    $(d).trigger(triggerName + $this.S + module + $this.S + 'systemData', data);
                 }
 
                 if (data['_action'] != null) {
-                    // websocket_message.sudoku_someAction
-                    $(d).trigger('websocket:message' + module + ':' + data._action, data);
+                    // websocket|message|sudoku|someAction
+                    $(d).trigger(triggerName + $this.S + module + $this.S + data._action, data);
                 }
             }
         };
@@ -51,12 +61,52 @@
             $(d).trigger('websocket_error');
         };
 
-        $this.send = function(data) {
-            $this.socket.send(JSON.stringify(data));
-        }
+        /************ SEND REQUEST *******************/
+
+        $this.send = function(config, module) {
+            module = '' + module;
+            if (module == '') {
+                $this._send(config);
+            } else {
+                if (!$this.requestsQueue.hasOwnProperty(module) || $this.requestsQueue[module] == undefined) {
+                    $this.requestsQueue[module] = [];
+                }
+                $this.requestsQueue[module].push(config);
+                $this._processRequestQueue(module);
+            }
+        };
+
+        $this._processRequestQueue = function(module) {
+            module = '' + module;
+            if (
+                module != ''
+                && $this.requestsQueue[module].length
+                && $this.sentRequests[module] == undefined
+            ) {
+                $this.sentRequests[module] = $this.requestsQueue[module].shift();
+                $this._send($this.sentRequests[module]);
+            }
+        };
+
+        $this._send = function(config) {
+            $this.socket.send(JSON.stringify(config.data || {}));
+        };
+
+        /*********** PROCESSED REQUEST **************/
+
+        $this._processedRequestQueue = function(data, module) {
+            if ($this.sentRequests[module] != undefined) {
+                var config = $this.sentRequests[module];
+                delete $this.sentRequests[module];
+                if (typeof config['callback'] === 'function') {
+                    config['callback'](data);
+                }
+                $this._processRequestQueue(module);
+            }
+        };
 
     };
 
     w.WS = WS;
 
-})(this, this.document, this.jQuery);
+})(this, this.document, this.jQuery, undefined);

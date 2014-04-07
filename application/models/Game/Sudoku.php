@@ -105,8 +105,8 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
      */
     public function getHash()
     {
-        $board['openCells'] = $this->getParameter(static::PARAMETER_KEY_OPEN_CELLS);
-        $board['checkedCells'] = $this->getParameter(static::PARAMETER_KEY_CHECKED_CELLS);
+        $board['openCells'] = $this->getParameter(static::PARAMETER_KEY_OPEN_CELLS) ?: [];
+        $board['checkedCells'] = $this->getParameter(static::PARAMETER_KEY_CHECKED_CELLS) ?: [];
 
         ksort($board['openCells']);
         ksort($board['checkedCells']);

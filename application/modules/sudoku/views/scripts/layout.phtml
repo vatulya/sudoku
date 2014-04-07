@@ -13,6 +13,7 @@
     $this->headScript()
         ->prependFile('/js/sudoku.js')
         ->prependFile('/js/user.js')
+        ->prependScript('window.websocket = new window.WS();')
         ->prependFile('/js/websocket.js')
         ->prependFile('/js/form.js')
         ->prependFile('/js/global.js')
@@ -30,7 +31,6 @@
     <?php echo $this->layout()->content ?>
 </div>
 
-<?php $this->headScript()->appendScript('window.websocket = new window.WS();'); ?>
 <?php echo $this->headScript(); ?>
 </body>
 </html>
