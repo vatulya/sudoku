@@ -76,6 +76,9 @@
             .on('websocket' + S + 'message' + S + 'sudoku' + S + 'systemData', function(e, data) {
                 $Sudoku.systemDataResponse(data['_system'] || {});
             })
+            .on('websocket' + S + 'message' + S + 'sudoku' + S + 'forceRefresh', function(e, data) {
+                $Sudoku.forceRefresh(data['reason'] || '');
+            })
         ;
 
         w.disableSelect($Sudoku.table);
@@ -85,7 +88,8 @@
         $Sudoku.sendUserAction = function(action, parameters, withQueue, callback) {
             parameters = $.extend({
                 '_game_id': $Sudoku.table.data('game-id'),
-                '_action': action
+                '_action': action,
+                '_hash': $Sudoku.getBoardHash()
             }, parameters || {});
             var config = {
                 'data': parameters,
@@ -189,6 +193,16 @@
         };
 
         /**************************** /PING **********************************/
+
+        $Sudoku.getBoardHash = function() {
+            var board = '';
+            $Sudoku.table.find('.cell').each(function(i, el) {
+                el = $(el);
+                var number = '' + el.data('number');
+                board += number || '0';
+            });
+            return $.md5(board);
+        };
 
         $Sudoku.checkGameHash = function(hash) {
             return true;
@@ -461,6 +475,11 @@
                     $Sudoku.checkNumber(number);
                 }
             }
+        };
+
+        $Sudoku.forceRefresh = function(reason) {
+            alert('Force game refresh. Reason: ' + reason);
+            w.location.reload();
         };
 
         $Sudoku.checkHistoryButtons();

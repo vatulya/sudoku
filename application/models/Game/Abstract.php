@@ -11,6 +11,11 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     protected $id;
 
     /**
+     * @var string
+     */
+    protected $hash;
+
+    /**
      * @var int
      */
     protected $difficulty;
@@ -36,6 +41,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
             throw new RuntimeException('Wrong game ID "' . $id . '".');
         }
         $this->id         = $game['id'];
+        $this->hash       = $game['hash'];
         $this->difficulty = $game['difficulty'];
         $this->state      = $game['state'];
         $this->parameters = $game['parameters'];
@@ -63,11 +69,31 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     }
 
     /**
+     * @param int $userId
+     * @param string $gameHash
+     * @return Application_Model_Game_Sudoku
+     */
+    public static function loadByUserIdAndGameHash($userId, $gameHash)
+    {
+        $game = self::getModelDb()->getOne(['user_id' => $userId, 'hash' => $gameHash]);
+        $game = !empty($game['id']) ? new static($game['id']) : null;
+        return $game;
+    }
+
+    /**
      * @return int
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash()
+    {
+        return $this->hash;
     }
 
     /**

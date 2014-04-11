@@ -7,6 +7,7 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
 
     const DATA_KEY_GAME_ID = '_game_id';
     const DATA_KEY_ACTION = '_action';
+    const DATA_KEY_HASH = '_hash';
 
     /**
      * @var Application_Service_Game_Sudoku
@@ -20,12 +21,17 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
 
     public function onClientReceivedDataFromClient(array $data = [])
     {
-        if (empty($data[static::DATA_KEY_GAME_ID]) || empty($data[static::DATA_KEY_ACTION])) {
+        if (
+            empty($data[static::DATA_KEY_GAME_ID])
+            || empty($data[static::DATA_KEY_ACTION])
+            || empty($data[static::DATA_KEY_HASH])
+        ) {
             $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Wrong data');
             return false;
         }
         $gameId = $data[static::DATA_KEY_GAME_ID];
         $action = $data[static::DATA_KEY_ACTION] . 'Action';
+        $hash = $data[static::DATA_KEY_HASH];
         if (!method_exists($this, $action)) {
             $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Wrong action "' . $action . '"');
             return false;
@@ -37,6 +43,11 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
             $this->$action($gameId, $data);
         } catch (Exception $e) {
             $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Action error: ' . $e->getMessage());
+            return false;
+        }
+        if (!$this->service->checkBoard($gameId, $hash)) {
+            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Check Board error');
+            $this->send('sudoku', 'forceRefresh', ['reason' => 'Synchronization error']);
             return false;
         }
         return true;

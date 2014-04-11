@@ -41,6 +41,7 @@ class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstrac
             'parameters' => isset($data['parameters']) ? $data['parameters'] : array(),
             'created'    => $now,
             'updated'    => $now,
+            'hash'       => $data['hash'],
         );
         $data['parameters'] = Zend_Json::encode($data['parameters']);
         $result = $this->_db->insert(self::TABLE_NAME, $data);

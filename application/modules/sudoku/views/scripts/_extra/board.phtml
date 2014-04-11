@@ -11,12 +11,50 @@ $game = $sudoku->getParameters();
  * @param int $col
  * @return bool
  */
-function isGray($row, $col) {
+function isGray ($row, $col) {
     $grayRow = (bool)(ceil($row / 3) % 2); // 111000111
     $grayCol = (bool)(ceil($col / 3) % 2); // 111000111
     $isGray = $grayRow == $grayCol;
     return $isGray;
 }
+
+function createCell ($game, $row, $col) {
+    $isGray = isGray($row, $col) ? 'gray' : '';
+    $cellCoords = $row . $col;
+    $open = 'open';
+    $empty = 'empty';
+    $locked = '';
+    $number = '';
+    if (!empty($game[Application_Model_Game_Sudoku::PARAMETER_KEY_CHECKED_CELLS][$cellCoords])) {
+        $number = $game[Application_Model_Game_Sudoku::PARAMETER_KEY_CHECKED_CELLS][$cellCoords];
+        $empty = '';
+    }
+    if (!empty($game[Application_Model_Game_Sudoku::PARAMETER_KEY_OPEN_CELLS][$cellCoords])) {
+        $number = $game[Application_Model_Game_Sudoku::PARAMETER_KEY_OPEN_CELLS][$cellCoords];
+        $open = '';
+        $empty = '';
+        $locked = 'locked';
+    }
+    $classes = [
+        'cell',
+        'row-' . $row,
+        'col-' . $col,
+        $isGray,
+        $open,
+        $empty,
+        $locked,
+    ];
+?>
+<td
+    class="<?php echo implode(' ', $classes); ?>"
+    data-row="<?php echo $row; ?>"
+    data-col="<?php echo $col; ?>"
+    data-number="<?php echo $number; ?>"
+    >
+    <?php echo $number; ?>
+</td>
+<?php
+} // createCell
 ?>
 <div class="sudoku-table"
      data-game-id="<?php echo $sudoku->getId(); ?>"
@@ -41,19 +79,7 @@ function isGray($row, $col) {
         <?php for ($r = 1; $r <= $rows; $r++): ?>
         <tr>
             <?php for ($c = 1; $c <= $cols; $c++): ?>
-                <?php
-                    $isGray = isGray($r, $c);
-                    $cellNumber = $r . $c;
-                    $number = isset($game['openCells'][$cellNumber]) ? $game['openCells'][$cellNumber] : '';
-                ?>
-                <td
-                    class="cell row-<?php echo $r; ?> col-<?php echo $c; ?> <?php if ($isGray) echo 'gray'; ?> <?php echo $number ? 'locked' : 'open empty'; ?>"
-                    data-row="<?php echo $r; ?>"
-                    data-col="<?php echo $c; ?>"
-                    data-number="<?php echo $number; ?>"
-                >
-                    <?php echo $number; ?>
-                </td>
+                <?php createCell($game, $r, $c); ?>
             <?php endfor; ?>
         </tr>
         <?php endfor; ?>

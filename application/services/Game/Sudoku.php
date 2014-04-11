@@ -14,6 +14,11 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
     protected static $difficulties;
 
     /**
+     * @var array
+     */
+    protected static $emptyBoard;
+
+    /**
      * @param int $userId
      * @param array $parameters
      * @return Application_Model_Game_Abstract
@@ -33,6 +38,7 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
             'parameters' => array(
                 'openCells' => $board,
             ),
+            'hash'       => md5($userId . time()),
         );
         $game = Application_Model_Game_Sudoku::create($game);
         return $game;
@@ -41,6 +47,12 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
     public function load($id)
     {
         $game = Application_Model_Game_Sudoku::load($id);
+        return $game;
+    }
+
+    public function loadByUserIdAndGameHash($userId, $gameHash)
+    {
+        $game = Application_Model_Game_Sudoku::loadByUserIdAndGameHash($userId, $gameHash);
         return $game;
     }
 
@@ -320,6 +332,39 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
             if ($row >= 1 && $row <= 9) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getEmptyBoard()
+    {
+        if (null === static::$emptyBoard) {
+            $board = [];
+            $coords = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            foreach ($coords as $r) {
+                foreach ($coords as $c) {
+                    $board[$r . $c] = '';
+                }
+            }
+            static::$emptyBoard = $board;
+        }
+        return static::$emptyBoard;
+    }
+
+    /**
+     * @param int $id
+     * @param string $hash
+     * @return bool
+     */
+    public function checkBoard($id, $hash)
+    {
+        $game = Application_Model_Game_Sudoku::load($id);
+        $gameHash = $game->getBoardHash();
+        if ($hash === $gameHash) {
+            return true;
         }
         return false;
     }

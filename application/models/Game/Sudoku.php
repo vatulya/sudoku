@@ -98,20 +98,23 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         return true;
     }
 
-    /************** HASH *******************/
+    /************** BOARD HASH *******************/
 
     /**
      * @return string
      */
-    public function getHash()
+    public function getBoardHash()
     {
-        $board['openCells'] = $this->getParameter(static::PARAMETER_KEY_OPEN_CELLS) ?: [];
-        $board['checkedCells'] = $this->getParameter(static::PARAMETER_KEY_CHECKED_CELLS) ?: [];
-
-        ksort($board['openCells']);
-        ksort($board['checkedCells']);
-
-        $hash = md5(json_encode($board));
+        $board = $this->getParameter(static::PARAMETER_KEY_OPEN_CELLS) ?: [];
+        $board += $this->getParameter(static::PARAMETER_KEY_CHECKED_CELLS) ?: [];
+        $board += $this->getService()->getEmptyBoard();
+        $board = array_map(function ($value) {
+            return $value ? (string)$value : '0';
+        }, $board);
+        ksort($board);
+        $board = array_values($board);
+        $board = implode('', $board);
+        $hash = md5($board);
         return $hash;
     }
 
