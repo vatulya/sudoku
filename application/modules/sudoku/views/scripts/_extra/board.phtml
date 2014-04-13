@@ -116,6 +116,13 @@ function createCell ($game, $row, $col) {
         <button class="check-field btn btn-mini">Check</button>
         <button class="clear-field btn btn-mini btn-danger">Clear</button>
     </div>
+
+    <div class="game-time">
+        <?php
+        $time = secondsToArray($sudoku->getDuration());
+        echo implode(':', $time);
+        ?>
+    </div>
 </div>
 
 <?php $this->headScript()->appendScript('var $game = new window.Sudoku(\'.sudoku-table\');'); ?>

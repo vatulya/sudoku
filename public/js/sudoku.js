@@ -6,8 +6,13 @@
 
         var S = w.websocket.S || '|';
 
+        $Sudoku.pushTimer = false; // Mouse button push
+        $Sudoku.pingTimer = false; // Ping timer
+        $Sudoku.durationTimer = 0; // Update duration timer
+
+        $Sudoku.duration = 0;
+
         $Sudoku.table = $(table);
-        $Sudoku.pushTimer = false;
 
         $Sudoku.table
             .on('mouseover', '.sudoku-board .cell', function() {
@@ -68,6 +73,7 @@
                 $Sudoku.keyPress(e.charCode);
             })
             .on('websocket' + S + 'open', function(e) {
+                $Sudoku.start();
                 $Sudoku.startPing();
             })
             .on('websocket' + S + 'close', function(e) {
@@ -100,6 +106,15 @@
 
         /**************************** /SEND USER ACTION *********************/
 
+        /**************************** GAME START ****************************/
+
+        $Sudoku.start = function() {
+            $Sudoku.sendUserAction('start');
+            $Sudoku.startDurationTimer();
+        };
+
+        /**************************** /GAME START ***************************/
+
         /**************************** SYSTEM DATA RESPONSE ******************/
 
         $Sudoku.systemDataResponse = function(response) {
@@ -107,6 +122,7 @@
             $Sudoku.setHistoryButton('undo', response['undoMove'] || {});
             $Sudoku.setHistoryButton('redo', response['redoMove'] || {});
             $Sudoku.checkHistoryButtons();
+            $Sudoku.updateGameServerTime(response['duration']);
         };
 
         /**************************** /SYSTEM DATA RESPONSE *****************/
@@ -183,13 +199,13 @@
 
         $Sudoku.startPing = function() {
             $Sudoku.stopPing();
-            $Sudoku.ping = setInterval(function() {
+            $Sudoku.pingTimer = setInterval(function() {
                 $Sudoku.sendUserAction('ping');
             }, 3000);
         };
 
         $Sudoku.stopPing = function() {
-            clearInterval($Sudoku.ping);
+            clearInterval($Sudoku.pingTimer);
         };
 
         /**************************** /PING **********************************/
@@ -481,6 +497,27 @@
             alert('Force game refresh. Reason: ' + reason);
             w.location.reload();
         };
+
+        $Sudoku.startDurationTimer = function() {
+            if (!$Sudoku.durationTimer) {
+                $Sudoku.durationTimer = setInterval(function() {
+                    if ($Sudoku.duration > 0) {
+                        $Sudoku.duration += 1;
+                        $Sudoku.table.find('.game-time').html($Sudoku.duration.toDDHHMMSS(false, true));
+                    }
+                }, 1000);
+            }
+        };
+
+        $Sudoku.stopDurationTimer = function() {
+            clearInterval($Sudoku.durationTimer);
+        };
+
+        $Sudoku.updateGameServerTime = function(time) {
+            $Sudoku.duration = time;
+            time = time.toDDHHMMSS(false, true);
+            $Sudoku.table.find('.game-time').html(time);
+        }
 
         $Sudoku.checkHistoryButtons();
         $Sudoku.checkNumbersCount();

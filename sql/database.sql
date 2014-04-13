@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS sudoku_games (
     started DATETIME NOT NULL,
     ended DATETIME DEFAULT NULL,
     duration INT NOT NULL,
+    client_duration INT NOT NULL,
     parameters TEXT NOT NULL,
     hash VARCHAR(50) NOT NULL,
     updated TIMESTAMP NOT NULL,

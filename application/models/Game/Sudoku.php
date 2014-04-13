@@ -214,47 +214,4 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         }
     }
 
-    /************** LOGS *******************/
-
-    protected function getLogs()
-    {
-        $where = [
-            'game_id' => $this->getId(),
-        ];
-        $order = [
-            'created DESC',
-        ];
-        return $this->getModelDbLogs()->getAll($where, $order);
-    }
-
-    protected function addLog($actionType, array $oldParameters = [], array $newParameters = [])
-    {
-        $data = [
-            'game_id'        => $this->getId(),
-            'action_type'    => $actionType,
-            'new_parameters' => $newParameters,
-            'old_parameters' => $oldParameters,
-        ];
-        return $this->getModelDbLogs()->insert($data);
-    }
-
-    protected static function initModelDbLogs()
-    {
-        if (is_string(static::$modelDbLogs)) {
-            $class = 'Application_Model_Db_' . static::$modelDbLogs;
-            static::$modelDbLogs = new $class();
-        }
-    }
-
-    /**
-     * @return Application_Model_Db_Abstract
-     */
-    protected static function getModelDbLogs()
-    {
-        if (is_string(static::$modelDbLogs)) {
-            static::initModelDbLogs();
-        }
-        return static::$modelDbLogs;
-    }
-
 }

@@ -61,6 +61,19 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
     protected function pingAction($gameId, array $data)
     {
         $this->service->load($gameId)->ping();
+        $this->send('sudoku', '', [], $this->getSystemData($gameId));
+        return true;
+    }
+
+    /**
+     * @param $gameId
+     * @param array $data
+     * @return bool
+     */
+    protected function startAction($gameId, array $data)
+    {
+        $this->service->load($gameId)->start();
+        $this->send('sudoku', '', [], $this->getSystemData($gameId));
         return true;
     }
 
@@ -146,6 +159,7 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
         $data['gameHash'] = $game->getHash();
         $data['undoMove'] = $moves['undo'];
         $data['redoMove'] = $moves['redo'];
+        $data['duration'] = $game->getDuration();
         return $data;
     }
 

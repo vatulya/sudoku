@@ -43,7 +43,6 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
         $sudokuGame = $sudokuService->create($user['id'], array('difficulty' => $difficulty));
-        $sudokuGame->start();
 
         $this->getHelper('redirector')->gotoRoute(['gameHash' => $sudokuGame->getHash()], 'sudoku-game', true);
 

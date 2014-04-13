@@ -26,5 +26,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $router->addConfig($config, 'routes');
     }
 
+    protected function _initFunctions()
+    {
+        require_once 'functions.php';
+    }
+
 }
 
