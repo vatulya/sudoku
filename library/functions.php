@@ -2,6 +2,7 @@
 
 /**
  * @param int $seconds
+ * @param bool $assoc
  * @return array
  */
 function secondsToArray ($seconds, $assoc = true) {
@@ -29,4 +30,18 @@ function secondsToArray ($seconds, $assoc = true) {
     }
 
     return $time;
+}
+
+if (!function_exists('http_parse_cookie')) {
+    function http_parse_cookie($string)
+    {
+        $cookies = [];
+        $pairs = explode(';', $string);
+        foreach ($pairs as $pair) {
+            list ($key, $value) = explode('=', $pair);
+            $key = trim($key);
+            $cookies[$key] = $value;
+        }
+        return $cookies;
+    }
 }

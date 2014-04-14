@@ -5,7 +5,7 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
 
     const LOG_PREFIX = '[LISTENER SUDOKU] ';
 
-    const DATA_KEY_GAME_ID = '_game_id';
+    const DATA_KEY_GAME_HASH = '_game_hash';
     const DATA_KEY_ACTION = '_action';
     const DATA_KEY_HASH = '_hash';
 
@@ -13,6 +13,13 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
      * @var Application_Service_Game_Sudoku
      */
     protected $service;
+
+    /**
+     * @var Application_Model_Game_Sudoku
+     */
+    protected $game;
+
+    protected $skipCheckBoardForActions = ['loadBoardAction'];
 
     public function __construct()
     {
@@ -22,14 +29,14 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
     public function onClientReceivedDataFromClient(array $data = [])
     {
         if (
-            empty($data[static::DATA_KEY_GAME_ID])
+            empty($data[static::DATA_KEY_GAME_HASH])
             || empty($data[static::DATA_KEY_ACTION])
             || empty($data[static::DATA_KEY_HASH])
         ) {
             $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Wrong data');
             return false;
         }
-        $gameId = $data[static::DATA_KEY_GAME_ID];
+        $gameHash = $data[static::DATA_KEY_GAME_HASH];
         $action = $data[static::DATA_KEY_ACTION] . 'Action';
         $hash = $data[static::DATA_KEY_HASH];
         if (!method_exists($this, $action)) {
@@ -37,54 +44,72 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
             return false;
         }
 
-        unset($data[static::DATA_KEY_GAME_ID], $data[static::DATA_KEY_ACTION]);
+        try {
+            $userId = $this->getUserId();
+            $this->game = $this->service->loadByUserIdAndGameHash($userId, $gameHash);
+        } catch (Exception $e) {
+            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Wrong user or game. Error: ' . $e->getMessage());
+            return false;
+        }
+
+        unset($data[static::DATA_KEY_GAME_HASH], $data[static::DATA_KEY_ACTION], $data[static::DATA_KEY_HASH]);
         $this->getServer()->getLogger()->debug(static::LOG_PREFIX . 'Call action "' . $action . '". Data: ' . Zend_Json::encode($data));
         try {
-            $this->$action($gameId, $data);
+            $this->$action($data);
         } catch (Exception $e) {
             $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Action error: ' . $e->getMessage());
             return false;
         }
-        if (!$this->service->checkBoard($gameId, $hash)) {
-            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Check Board error');
-            $this->send('sudoku', 'forceRefresh', ['reason' => 'Synchronization error']);
-            return false;
+        if (!in_array($action, $this->skipCheckBoardForActions)) {
+            if (!$this->service->checkBoard($this->game->getId(), $hash)) {
+                $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Check Board error');
+                $this->send('sudoku', 'forceRefresh', ['reason' => 'Synchronization error']);
+                return false;
+            }
         }
         return true;
     }
 
     /**
-     * @param $gameId
      * @param array $data
      * @return bool
      */
-    protected function pingAction($gameId, array $data)
+    protected function loadBoardAction(array $data)
     {
-        $this->service->load($gameId)->ping();
-        $this->send('sudoku', '', [], $this->getSystemData($gameId));
+        $data = $this->game->getParameters();
+        $this->send('sudoku', 'loadBoard', $data, $this->getSystemData());
         return true;
     }
 
     /**
-     * @param $gameId
      * @param array $data
      * @return bool
      */
-    protected function startAction($gameId, array $data)
+    protected function pingAction(array $data)
     {
-        $this->service->load($gameId)->start();
-        $this->send('sudoku', '', [], $this->getSystemData($gameId));
+        $this->game->ping();
+        $this->send('sudoku', '', [], $this->getSystemData());
         return true;
     }
 
     /**
-     * @param $gameId
      * @param array $data
      * @return bool
      */
-    protected function checkBoardAction($gameId, array $data)
+    protected function startAction(array $data)
     {
-        $errors = $this->service->checkGameSolution($this->service->load($gameId));
+        $this->game->start();
+        $this->send('sudoku', '', [], $this->getSystemData());
+        return true;
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
+    protected function checkBoardAction(array $data)
+    {
+        $errors = $this->service->checkGameSolution($this->game);
         $resolved = false;
         if (!is_array($errors)) {
             $resolved = (bool)$errors;
@@ -93,73 +118,67 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
             'errors'   => $errors,
             'resolved' => $resolved,
         ];
-        $this->send('sudoku', 'checkField', $data, $this->getSystemData($gameId));
+        $this->send('sudoku', 'checkField', $data, $this->getSystemData());
         return true;
     }
 
     /**
-     * @param $gameId
      * @param array $data
      * @return bool
      */
-    protected function setCellNumberAction($gameId, array $data)
+    protected function setCellNumberAction(array $data)
     {
         $coords = !empty($data['coords']) ? $data['coords'] : '';
         $number = !empty($data['number']) ? $data['number'] : '';
-        $this->service->load($gameId)->setCellNumber($coords, $number);
-        $this->send('sudoku', 'setCellNumber', [], $this->getSystemData($gameId));
+        $this->game->setCellNumber($coords, $number);
+        $this->send('sudoku', 'setCellNumber', [], $this->getSystemData());
         return true;
     }
 
     /**
-     * @param $gameId
      * @param array $data
      * @return bool
      */
-    protected function clearBoardAction($gameId, array $data)
+    protected function clearBoardAction(array $data)
     {
-        $this->service->load($gameId)->clearBoard();
-        $this->send('sudoku', 'clearBoard', [], $this->getSystemData($gameId));
+        $this->game->clearBoard();
+        $this->send('sudoku', 'clearBoard', [], $this->getSystemData());
         return true;
     }
 
     /**
-     * @param $gameId
      * @param array $data
      * @return bool
      */
-    protected function undoMoveAction($gameId, array $data)
+    protected function undoMoveAction(array $data)
     {
-        $this->service->load($gameId)->undoMove();
-        $this->send('sudoku', 'undoMove', [], $this->getSystemData($gameId));
+        $this->game->undoMove();
+        $this->send('sudoku', 'undoMove', [], $this->getSystemData());
         return true;
     }
 
     /**
-     * @param $gameId
      * @param array $data
      * @return bool
      */
-    protected function redoMoveAction($gameId, array $data)
+    protected function redoMoveAction(array $data)
     {
-        $this->service->load($gameId)->redoMove();
-        $this->send('sudoku', 'redoMove', [], $this->getSystemData($gameId));
+        $this->game->redoMove();
+        $this->send('sudoku', 'redoMove', [], $this->getSystemData());
         return true;
     }
 
     /**
-     * @param int $gameId
      * @return array
      */
-    protected function getSystemData($gameId)
+    protected function getSystemData()
     {
         $data = [];
-        $game = $this->service->load($gameId);
-        $moves = $game->getUndoRedoMoves();
-        $data['gameHash'] = $game->getHash();
+        $moves = $this->game->getUndoRedoMoves();
+        $data['gameHash'] = $this->game->getHash();
         $data['undoMove'] = $moves['undo'];
         $data['redoMove'] = $moves['redo'];
-        $data['duration'] = $game->getDuration();
+        $data['duration'] = $this->game->getDuration();
         return $data;
     }
 

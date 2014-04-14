@@ -3,7 +3,7 @@
 abstract class Application_Service_Abstract
 {
 
-    private static $instances = array();
+    private static $instances = [];
 
     /**
      * @var Application_Model_Db_Abstract

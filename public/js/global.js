@@ -58,9 +58,10 @@
         if (hours != '00' || time || showEmpty) {
             time += hours + ':';
         }
-        if (minutes != '00' || time || showEmpty) {
-            time += minutes + ':';
-        }
+//        if (minutes != '00' || time || showEmpty) {
+//            time += minutes + ':';
+//        }
+        time += minutes + ':';
         time += seconds;
         return time;
     }

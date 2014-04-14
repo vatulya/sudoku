@@ -13,18 +13,18 @@ abstract class Application_Model_Db_GameAbstract extends Application_Model_Db_Ab
      * @param array $exceptIds
      * @return bool
      */
-    public function setAllGamesState($state, $exceptIds = array())
+    public function setAllGamesState($state, array $exceptIds = [])
     {
         $where = null;
-        $ids = array();
+        $ids = [];
         $exceptIds = (array)$exceptIds;
         foreach ($exceptIds as $id) {
             $ids[] = $id;
         }
         if ($ids) {
-            $where = array('id IN (?)', $ids);
+            $where = ['id IN (?)', $ids];
         }
-        $update = array('state' => $state);
+        $update = ['state' => $state];
         $result = (bool)$this->_db->update(static::TABLE_NAME, $update, $where);
         return $result;
     }

@@ -13,6 +13,18 @@ CREATE TABLE IF NOT EXISTS users (
     INDEX (login)
 );
 
+CREATE TABLE IF NOT EXISTS user_sessions (
+    id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    session_id VARCHAR(255),
+    ip VARCHAR(25) NOT NULL,
+    created DATETIME NOT NULL,
+    PRIMARY KEY (id),
+    INDEX (user_id),
+    INDEX (session_id),
+    INDEX (created)
+);
+
 CREATE TABLE IF NOT EXISTS sudoku_games (
     id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,

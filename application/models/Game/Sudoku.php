@@ -35,7 +35,7 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
     {
         $newParameters = [];
         $oldParameters = [];
-        $checkedCells = $this->getParameter(static::PARAMETER_KEY_CHECKED_CELLS) ?: array();
+        $checkedCells = $this->getParameter(static::PARAMETER_KEY_CHECKED_CELLS) ?: [];
 
         foreach ($cellsNumbers as $coords => $number) {
             if (!$this->isCorrectCellNumber($coords, $number)) {

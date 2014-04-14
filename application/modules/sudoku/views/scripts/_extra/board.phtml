@@ -18,55 +18,14 @@ function isGray ($row, $col) {
     return $isGray;
 }
 
-function createCell ($game, $row, $col) {
-    $isGray = isGray($row, $col) ? 'gray' : '';
-    $cellCoords = $row . $col;
-    $open = 'open';
-    $empty = 'empty';
-    $locked = '';
-    $number = '';
-    if (!empty($game[Application_Model_Game_Sudoku::PARAMETER_KEY_CHECKED_CELLS][$cellCoords])) {
-        $number = $game[Application_Model_Game_Sudoku::PARAMETER_KEY_CHECKED_CELLS][$cellCoords];
-        $empty = '';
-    }
-    if (!empty($game[Application_Model_Game_Sudoku::PARAMETER_KEY_OPEN_CELLS][$cellCoords])) {
-        $number = $game[Application_Model_Game_Sudoku::PARAMETER_KEY_OPEN_CELLS][$cellCoords];
-        $open = '';
-        $empty = '';
-        $locked = 'locked';
-    }
-    $classes = [
-        'cell',
-        'row-' . $row,
-        'col-' . $col,
-        $isGray,
-        $open,
-        $empty,
-        $locked,
-    ];
 ?>
-<td
-    class="<?php echo implode(' ', $classes); ?>"
-    data-row="<?php echo $row; ?>"
-    data-col="<?php echo $col; ?>"
-    data-number="<?php echo $number; ?>"
-    >
-    <?php echo $number; ?>
-</td>
-<?php
-} // createCell
-?>
-<div class="sudoku-table"
-     data-game-id="<?php echo $sudoku->getId(); ?>"
+<div id="game-sudoku-<?php echo $sudoku->getHash(); ?>"
+     class="sudoku-table"
      ondragstart="return false;"
      ondrop="return false;"
      data-selected-cell=""
      data-hovered-number=""
     >
-
-    <div class="game-params">
-        Cells opened initially: <span><?php echo count($game['openCells']);?></span>
-    </div>
 
     <div class="congratulations">
         <div class="message">
@@ -76,10 +35,26 @@ function createCell ($game, $row, $col) {
     </div>
 
     <table class="sudoku-board">
-        <?php for ($r = 1; $r <= $rows; $r++): ?>
+        <?php for ($row = 1; $row <= $rows; $row++): ?>
         <tr>
-            <?php for ($c = 1; $c <= $cols; $c++): ?>
-                <?php createCell($game, $r, $c); ?>
+            <?php for ($col = 1; $col <= $cols; $col++): ?>
+                <?php
+                $classes = [
+                    'cell',
+                    'row-' . $row,
+                    'col-' . $col,
+                    isGray($row, $col) ? 'gray' : '',
+                    'open',
+                    'empty',
+                ];
+                ?>
+                <td
+                    class="<?php echo implode(' ', array_filter($classes)); ?>"
+                    data-row="<?php echo $row; ?>"
+                    data-col="<?php echo $col; ?>"
+                    data-number=""
+                    >
+                </td>
             <?php endfor; ?>
         </tr>
         <?php endfor; ?>
@@ -93,9 +68,9 @@ function createCell ($game, $row, $col) {
             </tr>
             */ ?>
             <?php $number = 1; ?>
-            <?php for ($r = 1; $r <= 3; $r++): ?>
+            <?php for ($row = 1; $row <= 3; $row++): ?>
             <tr>
-                <?php for ($c = 1; $c <= 3; $c++): ?>
+                <?php for ($col = 1; $col <= 3; $col++): ?>
                     <td class="number enabled" data-number="<?php echo $number; ?>">
                         <?php if ($number == 3): ?><?php endif; ?>
                         <?php echo $number; ?>
@@ -116,13 +91,9 @@ function createCell ($game, $row, $col) {
         <button class="check-field btn btn-mini">Check</button>
         <button class="clear-field btn btn-mini btn-danger">Clear</button>
     </div>
-
-    <div class="game-time">
-        <?php
-        $time = secondsToArray($sudoku->getDuration());
-        echo implode(':', $time);
-        ?>
+    <div class="time">
+        Time: <div class="game-time">synchronization...</div>
     </div>
 </div>
 
-<?php $this->headScript()->appendScript('var $game = new window.Sudoku(\'.sudoku-table\');'); ?>
+<?php $this->headScript()->appendScript('var $game = new window.Sudoku(\'' . $sudoku->getHash() . '\');'); ?>

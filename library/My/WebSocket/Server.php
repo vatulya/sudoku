@@ -110,6 +110,11 @@ class My_WebSocket_Server
                             }
                             $this->doHandshake($user, $buffer);
                         } else {
+                            $sessionId = $user->getCookie(ini_get('session.name'));
+                            if (!$sessionId) {
+                                $this->disconnect($socket);
+                                continue;
+                            }
                             if (($message = $this->deframe($buffer, $user)) !== false) {
                                 if ($user->hasSentClose) {
                                     $this->disconnect($user->getSocket());
@@ -275,6 +280,7 @@ class My_WebSocket_Server
 
         $user->setHeaders($headers);
         $user->setHandshake($buffer);
+        $user->setCookies(http_parse_cookie($headers['cookie'] ?: []));
 
         $webSocketKeyHash = sha1($headers['sec-websocket-key'] . self::WEBSOCKET_GUID);
 

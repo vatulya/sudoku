@@ -23,7 +23,7 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      * @param array $parameters
      * @return Application_Model_Game_Abstract
      */
-    public function create($userId, array $parameters = array())
+    public function create($userId, array $parameters = [])
     {
         $difficulty = isset($parameters['difficulty']) ? $parameters['difficulty'] : static::DEFAULT_GAME_DIFFICULTY;
         $difficulty = $this->getDifficulty($difficulty) ?: $this->getDifficulty(static::DEFAULT_GAME_DIFFICULTY);
@@ -32,14 +32,14 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
         $board = $this->getOpenCells($board, $difficulty['openCells']);
         $board = $this->normalizeBoardKeys($board);
 
-        $game = array(
+        $game = [
             'user_id'    => $userId,
             'difficulty' => $difficulty,
-            'parameters' => array(
+            'parameters' => [
                 'openCells' => $board,
-            ),
+            ],
             'hash'       => md5($userId . time()),
-        );
+        ];
         $game = Application_Model_Game_Sudoku::create($game);
         return $game;
     }
@@ -72,10 +72,10 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      */
     protected function getSimpleBoard()
     {
-        $board = array();
+        $board = [];
         $rows = 9;
-        $rowOffsets = array(null, 0, 3, 6, 1, 4, 7, 2, 5, 8);
-        $row = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
+        $rowOffsets = [null, 0, 3, 6, 1, 4, 7, 2, 5, 8];
+        $row = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         for ($r = 1; $r <= $rows; $r++) {
             $rowCopy = $row;
             $offset = $rowOffsets[$r];
@@ -113,13 +113,13 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      */
     public function getAllowedShuffleMethods()
     {
-        return array(
+        return [
             'Transposing',
             'SwapRows',
             'SwapCols',
             'SwapSquareRows',
             'SwapSquareCols',
-        );
+        ];
     }
 
     /**
@@ -203,7 +203,7 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      */
     protected function mergeBoardRows(array $board)
     {
-        $mergedBoard = array();
+        $mergedBoard = [];
         foreach ($board as $row) {
             $mergedBoard = array_merge($mergedBoard, $row);
         }
@@ -222,7 +222,7 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
         }
         $keys = array_keys($board);
         shuffle($keys);
-        $openCells = array();
+        $openCells = [];
         while ($count > 0) {
             $key = $keys[$count];
             $openCells[$key] = $board[$key];
@@ -237,7 +237,7 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      */
     protected function normalizeBoardKeys(array $board)
     {
-        $normalizedBoard = array();
+        $normalizedBoard = [];
         foreach ($board as $key => $value) {
             $key++; // 0 -> 1, 8 -> 9, 9 -> 10
             $row = ceil($key / 9);
@@ -255,32 +255,32 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      */
     public function checkFields(array $cells)
     {
-        $errors = array();
-        $openCellsPerRows = $openCellsPerCols = $openCellsPerSquares = array();
+        $errors = [];
+        $openCellsPerRows = $openCellsPerCols = $openCellsPerSquares = [];
         foreach ($cells as $coords => $value) {
             list ($row, $col) = str_split($coords);
             $square = (int)((ceil($row / 3) - 1) * 3 + ceil($col / 3));
 
             if (empty($openCellsPerRows[$row])) {
-                $openCellsPerRows[$row] = array();
+                $openCellsPerRows[$row] = [];
             }
             $openCellsPerRows[$row][$coords] = $value;
 
             if (empty($openCellsPerCols[$col])) {
-                $openCellsPerCols[$col] = array();
+                $openCellsPerCols[$col] = [];
             }
             $openCellsPerCols[$col][$coords] = $value;
 
             if (empty($openCellsPerSquares[$square])) {
-                $openCellsPerSquares[$square] = array();
+                $openCellsPerSquares[$square] = [];
             }
             $openCellsPerSquares[$square][$coords] = $value;
         }
 
         $checkCells = function (array $cells) {
-            $errors = array();
+            $errors = [];
             foreach ($cells as $data) {
-                $exists = array();
+                $exists = [];
                 foreach ($data as $coords => $value) {
                     if (isset($exists[$value])) {
                         if (!isset($errors[$exists[$value]])) { // Save first element too
@@ -372,15 +372,15 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
     protected static function initDifficulties()
     {
         parent::initDifficulties();
-        $additionalParameters = array(
-            self::DIFFICULTY_PRACTICE  => array('openCells' => 40),
-            self::DIFFICULTY_EASY      => array('openCells' => 35),
-            self::DIFFICULTY_NORMAL    => array('openCells' => 30),
-            self::DIFFICULTY_EXPERT    => array('openCells' => 25),
-            self::DIFFICULTY_NIGHTMARE => array('openCells' => 20),
-            self::DIFFICULTY_RANDOM    => array('openCells' => array('min' => 20, 'max' => 30)),
-            self::DIFFICULTY_TEST      => array('openCells' => 78),
-        );
+        $additionalParameters = [
+            self::DIFFICULTY_PRACTICE  => ['openCells' => 40],
+            self::DIFFICULTY_EASY      => ['openCells' => 35],
+            self::DIFFICULTY_NORMAL    => ['openCells' => 30],
+            self::DIFFICULTY_EXPERT    => ['openCells' => 25],
+            self::DIFFICULTY_NIGHTMARE => ['openCells' => 20],
+            self::DIFFICULTY_RANDOM    => ['openCells' => ['min' => 20, 'max' => 30]],
+            self::DIFFICULTY_TEST      => ['openCells' => 78],
+        ];
         foreach (static::$difficulties as $code => $parameters) {
             if (isset($additionalParameters[$code])) {
                 static::$difficulties[$code] += $additionalParameters[$code];

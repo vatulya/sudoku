@@ -10,9 +10,9 @@ class Application_Model_Db_Sudoku_Logs extends Application_Model_Db_GameAbstract
     const ACTION_TYPE_UNDO              = 'undo';
     const ACTION_TYPE_REDO              = 'redo';
 
-    public function getOne(array $parameters = [])
+    public function getOne(array $parameters = [], array $order = [])
     {
-        $data = parent::getOne($parameters);
+        $data = parent::getOne($parameters, $order);
         try {
             $data['new_parameters'] = Zend_Json::decode($data['new_parameters']);
         } catch (Exception $e) {

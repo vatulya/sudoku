@@ -26,7 +26,7 @@ class Application_Service_User extends Application_Service_Abstract
         $user = $this->getAuth()->getCurrentUser();
         if (empty($user)) {
             $userId = $this->registerGuest();
-            $this->getAuth()->login(array('id' => $userId));
+            $this->getAuth()->login(['id' => $userId]);
             $user = $this->getAuth()->getCurrentUser();
         }
         return $user;
@@ -38,7 +38,7 @@ class Application_Service_User extends Application_Service_Abstract
      */
     public function getById($id)
     {
-        return $this->getModelDb()->getOne(array('id' => $id));
+        return $this->getModelDb()->getOne(['id' => $id]);
     }
 
     /**
@@ -47,18 +47,18 @@ class Application_Service_User extends Application_Service_Abstract
      */
     public function getByData(array $data)
     {
-        $user = array();
+        $user = [];
         if (!empty($data['id'])) {
-            $user = $this->getModelDb()->getOne(array('id' => $data['id']));
+            $user = $this->getModelDb()->getOne(['id' => $data['id']]);
         }
         if (!$user && !empty($data['login'])) {
-            $user = $this->getModelDb()->getOne(array('login' => $data['login']));
+            $user = $this->getModelDb()->getOne(['login' => $data['login']]);
         }
         if (!$user && !empty($data['email'])) {
-            $user = $this->getModelDb()->getOne(array('email' => $data['email']));
+            $user = $this->getModelDb()->getOne(['email' => $data['email']]);
         }
         if (!$user && !empty($data['network']) && !empty($data['network_id'])) {
-            $user = $this->getModelDb()->getOne(array('network' => $data['network'], 'network_id' => $data['network_id']));
+            $user = $this->getModelDb()->getOne(['network' => $data['network'], 'network_id' => $data['network_id']]);
         }
         return $user;
     }
@@ -78,7 +78,7 @@ class Application_Service_User extends Application_Service_Abstract
             }
             $user = $this->convertULoginData($user);
         } catch (Exception $e) {
-            $user = array();
+            $user = [];
         }
         return $user;
     }
@@ -89,11 +89,11 @@ class Application_Service_User extends Application_Service_Abstract
      */
     public function convertULoginData(array $userData)
     {
-        $user = array(
+        $user = [
             'full_name'  => $userData['first_name'],
             'network'    => $userData['network'],
             'network_id' => $userData['uid'],
-        );
+        ];
         return $user;
     }
 
@@ -140,7 +140,7 @@ class Application_Service_User extends Application_Service_Abstract
      */
     public function registerGuest()
     {
-        $userData = array('role_id' => self::ROLE_GUEST);
+        $userData = ['role_id' => self::ROLE_GUEST];
         $userId = $this->getModelDb()->insert($userData);
         return $userId;
     }
@@ -153,7 +153,7 @@ class Application_Service_User extends Application_Service_Abstract
     public function changePassword($userId, $newPassword)
     {
         $newPassword = self::encodePassword($newPassword);
-        $result = $this->getModelDb()->update($userId, array('password' => $newPassword));
+        $result = $this->getModelDb()->update($userId, ['password' => $newPassword]);
         return $result;
     }
 
@@ -193,10 +193,10 @@ class Application_Service_User extends Application_Service_Abstract
      */
     static public function getAllowedRoles()
     {
-        $roles = array(
+        $roles = [
             self::ROLE_GUEST => 'Guest',
             self::ROLE_USER  => 'User',
-        );
+        ];
         return $roles;
     }
 

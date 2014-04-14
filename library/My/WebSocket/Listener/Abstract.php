@@ -17,6 +17,8 @@ abstract class My_WebSocket_Listener_Abstract
      */
     protected $user;
 
+    protected static $userSessions = [];
+
     public function __call($method, $arguments)
     {
         if (!isset($arguments[0]) || !$arguments[0] instanceof My_WebSocket_Server) {
@@ -88,6 +90,23 @@ abstract class My_WebSocket_Listener_Abstract
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserId()
+    {
+        $sessionId = $this->getUser()->getCookie(ini_get('session.name'));
+        if (empty(self::$userSessions[$sessionId])) {
+            $userSessionsDbModel = new Application_Model_Db_User_Sessions();
+            $userId = $userSessionsDbModel->getOne(['session_id' => $sessionId], ['created DESC']);
+            $userId = $userId['user_id'];
+            self::$userSessions[$sessionId] = $userId;
+        } else {
+            $userId = self::$userSessions[$sessionId];
+        }
+        return (int)$userId;
     }
 
 }

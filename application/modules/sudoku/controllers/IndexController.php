@@ -3,11 +3,11 @@
 class Sudoku_IndexController extends Zend_Controller_Action
 {
 
-    public $ajaxable = array(
-        'index'       => array('html'),
-        'check-field' => array('json'),
-        'user-action' => array('json'),
-    );
+    public $ajaxable = [
+        'index'       => ['html'],
+        'check-field' => ['json'],
+        'user-action' => ['json'],
+    ];
 
     public function init()
     {
@@ -22,18 +22,18 @@ class Sudoku_IndexController extends Zend_Controller_Action
     {
         $uLoginRedirectUrl = $this->view->serverUrl();
         $uLoginRedirectUrl .= $this->_helper->Url->url(
-            array(
+            [
                 'controller' => 'user',
                 'action'     => 'u-login'
-            ),
+            ],
             'sudoku',
             true
         );
-        $this->view->assign(array(
+        $this->view->assign([
             'uLoginData'   => Application_Service_User::getULoginData($uLoginRedirectUrl),
             'difficulties' => Application_Service_Game_Sudoku::getAllDifficulties(),
             'user'         => Application_Service_User::getInstance()->getCurrentUser(),
-        ));
+        ]);
     }
 
     public function indexAction()
@@ -42,13 +42,13 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $user = Application_Service_User::getInstance()->getCurrentUser();
 
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
-        $sudokuGame = $sudokuService->create($user['id'], array('difficulty' => $difficulty));
+        $sudokuGame = $sudokuService->create($user['id'], ['difficulty' => $difficulty]);
 
         $this->getHelper('redirector')->gotoRoute(['gameHash' => $sudokuGame->getHash()], 'sudoku-game', true);
 
-        $this->view->assign(array(
+        $this->view->assign([
             'sudoku' => $sudokuGame,
-        ));
+        ]);
     }
 
     public function gameAction()
@@ -66,9 +66,9 @@ class Sudoku_IndexController extends Zend_Controller_Action
             $this->getHelper('redirector')->gotoRoute([], 'sudoku', true);
 
         }
-        $this->view->assign(array(
+        $this->view->assign([
             'sudoku' => $sudokuGame,
-        ));
+        ]);
     }
 
     public function checkFieldAction()

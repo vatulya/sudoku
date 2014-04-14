@@ -7,15 +7,15 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
 
     const DEFAULT_USER_FULL_NAME = 'mr. Anonymous';
 
-    protected $_hiddenFields = array(
+    protected $_hiddenFields = [
         'password',
-    );
+    ];
 
     protected $_hideFields = true;
 
-    public function getOne(array $parameters = array())
+    public function getOne(array $parameters = [], array $order = [])
     {
-        $result = parent::getOne($parameters);
+        $result = parent::getOne($parameters, $order);
         if ($result && $this->_hideFields) {
             $result = $this->hideFields($result);
             $this->_hideFields = true;
@@ -23,7 +23,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
         return $result;
     }
 
-    public function getAll(array $parameters = array(), array $order = array('full_name ASC'))
+    public function getAll(array $parameters = [], array $order = ['full_name ASC'])
     {
         $result = parent::getAll($parameters, $order);
         if ($result && $this->_hideFields) {
@@ -37,7 +37,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
 
     public function insert(array $data)
     {
-        $data = array(
+        $data = [
             'role_id'    => isset($data['role_id']) ? $data['role_id'] : Application_Service_User::ROLE_GUEST,
             'email'      => isset($data['email']) ? $data['email'] : '',
             'login'      => isset($data['login']) ? $data['login'] : '',
@@ -46,7 +46,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
             'full_name'  => isset($data['full_name']) ? $data['full_name'] : self::DEFAULT_USER_FULL_NAME,
             'password'   => isset($data['password']) ? $data['password'] : '',
             'created'    => $this->getNow(),
-        );
+        ];
         $result = $this->_db->insert(static::TABLE_NAME, $data);
         if ($result) {
             $result = $this->_db->lastInsertId();

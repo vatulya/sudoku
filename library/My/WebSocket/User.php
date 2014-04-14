@@ -5,8 +5,11 @@ class My_WebSocket_User
 
     protected $socket;
     protected $id;
-    protected $headers = array();
+    protected $headers = [];
     protected $handshake = false;
+
+    protected $cookies;
+    protected $sessionId;
 
     public $handlingPartialPacket = false;
     public $partialBuffer = "";
@@ -86,6 +89,45 @@ class My_WebSocket_User
         return $this->socket;
     }
 
+    /**
+     * @param mixed $cookies
+     */
+    public function setCookies($cookies)
+    {
+        $this->cookies = $cookies;
+    }
 
+    /**
+     * @return mixed
+     */
+    public function getCookies()
+    {
+        return $this->cookies;
+    }
+
+    /**
+     * @param string $key
+     * @return mixed $value
+     */
+    public function getCookie($key)
+    {
+        return array_key_exists($key, $this->cookies) ? $this->cookies[$key] : null;
+    }
+
+    /**
+     * @param string $sessionId
+     */
+    public function setSessionId($sessionId)
+    {
+        $this->sessionId = $sessionId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSessionId()
+    {
+        return $this->sessionId;
+    }
 
 }

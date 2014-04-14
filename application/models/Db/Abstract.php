@@ -19,12 +19,16 @@ abstract class Application_Model_Db_Abstract
      * @param array $parameters
      * @return array
      */
-    public function getOne(array $parameters = array())
+    public function getOne(array $parameters = [], array $order = [])
     {
         $select = $this->_db->select()->from(static::TABLE_NAME);
         foreach ($parameters as $field => $value) {
             $select->where($field . ' = ?', $value);
         }
+        if (!empty($order)) {
+            $select->order($order);
+        }
+        $select->limit(1);
         $result = $this->_db->fetchRow($select);
         return $result;
     }
@@ -34,7 +38,7 @@ abstract class Application_Model_Db_Abstract
      * @param array $order
      * @return array
      */
-    public function getAll(array $parameters = array(), array $order = array())
+    public function getAll(array $parameters = [], array $order = [])
     {
         $select = $this->_db->select()->from(static::TABLE_NAME);
         foreach ($parameters as $field => $value) {

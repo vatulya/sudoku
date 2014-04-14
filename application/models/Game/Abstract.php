@@ -55,7 +55,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     /**
      * @var array
      */
-    protected $parameters = array();
+    protected $parameters = [];
 
     /**
      * @var string
@@ -73,7 +73,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
      */
     protected function __construct($id)
     {
-        $game = self::getModelDb()->getOne(array('id' => $id));
+        $game = self::getModelDb()->getOne(['id' => $id]);
         if (!$game) {
             throw new RuntimeException('Wrong game ID "' . $id . '".');
         }
@@ -301,7 +301,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     public function start()
     {
         $service = $this->getService();
-        $otherGames = $this->getModelDb()->getAll(array('state' => array($service::STATE_IN_PROGRESS, $service::STATE_NEW)));
+        $otherGames = $this->getModelDb()->getAll(['state' => [$service::STATE_IN_PROGRESS, $service::STATE_NEW]]);
         foreach ($otherGames as $otherGame) {
             /** @var Application_Model_Game_Abstract $game */
             $game = self::load($otherGame['id']);
@@ -359,7 +359,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
      */
     public function toArray()
     {
-        $data = array(
+        $data = [
             'id'         => $this->id,
 //            'user_id'    => $this->userId,
             'state'      => $this->state,
@@ -369,7 +369,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
             'ended'      => $this->ended,
             'duration'   => $this->duration,
             'parameters' => $this->parameters,
-        );
+        ];
         return $data;
     }
 

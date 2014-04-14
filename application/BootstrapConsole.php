@@ -8,5 +8,10 @@ class BootstrapConsole extends Zend_Application_Bootstrap_Bootstrap
         $this->getApplication()->getAutoloader()->registerNamespace('My');
     }
 
+    protected function _initFunctions()
+    {
+        require_once 'functions.php';
+    }
+
 }
 

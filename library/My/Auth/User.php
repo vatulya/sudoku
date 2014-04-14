@@ -33,6 +33,13 @@ class My_Auth_User
         $auth = Zend_Auth::getInstance();
         $result = $auth->authenticate($adapter);
         if ($result->isValid()) {
+            $user = $result->getIdentity();
+            $data = [
+                'user_id' => $user['id'],
+                'session_id' => session_id(),
+                'ip' => Zend_Controller_Front::getInstance()->getRequest()->getServer('REMOTE_ADDR'),
+            ];
+            (new Application_Model_Db_User_Sessions())->insert($data);
             return true;
         }
         return false;
@@ -54,7 +61,7 @@ class My_Auth_User
     public function getCurrentUser()
     {
         $auth = Zend_Auth::getInstance();
-        $user = $auth->hasIdentity() ? $auth->getIdentity() : array();
+        $user = $auth->hasIdentity() ? $auth->getIdentity() : [];
         return $user;
     }
 

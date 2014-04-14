@@ -5,19 +5,19 @@ class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstrac
 
     const TABLE_NAME = 'sudoku_games';
 
-    public function getOne(array $parameters = array())
+    public function getOne(array $parameters = [], array $order = [])
     {
-        $data = parent::getOne($parameters);
+        $data = parent::getOne($parameters, $order);
         try {
             $data['parameters'] = Zend_Json::decode($data['parameters']);
         } catch (Exception $e) {
             // TODO: add logs
-            $data['paramters'] = array();
+            $data['paramters'] = [];
         }
         return $data;
     }
 
-    public function getAll(array $parameters = array(), array $order = array())
+    public function getAll(array $parameters = [], array $order = [])
     {
         $data = parent::getAll($parameters, $order);
         foreach ($data as $key => $row) {
@@ -25,7 +25,7 @@ class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstrac
                 $row['parameters'] = Zend_Json::decode($row['parameters']);
             } catch (Exception $e) {
                 // TODO: add logs
-                $row['paramters'] = array();
+                $row['paramters'] = [];
             }
             $data[$key] = $row;
         }
@@ -35,14 +35,14 @@ class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstrac
     public function insert(array $data)
     {
         $now = $this->getNow();
-        $data = array(
+        $data = [
             'user_id'    => $data['user_id'],
             'difficulty' => $data['difficulty']['code'],
-            'parameters' => isset($data['parameters']) ? $data['parameters'] : array(),
+            'parameters' => isset($data['parameters']) ? $data['parameters'] : [],
             'created'    => $now,
             'updated'    => $now,
             'hash'       => $data['hash'],
-        );
+        ];
         $data['parameters'] = Zend_Json::encode($data['parameters']);
         $result = $this->_db->insert(self::TABLE_NAME, $data);
         if ($result) {
@@ -53,8 +53,8 @@ class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstrac
 
     public function update($id, array $data)
     {
-        $update = array();
-        foreach (array('state', 'difficulty', 'duration', 'parameters') as $field) {
+        $update = [];
+        foreach (['state', 'difficulty', 'duration', 'parameters'] as $field) {
             if (isset($data[$field])) {
                 $update[$field] = $data[$field];
             }
@@ -65,7 +65,7 @@ class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstrac
         $update['updated'] = $this->getNow();
         $result = false;
         if (!empty($update)) {
-            $result = (bool)$this->_db->update(static::TABLE_NAME, $update, array('id = ?' => $id));
+            $result = (bool)$this->_db->update(static::TABLE_NAME, $update, ['id = ?' => $id]);
         }
         return $result;
     }

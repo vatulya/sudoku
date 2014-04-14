@@ -3,11 +3,11 @@
 class Sudoku_UserController extends Zend_Controller_Action
 {
 
-    public $ajaxable = array(
-        'login'    => array('json'),
-        'logout'   => array('html', 'json'),
-        'register' => array('json'),
-    );
+    public $ajaxable = [
+        'login'    => ['json'],
+        'logout'   => ['html', 'json'],
+        'register' => ['json'],
+    ];
 
     /**
      * @var Application_Service_User
@@ -36,10 +36,10 @@ class Sudoku_UserController extends Zend_Controller_Action
         $uLoginUser = $this->serviceUser->ULogin($token, $host);
         if (empty($uLoginUser)) {
             $this->redirect($this->_helper->Url->url(
-                array(
+                [
                     'controller' => 'index',
                     'action'     => 'index'
-                ),
+                ],
                 'sudoku',
                 true
             ));
@@ -56,10 +56,10 @@ class Sudoku_UserController extends Zend_Controller_Action
             $this->serviceUser->getAuth()->login($user);
         }
         $this->redirect($this->_helper->Url->url(
-            array(
+            [
                 'controller' => 'index',
                 'action'     => 'index'
-            ),
+            ],
             'sudoku',
             true
         ));
@@ -70,20 +70,20 @@ class Sudoku_UserController extends Zend_Controller_Action
         $loginOrEmail = $this->_getParam('login_email');
         $password     = $this->_getParam('password');
 
-        $userData = array(
+        $userData = [
             'login'    => $loginOrEmail,
             'email'    => $loginOrEmail,
             'password' => $password,
-        );
+        ];
 
         try {
             $errors = $this->serviceUser->getAuth()->login($userData);
         } catch (Exception $e) {
-            $errors[] = array(
+            $errors[] = [
                 'name'  => 'Login form',
                 'title' => 'System error',
                 'text'  => 'Something wrong. System error',
-            );
+            ];
         }
 
         if (empty($errors)) {
@@ -102,7 +102,7 @@ class Sudoku_UserController extends Zend_Controller_Action
 
     public function registerAction()
     {
-        $errors = array();
+        $errors = [];
         try {
             $userData = $this->getAllParams();
             $check = $this->serviceUser->getByData($userData);
@@ -123,20 +123,20 @@ class Sudoku_UserController extends Zend_Controller_Action
 
             $userId = $this->serviceUser->register($userData);
             if ($userId) {
-                $errors = $this->serviceUser->getAuth()->login(array('id' => $userId));
+                $errors = $this->serviceUser->getAuth()->login(['id' => $userId]);
             }
         } catch (Zend_Controller_Exception $ze) {
-            $errors[] = array(
+            $errors[] = [
                 'name' => '',
                 'title' => 'System error',
                 'text' => $ze->getMessage(),
-            );
+            ];
         } catch (Exception $e) {
-            $errors[] = array(
+            $errors[] = [
                 'name' => '',
                 'title' => 'System error',
                 'text' => 'Something wrong. System error',
-            );
+            ];
         }
         if (!empty($errors)) {
             $this->view->messages = $errors;
