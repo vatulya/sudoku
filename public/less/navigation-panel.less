@@ -1,0 +1,115 @@
+/**************************************** navigation ***************************************/
+.navigation-panel {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1050;
+  height: @navigation-panel-navigation-panel-height;
+  background-color: @navigation-panel-navigation-panel-background-color;
+  border-bottom: @navigation-panel-navigation-panel-border-bottom;
+  padding: @navigation-panel-navigation-panel-padding;
+
+  .linear-gradient-mixin(@navigation-panel-navigation-panel-gradient-start, @navigation-panel-navigation-panel-gradient-end);
+  .box-shadow-mixin(@default-box-shadow);
+
+  .container {
+    vertical-align: middle;
+  }
+
+  .page-title {
+    float: left;
+    font-size: @navigation-panel-navigation-panel-page-title-font-size;
+    line-height: @navigation-panel-navigation-panel-page-title-line-height;
+    width: @navigation-panel-navigation-panel-page-title-width;
+    margin-left: @navigation-panel-navigation-panel-page-title-margin-left;
+  }
+
+  .user-block {
+    float: right;
+    line-height: @navigation-panel-navigation-panel-user-block-line-height;
+    border-left: @navigation-panel-navigation-panel-user-block-border-left;
+    padding-left: @navigation-panel-navigation-panel-user-block-padding-left;
+    margin-right: @navigation-panel-navigation-panel-user-block-margin-right;
+  }
+
+  .user-login-block,
+  .user-info-title-container {
+    text-align: right;
+  }
+}
+
+/**************************************** user info block ***************************************/
+
+.user-info-block {
+
+  .user-info-title-container {
+    cursor: pointer;
+  }
+
+  .user-menu-container {
+    float: right;
+  }
+
+  .user-menu {
+    position: absolute;
+    list-style-type: none;
+    text-align: left;
+    background-color: @navigation-panel-user-info-block-user-menu-background-color;
+    margin-top: @navigation-panel-user-info-block-user-menu-margin-top;
+    margin-left: @navigation-panel-user-info-block-user-menu-margin-left;
+    width: @navigation-panel-user-info-block-user-menu-width;
+    border: @navigation-panel-user-info-block-user-menu-border;
+
+    .box-shadow-mixin(@default-box-shadow);
+
+    li {
+      cursor: pointer;
+      padding: @navigation-panel-user-info-block-user-menu-li-padding;
+
+      &:hover {
+        background-color: @navigation-panel-user-info-block-user-menu-li-hover-background-color;
+      }
+
+      &.logout {
+        border-top: @navigation-panel-user-info-block-user-menu-li-logout-border-top;
+      }
+
+      a {
+        display: block;
+        color: @navigation-panel-user-info-block-user-menu-li-a-color;
+        text-decoration: @navigation-panel-user-info-block-user-menu-li-a-text-decoration;
+
+        &:hover {
+          color: @navigation-panel-user-info-block-user-menu-li-a-hover-color;
+          text-decoration: @navigation-panel-user-info-block-user-menu-li-a-hover-text-decoration;
+        }
+      }
+
+    }
+  }
+
+  &.user-menu-closed {
+    .user-menu-open-icon {
+      display: inline-block;
+    }
+
+    .user-menu,
+    .user-menu-close-icon {
+      display: none;
+    }
+  }
+
+  &.user-menu-opened {
+    .user-menu-close-icon {
+      display: inline-block;
+    }
+
+    .user-menu {
+      display: block;
+    }
+
+    .user-menu-open-icon {
+      display: none;
+    }
+  }
+}

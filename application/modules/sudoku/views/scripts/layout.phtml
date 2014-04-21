@@ -4,7 +4,8 @@
     <?php $this->headLink()
         ->appendStylesheet('/css/bootstrap.css')
         ->appendStylesheet('/css/styles.css')
-        ->appendStylesheet('/css/sudoku.css')
+    //        ->appendStylesheet('/css/styles.css')
+    //        ->appendStylesheet('/css/sudoku.css')
     ?>
     <?php echo $this->headLink() ?>
     <?php echo $this->headTitle() ?>
@@ -15,6 +16,7 @@
         ->prependFile('/js/user.js')
         ->prependScript('window.websocket = new window.WS();')
         ->prependFile('/js/websocket.js')
+        ->prependFile('/js/common.js')
         ->prependFile('/js/form.js')
         ->prependFile('/js/global.js')
         ->prependFile('/js/bootstrap.js')
@@ -26,8 +28,18 @@
 
 <?php echo $this->render('_extra/navigation.phtml'); ?>
 
-<div class="container" id="container">
-    <?php echo $this->layout()->content ?>
+<div class="main-container" id="main-container">
+    <div class="left-column">&nbsp;</div>
+    <?php echo $this->layout()->content; ?>
+</div>
+
+<div id="modal" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+        <h3></h3>
+    </div>
+    <div class="modal-body">
+    </div>
 </div>
 
 <?php echo $this->headScript(); ?>

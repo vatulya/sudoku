@@ -5,7 +5,7 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
 
     const TABLE_NAME = 'users';
 
-    const DEFAULT_USER_FULL_NAME = 'mr. Anonymous';
+    const DEFAULT_USER_FULL_NAME = 'мистер Гость';
 
     protected $_hiddenFields = [
         'password',

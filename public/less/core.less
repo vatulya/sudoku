@@ -1,0 +1,38 @@
+/**************************************** core ***************************************/
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  color: @core-body-color;
+  font-size: @core-body-font-size;
+  font-family: @core-body-font-family;
+}
+
+a {
+  color: @core-a-color;
+  text-decoration: @core-a-text-decoration;
+
+  [class^="icon-"], [class*=" icon-"] {
+    display: inline;
+  }
+
+  &:hover {
+    color: @core-a-hover-color;
+    text-decoration: @core-a-hover-text-decoration;
+
+    [class^='icon-'], [class*=' icon-'] {
+      text-decoration: none;
+    }
+  }
+}
+
+ul {
+  margin: 0;
+  list-style: none;
+}

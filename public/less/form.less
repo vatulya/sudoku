@@ -1,0 +1,48 @@
+/**************************************** form messages ***************************************/
+
+.form-message {
+  display: none;
+  vertical-align: middle;
+  text-align: center;
+  background-color: @form-form-message-background-color;
+  padding: @form-form-message-padding;
+  margin: @form-form-message-margin;
+
+  .border-radius-mixin(@form-form-message-border-radius);
+
+  ul {
+    list-style-type: none;
+  }
+}
+
+.form-field {
+
+  &.error {
+    .message {
+      color: @form-form-field-error-message-color;
+    }
+
+    .tooltip-inner {
+      background-color: @form-form-field-error-message-tooltip-inner-background-color;
+    }
+
+    .tooltip-arrow {
+      border-right-color: @form-form-field-error-message-tooltip-arrow-background-color;
+    }
+  }
+
+  &.success {
+    .message {
+      color: @form-form-field-success-message-tooltip-arrow-color;
+    }
+  }
+
+  .message {
+    display: none;
+    vertical-align: middle;
+    text-align: center;
+    font-size: @form-form-field-message-font-size;
+
+    .border-radius-mixin(@form-form-field-message-border-radius);
+  }
+}

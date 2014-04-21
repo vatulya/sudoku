@@ -93,12 +93,12 @@ abstract class Application_Service_Game_Abstract extends Application_Service_Abs
     protected static function initDifficulties()
     {
         static::$difficulties = [
-            self::DIFFICULTY_PRACTICE  => ['code' => self::DIFFICULTY_PRACTICE, 'title' => 'Practice',],
-            self::DIFFICULTY_EASY      => ['code' => self::DIFFICULTY_EASY, 'title' => 'Easy',],
-            self::DIFFICULTY_NORMAL    => ['code' => self::DIFFICULTY_NORMAL, 'title' => 'Normal',],
-            self::DIFFICULTY_EXPERT    => ['code' => self::DIFFICULTY_EXPERT, 'title' => 'Expert',],
-            self::DIFFICULTY_NIGHTMARE => ['code' => self::DIFFICULTY_NIGHTMARE, 'title' => 'Nightmare',],
-            self::DIFFICULTY_RANDOM    => ['code' => self::DIFFICULTY_RANDOM, 'title' => 'Random',],
+            self::DIFFICULTY_PRACTICE  => ['code' => self::DIFFICULTY_PRACTICE, 'title' => 'Практика',],
+            self::DIFFICULTY_EASY      => ['code' => self::DIFFICULTY_EASY, 'title' => 'Легкая',],
+            self::DIFFICULTY_NORMAL    => ['code' => self::DIFFICULTY_NORMAL, 'title' => 'Средняя',],
+            self::DIFFICULTY_EXPERT    => ['code' => self::DIFFICULTY_EXPERT, 'title' => 'Сложная',],
+            self::DIFFICULTY_NIGHTMARE => ['code' => self::DIFFICULTY_NIGHTMARE, 'title' => 'Эксперт',],
+            self::DIFFICULTY_RANDOM    => ['code' => self::DIFFICULTY_RANDOM, 'title' => 'Случайная',],
             self::DIFFICULTY_TEST      => ['code' => self::DIFFICULTY_TEST, 'title' => 'Test',],
         ];
     }

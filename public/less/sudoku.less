@@ -1,0 +1,192 @@
+@import "variables";
+@import "sudoku-variables";
+
+.sudoku-table {
+
+  &.resolved {
+
+    .congratulations {
+      display: block;
+    }
+
+    .sudoku-board {
+      .cell {
+        background-color: #ddffdd;
+      }
+    }
+  }
+  .congratulations {
+    width: 550px;
+    display: none;
+    position: absolute;
+    z-index: 10;
+
+    .message {
+      padding: 20px 50px;
+      margin: 100px auto 0;
+      width: 400px;
+      background-color: #fff;
+      border: 5px solid #cccccc;
+      border-radius: 5px;
+      font-size: 2em;
+      font-weight: bold;
+      line-height: 40px;
+      color: #008800;
+      text-align: center;
+      vertical-align: middle;
+    }
+  }
+}
+
+.sudoku-board {
+  border: @sudoku-default-board-border-width @sudoku-default-board-border-style @sudoku-default-board-border-color;
+}
+
+/********************************** board cells *********************************/
+
+.sudoku-board .cell {
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+  width: @sudoku-default-board-cell-width;
+  height: @sudoku-default-board-cell-height;
+  background-color: @sudoku-default-board-cell-background-color;
+  border: @sudoku-default-board-cell-border-width @sudoku-default-board-cell-border-style @sudoku-default-board-cell-border-color;
+  margin: -@sudoku-default-board-cell-border-width 0 0 -@sudoku-default-board-cell-border-width;
+  font-size: @sudoku-default-board-cell-font-size;
+}
+
+.sudoku-board .cell.gray {
+  background-color: @sudoku-default-board-cell-gray-background-color;
+}
+
+.sudoku-board .cell:hover {
+  background-color: @sudoku-default-board-cell-hover-background-color;
+}
+
+.sudoku-board .cell.locked {
+  background-color: @sudoku-default-board-cell-locked-background-color;
+}
+
+.sudoku-board .cell.hovered {
+  color: @sudoku-default-board-cell-number-hover-color;
+  background-color: @sudoku-default-board-cell-number-hover-background-color; // ???
+}
+
+.sudoku-board .cell.selected {
+  background-color: @sudoku-default-board-cell-selected-background-color;
+}
+
+.sudoku-board .cell.pushed {
+  background-color: @sudoku-default-board-cell-pushed-background-color;
+}
+
+.sudoku-board .cell.error {
+  background-color: @sudoku-default-board-cell-error-background-color;
+}
+
+.sudoku-board .cell.row-4,
+.sudoku-board .cell.row-7 {
+  border-top: @sudoku-default-board-around-section-border-width @sudoku-default-board-around-section-border-style @sudoku-default-board-around-section-border-color;
+}
+
+.sudoku-board .cell.col-4,
+.sudoku-board .cell.col-7 {
+  border-left: @sudoku-default-board-around-section-border-width @sudoku-default-board-around-section-border-style @sudoku-default-board-around-section-border-color;
+}
+
+/* no-errors */
+.sudoku-board.no-errors .cell.row-4,
+.sudoku-board.no-errors .cell.row-7 {
+  border-top-color: @sudoku-default-success-board-around-section-border-color;
+}
+
+.sudoku-board.no-errors .cell.col-4,
+.sudoku-board.no-errors .cell.col-7 {
+  border-left-color: @sudoku-default-success-board-around-section-border-color;
+}
+
+.sudoku-board.no-errors {
+  border-color: @sudoku-default-success-board-border-color;
+}
+
+/********************************** numpad *********************************/
+.sudoku-numpad {
+  /*display: none;*/
+}
+
+.sudoku-numpad table {
+  border: @sudoku-numpad-default-table-border;
+  padding: @sudoku-numpad-default-table-padding;
+  background-color: @sudoku-numpad-default-table-background-color;
+
+  .border-radius-mixin(@sudoku-numpad-default-table-border-radius);
+
+  &.popup {
+    position: absolute;
+  }
+
+  .number {
+    float: left;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    font-weight: bold;
+    background-color: @sudoku-numpad-default-number-background-color;
+    width: @sudoku-numpad-default-number-width;
+    height: @sudoku-numpad-default-number-height;
+    border: @sudoku-numpad-default-number-border;
+    margin: @sudoku-numpad-default-number-margin;
+    padding: @sudoku-numpad-default-number-padding;
+
+    &.disabled {
+      background-color: @sudoku-numpad-default-number-disabled-background-color;
+      font-weight: normal;
+    }
+
+    &.clear {
+      width: @sudoku-numpad-default-clear-width;
+    }
+
+    &.enabled {
+      &:hover,
+      &.hover {
+        background-color: @sudoku-numpad-default-number-hover-background-color;
+      }
+    }
+  }
+
+  .none {
+    visibility: hidden;
+  }
+
+  .close {
+    cursor: pointer;
+  }
+}
+
+/********************************** index and other *********************************/
+.game-board-example {
+  text-align: center;
+  padding: 15px 0;
+  margin: 0 auto;
+  width: 350px;
+
+  .sudoku-board {
+    margin: 0 auto;
+  }
+}
+
+.sudoku-game-goal {
+  font-size: 25px;
+  line-height: 30px;
+}
+
+/********************************** right col *********************************/
+
+.new-game {
+  width: 100%;
+}
+
+

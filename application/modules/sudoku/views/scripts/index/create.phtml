@@ -20,6 +20,5 @@
         </select>
         <button class="btn btn-mini btn-danger new-game">New game</button>
     </div>
-    <?php echo $this->partial('_extra/board.phtml'); ?>
-    <?php $this->headScript()->appendScript('var $game = new window.Sudoku(\'' . $sudoku->getHash() . '\');'); ?>
+    <?php echo $this->render('_extra/board.phtml'); ?>
 </div>

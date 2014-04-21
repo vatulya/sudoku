@@ -1,0 +1,28 @@
+<?php
+/** @var Application_Model_Game_Sudoku $sudoku */
+$sudoku = $this->sudoku;
+?>
+<div id="game-sudoku-<?php echo $sudoku->getHash(); ?>"
+     class="sudoku-table"
+     ondragstart="return false;"
+     ondrop="return false;"
+     data-selected-cell=""
+     data-hovered-number=""
+    >
+
+    <div class="congratulations">
+        <div class="message">
+            Congratulations!<br>
+            You have solved this sudoku!
+        </div>
+    </div>
+
+    <?php echo $this->partial('_extra/board.phtml', ['parameters' => $sudoku->getParameters()]); ?>
+
+    <?php echo $this->partial('_extra/sudoku-controls.phtml'); ?>
+
+    <div class="time">
+        Time: <div class="game-time">synchronization...</div>
+    </div>
+</div>
+

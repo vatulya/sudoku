@@ -3,8 +3,11 @@
 class Sudoku_IndexController extends Zend_Controller_Action
 {
 
+    const EXAMPLE_OPEN_CELLS = 35;
+
     public $ajaxable = [
         'index'       => ['html'],
+        'create'      => ['html'],
         'check-field' => ['json'],
         'user-action' => ['json'],
     ];
@@ -38,16 +41,41 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        $difficulty = $this->_request->getParam('difficulty');
-        $user = Application_Service_User::getInstance()->getCurrentUser();
-
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
-        $sudokuGame = $sudokuService->create($user['id'], ['difficulty' => $difficulty]);
+        $board = $sudokuService->generateBoard();
+        $board = $sudokuService->normalizeBoardKeys($board);
+        $openCells = $sudokuService->getOpenCells($board, static::EXAMPLE_OPEN_CELLS);
+        $boardExample = [
+            'openCells' => $openCells,
+        ];
+        $boardSolvedExample = [
+            'openCells'    => $openCells,
+            'checkedCells' => array_diff_key($board, $openCells),
+        ];
+        $this->view->assign([
+            'difficulties'       => $sudokuService::getAllDifficulties(),
+            'boardExample'       => $boardExample,
+            'boardSolvedExample' => $boardSolvedExample,
+        ]);
+    }
 
-        $this->getHelper('redirector')->gotoRoute(['gameHash' => $sudokuGame->getHash()], 'sudoku-game', true);
+    public function createAction()
+    {
+        $errors = [];
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+        $user = Application_Service_User::getInstance()->getCurrentUser();
+        try {
+            $difficulty = $this->_request->getParam('difficulty');
+            $sudokuGame = $sudokuService->create($user['id'], ['difficulty' => $difficulty]);
+            if ($sudokuGame) {
+                $this->getHelper('redirector')->gotoRoute(['gameHash' => $sudokuGame->getHash()], 'sudoku-game', true);
+            }
+        } catch (Exception $e) {
+            $errors[] = $e->getMessage();
+        }
 
         $this->view->assign([
-            'sudoku' => $sudokuGame,
+            'errors' => $errors,
         ]);
     }
 

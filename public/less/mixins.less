@@ -1,0 +1,52 @@
+.linear-gradient-mixin(@firstColor, @endColor) {
+  background: @firstColor;
+  background: -moz-linear-gradient(top,  @firstColor 0%, @endColor 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@firstColor), color-stop(100%,@endColor));
+  background: -webkit-linear-gradient(top,  @firstColor 0%,@endColor 100%);
+  background: -o-linear-gradient(top,  @firstColor 0%,@endColor 100%);
+  background: -ms-linear-gradient(top,  @firstColor 0%,@endColor 100%);
+  background: linear-gradient(to bottom,  @firstColor 0%,@endColor 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{firstColor}', endColorstr='@{endColor}', GradientType=0);
+}
+
+.opacity-mixin(@opacity) {
+  @ie-opacity: @opacity * 100;
+  -khtml-opacity: @opacity;
+    -moz-opacity: @opacity;
+         opacity: @opacity;
+
+     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=@{ie-opacity})";
+         filter: alpha(opacity=@ie-opacity);
+}
+
+.border-radius-mixin(@args) {
+  -webkit-border-radius: @arguments;
+     -moz-border-radius: @arguments;
+          border-radius: @arguments;
+}
+
+.box-shadow-mixin(@args) {
+  -webkit-box-shadow: @arguments;
+     -moz-box-shadow: @arguments;
+          box-shadow: @arguments;
+}
+
+.text-shadow-mixin(@args) {
+  text-shadow: @arguments;
+}
+
+.box-sizing-mixin(@args) {
+  -webkit-box-sizing: @arguments;
+  -moz-box-sizing: @arguments;
+  box-sizing: @arguments;
+}
+
+.select-disabled-mixin() {
+  -moz-user-select: '-moz-none';
+  -moz-user-select: 'none';
+  -o-user-select: 'none';
+  -khtml-user-select: 'none';
+  -webkit-user-select: 'none';
+  -ms-user-select: 'none';
+  user-select: 'none';
+}

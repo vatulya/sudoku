@@ -24,7 +24,8 @@
                 message += 'Connection die.';
             }
             message +=' Code: ' + event.code + ' Reason: ' + event.reason;
-            alert(message);
+            console.log(message);
+//            alert(message);
             $(d).trigger('websocket' + $this.S + 'close');
         };
 
@@ -57,7 +58,7 @@
 
         $this.socket.onerror = function(error) {
             console.log(error);
-            alert("Error: " + error.message);
+//            alert("Error: " + error.message);
             $(d).trigger('websocket_error');
         };
 

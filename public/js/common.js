@@ -8,7 +8,7 @@
         .on('click', '.new-game', function() {
             w.location.reload();
         })
-        .on('click', '.scroll-to-top', function(e) {
+        .on('click', '.scroll-top-top', function(e) {
             e.preventDefault();
             w.scrollTo(0, 0);
         });

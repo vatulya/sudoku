@@ -1,0 +1,31 @@
+<div class="sudoku-numpad">
+    <table>
+        <?php /*
+            <tr>
+                <td colspan="3" class="close"><i class="icon-remove-circle"></i></td>
+            </tr>
+            */ ?>
+        <?php $number = 1; ?>
+        <?php for ($row = 1; $row <= 3; $row++): ?>
+            <tr>
+                <?php for ($col = 1; $col <= 3; $col++): ?>
+                    <td class="number enabled" data-number="<?php echo $number; ?>">
+                        <?php if ($number == 3): ?><?php endif; ?>
+                        <?php echo $number; ?>
+                    </td>
+                    <?php $number++; ?>
+                <?php endfor; ?>
+            </tr>
+        <?php endfor; ?>
+        <tr>
+            <td class="number clear" colspan="3" data-number="">clear</td>
+        </tr>
+    </table>
+</div>
+
+<div class="additional-buttons">
+    <button class="undo-move btn btn-mini disabled" data-moves=""><i class="icon-chevron-left"></i> Undo</button>
+    <button class="redo-move btn btn-mini disabled" data-moves=""><i class="icon-chevron-right"></i>Redo</button>
+    <button class="check-field btn btn-mini">Check</button>
+    <button class="clear-field btn btn-mini btn-danger">Clear</button>
+</div>

@@ -1,0 +1,85 @@
+/**************************************** login and register ***************************************/
+
+#login-modal {
+
+  .modal-body {
+    padding: 15px 0 0 0;
+  }
+
+  .container {
+    width: @login-modal-container-width;
+    height: @login-modal-container-height;
+  }
+
+  .show-login {
+    float: left;
+  }
+
+  .show-register {
+    float: right;
+  }
+
+  .login-container {
+    float: left;
+    text-align: center;
+    width: @login-modal-login-container-width;
+  }
+
+  .register-container {
+    width: @login-modal-register-container-width;
+    float: right;
+    text-align: center;
+
+    form {
+      margin: 0;
+    }
+  }
+
+  .line-separator {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .show-button {
+    width: 30%;
+    cursor: pointer;
+    margin: 3px;
+    padding: 0 20px;
+    border-top: 1px solid #eeeeee;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    &.show-register {
+      text-align: right;
+    }
+  }
+
+  .login-register {
+    &.show-login-form {
+      .login-container,
+      .show-register {
+        display: block;
+      }
+
+      .register-container,
+      .show-login {
+        display: none;
+      }
+    }
+
+    &.show-register-form {
+      .login-container,
+      .show-register {
+        display: none;
+      }
+
+      .register-container,
+      .show-login {
+        display: block;
+      }
+    }
+  }
+}

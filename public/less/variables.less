@@ -1,0 +1,146 @@
+@import "mixins";
+
+// Colors
+@text-font-family: "Book Antiqua", Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
+@text-color: #000;
+@link-color: #1541ff;
+@link-hover-color: #d11c22;
+@default-box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+@default-text-shadow: 1px 1px 0 #000;
+@default-border-color: #998877;
+
+// Core
+@core-body-color: @text-color;
+@core-body-font-size: 16px;
+@core-body-font-family: @text-font-family;
+
+@core-a-color: @link-color;
+@core-a-text-decoration: underline;
+
+@core-a-hover-color: @link-hover-color;
+@core-a-hover-text-decoration: underline;
+
+// Common
+@common-background-color: @navigation-panel-navigation-panel-background-color;
+
+@common-left-column-width: 300px;
+
+@common-center-column-min-width: 800px;
+@common-center-column-background-color: #fff;
+@common-center-column-border-left: 1px solid @default-border-color;
+@common-center-column-border-right: 1px solid @default-border-color;
+
+@common-right-column-width: 300px;
+@common-right-column-font-size: 12px;
+
+@common-right-column-section-margin: 0 15px;
+@common-right-column-section-padding: 0 0 20px;
+
+@common-right-column-section-change-difficulty-margin-bottom: 3px;
+@common-right-column-section-change-difficulty-height: 25px;
+@common-right-column-section-change-difficulty-width: 150px;
+
+@common-right-column-section-section-title-font-weight: bold;
+@common-right-column-section-section-title-margin-bottom: 5px;
+@common-right-column-section-section-title-font-size: 16px;
+@common-right-column-section-section-title-border-top: 1px solid @default-border-color;
+
+@common-right-column-table-th-padding: 0 2px;
+
+@common-right-column-table-tr-background-color: #f0efde;
+
+@common-right-column-table-tr-even-background-color: #fffeed;
+
+@common-right-column-table-tr-me-font-weight: bold;
+@common-right-column-table-tr-me-border-top: 1px solid @default-border-color;
+@common-right-column-table-tr-me-border-right: @common-right-column-table-tr-me-border-top;
+@common-right-column-table-tr-me-border-bottom: @common-right-column-table-tr-me-border-top;
+@common-right-column-table-tr-me-border-left: @common-right-column-table-tr-me-border-top;
+
+@common-game-state-font-weight: bold;
+@common-game-state-new-color: #2d00b0;
+@common-game-state-paused-color: #bd561d;
+@common-game-state-finished-color: #14b000;
+
+@common-to-top-width: 200px;
+@common-to-top-border-top: 1px solid @default-border-color;
+@common-to-top-padding: 50px 0;
+@common-to-top-margin: 30px auto 0;
+@common-to-top-text-align: center;
+
+// Navigation panel
+@navigation-panel-navigation-panel-real-height: @navigation-panel-navigation-panel-height + @navigation-panel-navigation-panel-padding-top + @navigation-panel-navigation-panel-padding-bottom + @navigation-panel-navigation-panel-border-bottom-width;
+
+@navigation-panel-navigation-panel-height: 30px;
+@navigation-panel-navigation-panel-background-color: #dbcfc1;
+@navigation-panel-navigation-panel-border-bottom-color: @default-border-color;
+@navigation-panel-navigation-panel-border-bottom-style: solid;
+@navigation-panel-navigation-panel-border-bottom-width: 1px;
+@navigation-panel-navigation-panel-border-bottom: @navigation-panel-navigation-panel-border-bottom-width @navigation-panel-navigation-panel-border-bottom-style @navigation-panel-navigation-panel-border-bottom-color;
+@navigation-panel-navigation-panel-padding-top: 5px;
+@navigation-panel-navigation-panel-padding-right: 0;
+@navigation-panel-navigation-panel-padding-bottom: @navigation-panel-navigation-panel-padding-top;
+@navigation-panel-navigation-panel-padding-left: 0;
+@navigation-panel-navigation-panel-padding: @navigation-panel-navigation-panel-padding-top @navigation-panel-navigation-panel-padding-right @navigation-panel-navigation-panel-padding-bottom @navigation-panel-navigation-panel-padding-left;
+@navigation-panel-navigation-panel-gradient-start: #ffeedd;
+@navigation-panel-navigation-panel-gradient-end: @navigation-panel-navigation-panel-background-color;
+
+@navigation-panel-navigation-panel-page-title-font-size: 2em;
+@navigation-panel-navigation-panel-page-title-line-height: @navigation-panel-navigation-panel-height;
+@navigation-panel-navigation-panel-page-title-width: 200px;
+@navigation-panel-navigation-panel-page-title-margin-left: 10px;
+
+@navigation-panel-navigation-panel-user-block-line-height: @navigation-panel-navigation-panel-height;
+//@navigation-panel-navigation-panel-user-block-border-left: 1px solid @default-border-color;
+//@navigation-panel-navigation-panel-user-block-padding-left: 10px;
+@navigation-panel-navigation-panel-user-block-border-left: 0;
+@navigation-panel-navigation-panel-user-block-padding-left: 0;
+@navigation-panel-navigation-panel-user-block-margin-right: 10px;
+
+@navigation-panel-user-info-block-user-menu-background-color: #ffeedd;
+@navigation-panel-user-info-block-user-menu-margin-top: 5px;
+@navigation-panel-user-info-block-user-menu-width: 120px;
+@navigation-panel-user-info-block-user-menu-margin-left: -@navigation-panel-user-info-block-user-menu-width;
+@navigation-panel-user-info-block-user-menu-border: 1px solid @default-border-color;
+
+@navigation-panel-user-info-block-user-menu-li-padding: 5px;
+
+@navigation-panel-user-info-block-user-menu-li-hover-background-color: #fffeed;
+
+@navigation-panel-user-info-block-user-menu-li-logout-border-top: 1px dashed @default-border-color;
+
+@navigation-panel-user-info-block-user-menu-li-a-color: #333;
+@navigation-panel-user-info-block-user-menu-li-a-text-decoration: none;
+
+@navigation-panel-user-info-block-user-menu-li-a-hover-color: @navigation-panel-user-info-block-user-menu-li-a-color;
+@navigation-panel-user-info-block-user-menu-li-a-hover-text-decoration: @navigation-panel-user-info-block-user-menu-li-a-text-decoration;
+
+// Form
+@form-form-message-background-color: #ff9999;
+@form-form-message-padding: 5px;
+@form-form-message-margin: 5px;
+@form-form-message-border-radius: 5px;
+
+@form-form-field-error-message-color: #b94a48;
+
+@form-form-field-error-message-tooltip-inner-background-color: @form-form-field-error-message-color;
+
+@form-form-field-error-message-tooltip-arrow-background-color: @form-form-field-error-message-color;
+
+@form-form-field-success-message-tooltip-arrow-color: #468847;
+
+@form-form-field-message-font-size: 12px;
+@form-form-field-message-border-radius: 5px;
+
+// Login modal
+@login-modal-modal-body-padding: 15px 0 0 0;
+
+@login-modal-container-width: 560px; // as modal
+@login-modal-container-height: 255px;
+
+@login-modal-login-container-width: @login-modal-container-width;
+
+@login-modal-register-container-width: @login-modal-container-width;
+
+
+

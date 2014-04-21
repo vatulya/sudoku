@@ -215,7 +215,7 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      * @param $count
      * @return array
      */
-    protected function getOpenCells(array $board, $count)
+    public function getOpenCells(array $board, $count)
     {
         if (is_array($count)) {
             $count = rand($count['min'], $count['max']);
@@ -235,7 +235,7 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      * @param array $board
      * @return array
      */
-    protected function normalizeBoardKeys(array $board)
+    public function normalizeBoardKeys(array $board)
     {
         $normalizedBoard = [];
         foreach ($board as $key => $value) {

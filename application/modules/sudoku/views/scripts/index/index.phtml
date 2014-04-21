@@ -1,0 +1,160 @@
+<div class="right-column">
+    <div class="section create-new-game-container">
+        <button class="new-game btn btn-success btn-large">Начать новую игру</button>
+    </div>
+    <div class="section game-history-container">
+        <div class="section-title">История ваших игр:</div>
+        <table class="game-history">
+            <tbody>
+            <tr class="head">
+                <th>Начало</th>
+                <th>Статус</th>
+                <th>В игре</th>
+            </tr>
+            <tr>
+                <td>21-04-2014 20:28</td>
+                <td><span class="game-state paused">Приостановлена</span></td>
+                <td class="time">2:34</td>
+            </tr>
+            <tr class="even">
+                <td>21-04-2014 20:28</td>
+                <td><span class="game-state paused">Приостановлена</span></td>
+                <td class="time">2:34</td>
+            </tr>
+            <tr>
+                <td>21-04-2014 20:28</td>
+                <td><span class="game-state finished">Завершена</span></td>
+                <td class="time">2:34</td>
+            </tr>
+            <tr class="even">
+                <td>21-04-2014 20:28</td>
+                <td><span class="game-state finished">Завершена</span></td>
+                <td class="time">2:34</td>
+            </tr>
+            <tr>
+                <td>21-04-2014 20:28</td>
+                <td><span class="game-state finished">Завершена</span></td>
+                <td class="time">2:34</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="show-game-history-container">
+            <a href="" class="show-game-history">Просмотреть всю историю игр</a>
+        </div>
+    </div>
+    <div class="section top-user-ratings-container">
+        <div class="section-title">Лучшие игроки:</div>
+        Сложность:
+        <select class="change-top-user-ratings-difficulty change-difficulty btn-small">
+            <?php foreach ($this->difficulties as $difficulty): ?>
+                <option value="<?php echo $difficulty['code']; ?>"><?php echo $difficulty['title']; ?></option>
+            <?php endforeach; ?>
+        </select>
+        <table class="top-user-ratings">
+            <tbody>
+            <tr class="head">
+                <th>#</th>
+                <th>Имя</th>
+                <th>Время</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Вася</td>
+                <td class="time">5:55</td>
+            </tr>
+            <tr class="even">
+                <td>2</td>
+                <td>Коля</td>
+                <td class="time">5:55</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Петя</td>
+                <td class="time">5:55</td>
+            </tr>
+            <tr class="even">
+                <td>4</td>
+                <td>Иван</td>
+                <td class="time">5:55</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Ористарх</td>
+                <td class="time">5:55</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="show-top-user-ratings-container">
+            <a href="" class="show-top-user-ratings">Просмотреть весь список игроков</a>
+        </div>
+    </div>
+    <div class="section my-ratings-container">
+        <div class="section-title">Ваш рейтинг:</div>
+        Сложность:
+        <select class="my-user-ratings-difficulty change-difficulty btn-small">
+            <?php foreach ($this->difficulties as $difficulty): ?>
+                <option value="<?php echo $difficulty['code']; ?>"><?php echo $difficulty['title']; ?></option>
+            <?php endforeach; ?>
+        </select>
+        <table class="my-user-ratings">
+            <tbody>
+            <tr class="head">
+                <th>#</th>
+                <th>Имя</th>
+                <th>Время</th>
+            </tr>
+            <tr class="even">
+                <td>8</td>
+                <td>Вася</td>
+                <td class="time">5:55</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>Коля</td>
+                <td class="time">5:55</td>
+            </tr>
+            <tr class="me even">
+                <td>10</td>
+                <td>Петя</td>
+                <td class="time">5:55</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>Иван</td>
+                <td class="time">5:55</td>
+            </tr>
+            <tr class="even">
+                <td>12</td>
+                <td>Ористарх</td>
+                <td class="time">5:55</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="center-column">
+    <div class="content">
+        <h1>Судоку</h1>
+        <p>
+            Логическая игра, в которой нужно заполнить поле цифрами, придерживаясь определенных правил.<br>
+            В Википедии вы можете почитать подробную
+            <a href="http://ru.wikipedia.org/wiki/%D0%A1%D1%83%D0%B4%D0%BE%D0%BA%D1%83" rel="nofollow" target="_blank" class="wiki-link">статью об игре</a>.
+        </p>
+        <div class="game-board-example">
+            <?php echo $this->partial('_extra/board.phtml', ['parameters' => $this->boardExample,]); ?>
+            <span class="image-info">(Пример головоломки "Судоку")</span>
+        </div>
+        <p>
+            <span class="sudoku-game-goal">Цель игры:</span><br>
+            Необходимо заполнить поле цифрами от 1 до 9 так, чтоб в каждой колонке, строчке и под-квадрате не было повторяющихся цифр.
+        </p>
+        <div class="game-board-example">
+            <?php echo $this->partial('_extra/board.phtml', ['parameters' => $this->boardSolvedExample,]); ?>
+            <span class="image-info">(Пример решенной головоломки "Судоку")</span>
+        </div>
+        <div class="to-top">
+            <a href="" class="scroll-to-top">Вверх <i class="icon-chevron-up"></i></a>
+        </div>
+    </div>
+</div>

@@ -2,98 +2,61 @@
 $cols = 9; // 1..9
 $rows = 9;
 
-/** @var Application_Model_Game_Sudoku $sudoku */
-$sudoku = $this->sudoku;
-$game = $sudoku->getParameters();
+$parameters = isset($this->parameters) && is_array($this->parameters) ? $this->parameters : [];
 
 /**
  * @param int $row
  * @param int $col
  * @return bool
  */
-function isGray ($row, $col) {
+$isGray = function ($row, $col) {
     $grayRow = (bool)(ceil($row / 3) % 2); // 111000111
     $grayCol = (bool)(ceil($col / 3) % 2); // 111000111
     $isGray = $grayRow == $grayCol;
     return $isGray;
-}
+};
 
+/**
+ * @param int $row
+ * @param int $col
+ */
+$getCell = function($row, $col) use ($parameters, $isGray) {
+    $classes = [
+        'cell',
+        'row-' . $row,
+        'col-' . $col,
+        $isGray($row, $col) ? 'gray' : '',
+    ];
+    $number = '';
+    $coords = $row . $col;
+    if (isset($parameters['openCells'][$coords])) {
+        $number = $parameters['openCells'][$coords];
+        $classes[] = 'locked';
+    } elseif (isset($parameters['checkedCells'][$coords])) {
+        $number = $parameters['checkedCells'][$coords];
+        $classes[] = 'open';
+    } else {
+        $classes[] = 'open';
+        $classes[] = 'empty';
+    }
 ?>
-<div id="game-sudoku-<?php echo $sudoku->getHash(); ?>"
-     class="sudoku-table"
-     ondragstart="return false;"
-     ondrop="return false;"
-     data-selected-cell=""
-     data-hovered-number=""
+<td
+    class="<?php echo implode(' ', array_filter($classes)); ?>"
+    data-row="<?php echo $row; ?>"
+    data-col="<?php echo $col; ?>"
+    data-number="<?php echo $number; ?>"
     >
-
-    <div class="congratulations">
-        <div class="message">
-            Congratulations!<br>
-            You have solved this sudoku!
-        </div>
-    </div>
-
-    <table class="sudoku-board">
-        <?php for ($row = 1; $row <= $rows; $row++): ?>
-        <tr>
-            <?php for ($col = 1; $col <= $cols; $col++): ?>
-                <?php
-                $classes = [
-                    'cell',
-                    'row-' . $row,
-                    'col-' . $col,
-                    isGray($row, $col) ? 'gray' : '',
-                    'open',
-                    'empty',
-                ];
-                ?>
-                <td
-                    class="<?php echo implode(' ', array_filter($classes)); ?>"
-                    data-row="<?php echo $row; ?>"
-                    data-col="<?php echo $col; ?>"
-                    data-number=""
-                    >
-                </td>
-            <?php endfor; ?>
-        </tr>
+    <?php echo $number; ?>
+</td>
+<?php
+}; // $getCell
+?>
+<table class="sudoku-board">
+    <?php for ($row = 1; $row <= $rows; $row++): ?>
+    <tr>
+        <?php for ($col = 1; $col <= $cols; $col++): ?>
+            <?php $getCell($row, $col); ?>
         <?php endfor; ?>
-    </table>
-
-    <div class="sudoku-numpad">
-        <table>
-            <?php /*
-            <tr>
-                <td colspan="3" class="close"><i class="icon-remove-circle"></i></td>
-            </tr>
-            */ ?>
-            <?php $number = 1; ?>
-            <?php for ($row = 1; $row <= 3; $row++): ?>
-            <tr>
-                <?php for ($col = 1; $col <= 3; $col++): ?>
-                    <td class="number enabled" data-number="<?php echo $number; ?>">
-                        <?php if ($number == 3): ?><?php endif; ?>
-                        <?php echo $number; ?>
-                    </td>
-                    <?php $number++; ?>
-                <?php endfor; ?>
-            </tr>
-            <?php endfor; ?>
-            <tr>
-                <td class="number clear" colspan="3" data-number="">clear</td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="additional-buttons">
-        <button class="undo-move btn btn-mini disabled" data-moves=""><i class="icon-chevron-left"></i> Undo</button>
-        <button class="redo-move btn btn-mini disabled" data-moves=""><i class="icon-chevron-right"></i>Redo</button>
-        <button class="check-field btn btn-mini">Check</button>
-        <button class="clear-field btn btn-mini btn-danger">Clear</button>
-    </div>
-    <div class="time">
-        Time: <div class="game-time">synchronization...</div>
-    </div>
-</div>
-
-<?php $this->headScript()->appendScript('var $game = new window.Sudoku(\'' . $sudoku->getHash() . '\');'); ?>
+    </tr>
+    <?php endfor; ?>
+</table>
