@@ -7,7 +7,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     public $ajaxable = [
         'index'       => ['html'],
-        'create'      => ['html'],
+        'create'      => ['html', 'json'],
         'check-field' => ['json'],
         'user-action' => ['json'],
     ];
@@ -61,22 +61,49 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     public function createAction()
     {
-        $errors = [];
-        $sudokuService = Application_Service_Game_Sudoku::getInstance();
-        $user = Application_Service_User::getInstance()->getCurrentUser();
-        try {
+        $vars = [];
+        $messages = [];
+
+        if ($this->_request->getParam('submit')) {
+            $sudokuGame = null;
             $difficulty = $this->_request->getParam('difficulty');
-            $sudokuGame = $sudokuService->create($user['id'], ['difficulty' => $difficulty]);
-            if ($sudokuGame) {
-                $this->getHelper('redirector')->gotoRoute(['gameHash' => $sudokuGame->getHash()], 'sudoku-game', true);
+            try {
+                $sudokuService = Application_Service_Game_Sudoku::getInstance();
+                $user = Application_Service_User::getInstance()->getCurrentUser();
+                $difficulties = $sudokuService->getAllDifficulties();
+                if (null === $difficulty) {
+                    throw new Exception('выберите сложность');
+                }
+                if (!isset($difficulties[$difficulty])) {
+                    throw new Exception('Неправильная сложность. Выберите другую');
+                }
+                $sudokuGame = $sudokuService->create($user['id'], ['difficulty' => $difficulty]);
+            } catch (Exception $e) {
+                $messages[] = [
+                    'name' => '',
+                    'title' => 'Ошибка при создании новой игры',
+                    'text' => $e->getMessage(),
+                    'type' => 'error',
+                ];
             }
-        } catch (Exception $e) {
-            $errors[] = $e->getMessage();
+            if ($sudokuGame instanceof Application_Model_Game_Abstract) {
+                $vars['gameHash'] = $sudokuGame->getHash();
+                $vars['success'] = true;
+                if (!$this->_request->isXmlHttpRequest()) {
+                    $url = $this->_helper->Url->url(
+                        [
+                            'gameHash' => $vars['gameHash'],
+                        ],
+                        'sudoku-game',
+                        true
+                    );
+                    return $this->redirect($url);
+                }
+            }
         }
 
-        $this->view->assign([
-            'errors' => $errors,
-        ]);
+        $vars['messages'] = $messages;
+        $this->view->assign($vars);
     }
 
     public function gameAction()

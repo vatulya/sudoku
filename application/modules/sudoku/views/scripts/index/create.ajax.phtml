@@ -1,0 +1,25 @@
+<div id="game-sudoku">
+    <div class="game-title">Sudoku</div>
+    <div class="difficulties">
+        <form class="sudoku-create-new-game ajax-form-submit" method="post" action="<?php echo $this->url(['action' => 'create'], 'sudoku', true); ?>">
+            <input type="hidden" name="submit" value="1">
+            <div class="form-message hidden"></div>
+            <select class="select-difficulties" name="difficulty">
+                <?php $titleTemplate = '%s (%s open cells)'; ?>
+                <?php foreach ($this->difficulties as $code => $difficulty): ?>
+                    <?php
+                        $openCells = $difficulty['openCells'];
+                        if (is_array($openCells)) {
+                            $openCells = $openCells['min'] . '..' . $openCells['max'];
+                        }
+                        $title = sprintf($titleTemplate, $difficulty['title'], $openCells);
+                        $selected = null == $code ? ' selected="selected"' : '';
+                    ?>
+                    <option value="<?php echo $code; ?>"<?php echo $selected; ?>><?php echo $title; ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" class="btn btn-mini btn-danger submit-form">New game</button>
+        </form>
+    </div>
+    <?php echo $this->partial('_extra/sudoku-board.phtml'); ?>
+</div>

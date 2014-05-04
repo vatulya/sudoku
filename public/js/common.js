@@ -1,27 +1,5 @@
 (function (w, d, $) {
 
-    $(d)
-        .on('change', '.select-difficulties', function() {
-            var difficulty = $(this).val();
-            w.location = '/?difficulty=' + difficulty;
-        })
-        .on('click', '.new-game', function() {
-            w.location.reload();
-        })
-        .on('click', '.scroll-top-top', function(e) {
-            e.preventDefault();
-            w.scrollTo(0, 0);
-        });
-    ;
-
-    w.gogogo = function() {
-
-    };
-
-    w.test = function(data) {
-        w.websocket.send(data);
-    };
-
     w.disableSelect = function(el) {
         el = $(el);
         el

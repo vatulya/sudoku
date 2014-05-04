@@ -22,6 +22,10 @@ class My_WebSocket_Server
     const LEVEL_ERROR = 2;
     const LEVEL_DEBUG = 3;
 
+    const DATA_KEY_MODULE = '_module';
+
+    const COMMON_LISTENERS_KEY = 'common';
+
     protected $master;
     protected $sockets = [];
     /**
@@ -710,12 +714,26 @@ class My_WebSocket_Server
 
     /**
      * @param My_WebSocket_Listener_Abstract $listener
+     * @param array $modules
      * @return $this
      */
-    public function addListener(My_WebSocket_Listener_Abstract $listener)
+    public function addListener(My_WebSocket_Listener_Abstract $listener, $modules = [])
     {
+        $modules = (array)$modules;
         $this->getLogger()->debug('Added listener "' . get_class($listener) . '"');
-        $this->listeners[] = $listener->setServer($this);
+        if (empty($modules)) {
+            if (empty($this->listeners[static::COMMON_LISTENERS_KEY])) {
+                $this->listeners[static::COMMON_LISTENERS_KEY] = [];
+            }
+            $this->listeners[static::COMMON_LISTENERS_KEY][] = $listener->setServer($this);
+        } else {
+            foreach ($modules as $module) {
+                if (empty($this->listeners[$module])) {
+                    $this->listeners[$module] = [];
+                }
+                $this->listeners[$module][] = $listener->setServer($this);
+            }
+        }
         return $this;
     }
 
@@ -734,9 +752,24 @@ class My_WebSocket_Server
             throw new Exception('Error! Unknown event "' . $event . '"');
         }
         $method = 'on' . ucfirst($event);
-        foreach ($this->listeners as $listener) {
-            if (method_exists($listener, $method)) {
-                $listener->setUser($user)->$method($additionalData);
+        /** @var $listener My_WebSocket_Listener_Abstract */
+        if (!empty($additionalData[static::DATA_KEY_MODULE])) {
+            $module = $additionalData[static::DATA_KEY_MODULE];
+            if (empty($this->listeners[$module])) {
+                $this->getLogger()->error('Error! No listeners for module "' . $module . '"');
+            } else {
+                foreach ($this->listeners[$module] as $listener) {
+                    if (method_exists($listener, $method)) {
+                        $listener->setUser($user)->$method($additionalData);
+                    }
+                }
+            }
+        }
+        if (!empty($this->listeners[static::COMMON_LISTENERS_KEY])) {
+            foreach ($this->listeners[static::COMMON_LISTENERS_KEY] as $listener) {
+                if (method_exists($listener, $method)) {
+                    $listener->setUser($user)->$method($additionalData);
+                }
             }
         }
         return $this;

@@ -1,25 +1,68 @@
-<div id="game-sudoku">
-    <div class="game-title">Sudoku</div>
-    <div class="difficulties">
-        <select class="select-difficulties">
-            <?php
-            $titleTemplate = '%s (%s open cells)';
-            $currentDifficulty = $this->sudoku->getDifficulty();
-            ?>
-            <?php foreach ($this->difficulties as $code => $difficulty): ?>
-                <?php
-                    $openCells = $difficulty['openCells'];
-                    if (is_array($openCells)) {
-                        $openCells = $openCells['min'] . '..' . $openCells['max'];
-                    }
-                    $title = sprintf($titleTemplate, $difficulty['title'], $openCells);
-                    $selected = $currentDifficulty == $code ? ' selected="selected"' : '';
-                ?>
-                <option value="<?php echo $code; ?>"<?php echo $selected; ?>><?php echo $title; ?></option>
-            <?php endforeach; ?>
-        </select>
-        <button class="btn btn-mini btn-danger new-game">New game</button>
+<div class="right-column">
+    <div class="section create-new-game-container">
+        <button type="button" class="show-new-game-form btn btn-success btn-large">Начать новую игру</button>
     </div>
-    <?php echo $this->partial('_extra/board.phtml'); ?>
-    <?php $this->headScript()->appendScript('var $game = new window.Sudoku(\'' . $sudoku->getHash() . '\');'); ?>
+    <div class="section game-history-container">
+        <div class="section-title">История ваших игр:</div>
+        <table class="game-history">
+            <tbody>
+            <tr class="head">
+                <th>Начало</th>
+                <th>Статус</th>
+                <th>В игре</th>
+            </tr>
+            <tr>
+                <td>21-04-2014 20:28</td>
+                <td><span class="game-state paused">Приостановлена</span></td>
+                <td class="time">2:34</td>
+            </tr>
+            <tr class="even">
+                <td>21-04-2014 20:28</td>
+                <td><span class="game-state paused">Приостановлена</span></td>
+                <td class="time">2:34</td>
+            </tr>
+            <tr>
+                <td>21-04-2014 20:28</td>
+                <td><span class="game-state finished">Завершена</span></td>
+                <td class="time">2:34</td>
+            </tr>
+            <tr class="even">
+                <td>21-04-2014 20:28</td>
+                <td><span class="game-state finished">Завершена</span></td>
+                <td class="time">2:34</td>
+            </tr>
+            <tr>
+                <td>21-04-2014 20:28</td>
+                <td><span class="game-state finished">Завершена</span></td>
+                <td class="time">2:34</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="show-game-history-container">
+            <a href="" class="show-game-history">Просмотреть всю историю игр</a>
+        </div>
+    </div>
+</div>
+
+<div class="center-column">
+    <div class="content">
+
+        <?php
+        $currentDifficulty = $this->sudoku->getDifficulty();
+        $currentDifficulty = $this->difficulties[$currentDifficulty];
+        $openCells = $currentDifficulty['openCells'];
+        if (is_array($openCells)) {
+            $openCells = $openCells['min'] . '..' . $openCells['max'];
+        }
+        $currentDifficultyText = sprintf('%s (%s открытых клеток)', $currentDifficulty['title'], $openCells);
+        ?>
+        <h1 class="game-title">Судоку</h1>
+
+        <div class="game-info">
+            Сложность: <span class="current-difficulty"><?php echo $currentDifficultyText; ?></span>
+        </div>
+        <?php echo $this->partial('_extra/sudoku-game.phtml', ['sudoku' => $this->sudoku]); ?>
+        <?php $this->headScript()->appendScript('var $game = new window.Sudoku(\'' .  $this->sudoku->getHash() . '\');'); ?>
+
+    </div>
 </div>

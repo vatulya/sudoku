@@ -8,11 +8,18 @@
                 Form.clickSubmit(this);
             }
         })
-        .on('click', '.submit-form', function() {
+        .on('click', '.submit-form', function(e) {
+            e.preventDefault();
             Form.clickSubmit(this);
         })
-        .on('click', '.form-field .tooltip', function() {
+        .on('click', '.form-field .tooltip', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             $(this).closest('.form-field').find('.message-tooltip').tooltip('destroy');
+        })
+        .on('submit', '.ajax-form-submit', function(e) {
+            e.preventDefault();
+            Form.submitForm(this);
         })
     ;
 
@@ -23,6 +30,11 @@
         clickSubmit: function(button) {
             button = $(button);
             var form = button.closest('form');
+            Form.submitForm(form);
+        },
+
+        submitForm: function(form) {
+            form = $(form);
             var formData = {};
             $.each(form.serializeArray(), function(_, kv) {
                 if (formData.hasOwnProperty(kv.name)) {
@@ -40,7 +52,7 @@
                     if (typeof response.success != 'undefined') {
                         form.trigger('success', response);
                     } else {
-                        Form.showMessages(form, response.messages);
+                        Form.showMessages(form, response.messages || {});
                     }
                 }
             });
@@ -61,10 +73,10 @@
                  */
                 if (messages.hasOwnProperty(i)) {
                     var message = messages[i],
-                        fieldBlock = form.find('.field-' + message.name),
+                        fieldBlock = form.find('.field-' + (message.name || '')),
                         field = fieldBlock.find('input'),
                         fieldMessageBlock = fieldBlock.find('.message'),
-                        messageText = message.text,
+                        messageText = message.text || '',
                         messageType = Form.getMessageType(message)
                     ;
                     fieldBlock.addClass(messageType);

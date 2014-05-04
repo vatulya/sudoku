@@ -20,7 +20,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
     protected function _initRoute()
     {
-
         $router = Zend_Controller_Front::getInstance()->getRouter();
         $config = new Zend_Config_Ini(APPLICATION_PATH . '/configs/routes.ini', 'production');
         $router->addConfig($config, 'routes');

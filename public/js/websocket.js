@@ -64,16 +64,19 @@
 
         /************ SEND REQUEST *******************/
 
-        $this.send = function(config, module) {
+        $this.send = function(config, module, queue) {
             module = '' + module;
-            if (module == '') {
+            queue  = '' + queue;
+
+            config['data']['_module'] = module;
+            if (queue == '') {
                 $this._send(config);
             } else {
-                if (!$this.requestsQueue.hasOwnProperty(module) || $this.requestsQueue[module] == undefined) {
-                    $this.requestsQueue[module] = [];
+                if (!$this.requestsQueue.hasOwnProperty(queue) || $this.requestsQueue[queue] == undefined) {
+                    $this.requestsQueue[queue] = [];
                 }
-                $this.requestsQueue[module].push(config);
-                $this._processRequestQueue(module);
+                $this.requestsQueue[queue].push(config);
+                $this._processRequestQueue(queue);
             }
         };
 

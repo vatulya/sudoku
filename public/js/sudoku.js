@@ -4,7 +4,9 @@
 
         var $Sudoku = this;
 
-        var S = w.websocket.S || '|';
+        $Sudoku.websocket = new w.WS();
+
+        var S = $Sudoku.websocket.S;
 
         $Sudoku.hash = gameHash;
 
@@ -110,7 +112,7 @@
                     'data': parameters,
                     'callback': callback
                 };
-                w.websocket.send(config, withQueue ? 'sudoku' : '');
+                $Sudoku.websocket.send(config, 'sudoku', withQueue ? 'sudoku' : '');
             };
 
             /**************************** /SEND USER ACTION *********************/
@@ -133,13 +135,13 @@
             $Sudoku.start = function() {
                 $Sudoku._showBoard();
                 $Sudoku._startDurationTimer();
-                $Sudoku.sendUserAction('start');
+                $Sudoku.sendUserAction('start', {}, true);
                 $Sudoku._startPing();
             };
 
             $Sudoku.pause = function() {
                 $Sudoku._hideBoard();
-                $Sudoku.sendUserAction('pause');
+                $Sudoku.sendUserAction('pause', {}, true);
             };
 
             /**************************** /GAME START / STOP ********************/
@@ -166,7 +168,7 @@
                         'coords': coords,
                         'number': number
                     };
-                    $Sudoku.sendUserAction('setCellNumber', data);
+                    $Sudoku.sendUserAction('setCellNumber', data, true);
                 }
             };
 
@@ -197,7 +199,7 @@
                     el.html('');
                 });
                 $Sudoku.clearHistory();
-                $Sudoku.sendUserAction('clearBoard');
+                $Sudoku.sendUserAction('clearBoard', {}, true);
             };
 
             /************************ /CLEAR BOARD ****************************/
@@ -427,7 +429,7 @@
                 });
                 $Sudoku.removeLastMoveFromHistory(undoButton);
                 $Sudoku.checkHistoryButtons();
-                $Sudoku.sendUserAction('undoMove');
+                $Sudoku.sendUserAction('undoMove', {}, true);
 
 //            cell = $Sudoku.getSelectedCell();
 //            $Sudoku.hoverNumber(cell);
@@ -445,7 +447,7 @@
                 });
                 $Sudoku.removeLastMoveFromHistory(redoButton);
                 $Sudoku.checkHistoryButtons();
-                $Sudoku.sendUserAction('redoMove');
+                $Sudoku.sendUserAction('redoMove', {}, true);
 
 //            cell = $Sudoku.getSelectedCell();
 //            $Sudoku.hoverNumber(cell);
@@ -552,6 +554,8 @@
 
             $Sudoku.win = function() {
                 $Sudoku.table.addClass('resolved');
+                $Sudoku._stopDurationTimer();
+                $Sudoku._stopPing();
             };
 
             $Sudoku.mouseDown = function(cell) {

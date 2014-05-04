@@ -39,6 +39,9 @@ $getCell = function($row, $col) use ($parameters, $isGray) {
         $classes[] = 'open';
         $classes[] = 'empty';
     }
+    if ($this->hide) {
+        $number = '';
+    }
 ?>
 <td
     class="<?php echo implode(' ', array_filter($classes)); ?>"
