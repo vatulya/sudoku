@@ -1,0 +1,21 @@
+<?php
+if (isset($this->breadcrumbs) && is_array($this->breadcrumbs) && !empty($this->breadcrumbs)) {
+    $breadcrumbs = $this->breadcrumbs;
+} else {
+    $breadcrumbs = [
+        '/' => 'Главная страница',
+    ];
+}
+$last = count($breadcrumbs);
+$i = 1;
+?>
+<div class="breadcrumbs">
+    <i class="ficon-home"></i>&nbsp;
+    <?php foreach ($breadcrumbs as $url => $title): ?>
+        <?php $isCurrent = ($i++ == $last) ? ' current' : ''; ?>
+        <a href="<?php echo $url; ?>" class="breadcrumb-step<?php echo $isCurrent; ?>"><?php echo $title; ?></a>
+        <?php if (!$isCurrent): ?>
+            <i class="ficon-angle-right"></i>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</div>

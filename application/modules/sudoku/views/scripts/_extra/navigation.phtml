@@ -1,12 +1,10 @@
 <div class="navigation-panel">
-    <div class="page-title">
-        <i class="icon-home"></i> <a href="/"><span class="title">Вернуться на главную страницу</span></a>
-    </div>
+    <?php echo $this->partial('_extra/breadcrumbs.phtml', ['breadcrumbs' => $this->breadcrumbs]); ?>
     <div class="user-block">
         <?php if ($this->user): ?>
-            <?php echo $this->render('_extra/user-block.phtml'); ?>
+            <?php echo $this->partial('_extra/user-block.phtml', ['user' => $this->user]); ?>
         <?php else: ?>
-            <?php echo $this->render('_extra/login-block.phtml'); ?>
+            <?php echo $this->partial('_extra/login-block.phtml'); ?>
         <?php endif; ?>
     </div>
 </div>

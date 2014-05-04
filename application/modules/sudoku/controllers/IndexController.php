@@ -19,6 +19,9 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     public function preDispatch()
     {
+        $this->view->breadcrumbs = [
+            '/' => 'Главная страница',
+        ];
     }
 
     public function postDispatch()
@@ -104,6 +107,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
         $vars['messages'] = $messages;
         $this->view->assign($vars);
+        $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'create'], 'sudoku', true)] = 'Создание новой игры';
     }
 
     public function gameAction()
@@ -124,6 +128,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $this->view->assign([
             'sudoku' => $sudokuGame,
         ]);
+        $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'create'], 'sudoku', true)] = 'Игра';
     }
 
     public function checkFieldAction()

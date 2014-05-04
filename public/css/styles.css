@@ -148,6 +148,47 @@ ul {
 .image-info {
   font-size: 12px;
 }
+.breadcrumbs {
+  float: left;
+  font-size: 1em;
+  line-height: 30px;
+  width: initial;
+  margin-left: 10px;
+}
+.breadcrumbs .ficon-home {
+  font-size: 25px;
+  -khtml-opacity: 0.8;
+  -moz-opacity: 0.8;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+  -khtml-opacity: 0.8;
+  -moz-opacity: 0.8;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+  -khtml-opacity: 0.8;
+  -moz-opacity: 0.8;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+}
+.breadcrumbs .breadcrumb-step {
+  color: #000000;
+  text-decoration: underline;
+}
+.breadcrumbs .breadcrumb-step:hover {
+  color: #000000;
+  text-decoration: none;
+}
+.breadcrumbs .breadcrumb-step.current {
+  font-weight: bold;
+  text-decoration: none;
+  cursor: default;
+}
+.breadcrumbs .breadcrumb-step.current:hover {
+  text-decoration: none;
+}
 /**************************************** navigation ***************************************/
 .navigation-panel {
   position: fixed;
@@ -194,21 +235,6 @@ ul {
 }
 .navigation-panel .container {
   vertical-align: middle;
-}
-.navigation-panel .page-title {
-  float: left;
-  font-size: 1em;
-  line-height: 30px;
-  width: initial;
-  margin-left: 10px;
-}
-.navigation-panel .page-title a {
-  color: #000000;
-  text-decoration: underline;
-}
-.navigation-panel .page-title a:hover {
-  color: #000000;
-  text-decoration: none;
 }
 .navigation-panel .user-block {
   float: right;
