@@ -197,10 +197,18 @@ ul {
 }
 .navigation-panel .page-title {
   float: left;
-  font-size: 2em;
+  font-size: 1em;
   line-height: 30px;
-  width: 200px;
+  width: initial;
   margin-left: 10px;
+}
+.navigation-panel .page-title a {
+  color: #000000;
+  text-decoration: underline;
+}
+.navigation-panel .page-title a:hover {
+  color: #000000;
+  text-decoration: none;
 }
 .navigation-panel .user-block {
   float: right;
