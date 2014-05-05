@@ -189,6 +189,9 @@ ul {
 .breadcrumbs .breadcrumb-step.current:hover {
   text-decoration: none;
 }
+.create-new-game-container .difficulties {
+  text-align: center;
+}
 /**************************************** navigation ***************************************/
 .navigation-panel {
   position: fixed;

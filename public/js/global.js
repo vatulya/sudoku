@@ -10,7 +10,21 @@
             };
             w.$Modal.load('Начинаем новую игру "Судоку"', options);
         })
-        .on('success', '.sudoku-create-new-game', function(e, response) {
+        .on('change', 'form.create-new-game .select-difficulties', function(e) {
+            var options = {
+                'url': '/sudoku/get-board',
+                'data': {
+                    'format': 'html',
+                    'difficulty': $(e.currentTarget).val(),
+                    'hide': 1
+                }
+            };
+            $.ajax(options)
+                .done(function(response) {
+                    $Modal.body.find('.game-board-example-container').html(response);
+                });
+        })
+        .on('success', 'form.create-new-game', function(e, response) {
             if (response.hasOwnProperty('gameHash')) {
                 window.location.href = '/game/' + response['gameHash'];
             }

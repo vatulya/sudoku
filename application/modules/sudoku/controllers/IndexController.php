@@ -8,6 +8,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
     public $ajaxable = [
         'index'       => ['html'],
         'create'      => ['html', 'json'],
+        'get-board'   => ['html'],
         'check-field' => ['json'],
         'user-action' => ['json'],
     ];
@@ -66,25 +67,26 @@ class Sudoku_IndexController extends Zend_Controller_Action
     {
         $vars = [];
         $messages = [];
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+        $difficulties = $sudokuService->getAllDifficulties();
+        $difficulty = $this->_request->getParam('difficulty');
+        if (null === $difficulty) {
+            $difficulty = $sudokuService::DEFAULT_GAME_DIFFICULTY;
+        }
+        $vars['selectedDifficulty'] = $difficulty;
 
         if ($this->_request->getParam('submit')) {
             $sudokuGame = null;
-            $difficulty = $this->_request->getParam('difficulty');
             try {
-                $sudokuService = Application_Service_Game_Sudoku::getInstance();
                 $user = Application_Service_User::getInstance()->getCurrentUser();
-                $difficulties = $sudokuService->getAllDifficulties();
-                if (null === $difficulty) {
-                    throw new Exception('выберите сложность');
-                }
                 if (!isset($difficulties[$difficulty])) {
-                    throw new Exception('Неправильная сложность. Выберите другую');
+                    throw new Exception('Неправильная сложность. Выберите другую.');
                 }
                 $sudokuGame = $sudokuService->create($user['id'], ['difficulty' => $difficulty]);
             } catch (Exception $e) {
                 $messages[] = [
                     'name' => '',
-                    'title' => 'Ошибка при создании новой игры',
+                    'title' => '',
                     'text' => $e->getMessage(),
                     'type' => 'error',
                 ];
@@ -103,6 +105,14 @@ class Sudoku_IndexController extends Zend_Controller_Action
                     return $this->redirect($url);
                 }
             }
+        }
+        if (isset($difficulties[$difficulty]['openCells'])) {
+            $board = $sudokuService->generateBoard();
+            $board = $sudokuService->normalizeBoardKeys($board);
+            $openCells = $sudokuService->getOpenCells($board, $difficulties[$difficulty]['openCells']);
+            $vars['boardExample'] = [
+                'openCells' => $openCells,
+            ];
         }
 
         $vars['messages'] = $messages;
@@ -129,6 +139,29 @@ class Sudoku_IndexController extends Zend_Controller_Action
             'sudoku' => $sudokuGame,
         ]);
         $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'create'], 'sudoku', true)] = 'Игра';
+    }
+
+    public function getBoardAction()
+    {
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+        $difficulties = $sudokuService->getAllDifficulties();
+        $difficulty = $this->_request->getParam('difficulty');
+        if (null === $difficulty) {
+            $difficulty = $sudokuService::DEFAULT_GAME_DIFFICULTY;
+        }
+        $boardExample = [];
+        if (isset($difficulties[$difficulty]['openCells'])) {
+            $board = $sudokuService->generateBoard();
+            $board = $sudokuService->normalizeBoardKeys($board);
+            $openCells = $sudokuService->getOpenCells($board, $difficulties[$difficulty]['openCells']);
+            $boardExample = [
+                'openCells' => $openCells,
+            ];
+        }
+        $this->view->assign([
+            'boardExample' => $boardExample,
+            'hide'         => $this->_request->getParam('hide', false),
+        ]);
     }
 
     public function checkFieldAction()

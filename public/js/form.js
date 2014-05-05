@@ -17,6 +17,11 @@
             e.stopPropagation();
             $(this).closest('.form-field').find('.message-tooltip').tooltip('destroy');
         })
+        .on('click', '.form-message', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).hide();
+        })
         .on('submit', '.ajax-form-submit', function(e) {
             e.preventDefault();
             Form.submitForm(this);
@@ -92,7 +97,8 @@
                         field.tooltip(options);
                     } else {
                         // Show in common form message block
-                        messageText = message.title + ': ' + messageText;
+                        var messageTitle = '' + message.title;
+                        messageText = (messageTitle ? messageTitle + ': ' : '') + messageText;
                         formMessageBlock += '<li>' + messageText + '</li>';
                     }
                 }

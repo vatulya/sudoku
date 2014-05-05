@@ -1,25 +1,33 @@
-<div id="game-sudoku">
-    <div class="game-title">Sudoku</div>
+<?php
+$selectedDifficulty = isset($this->selectedDifficulty) ? $this->selectedDifficulty : 0;;
+$selectedDifficulty = $this->difficulties[$selectedDifficulty];
+$titleTemplate = '%s (%s открытых клеток)';
+?>
+<div class="create-new-game-container">
     <div class="difficulties">
-        <form class="sudoku-create-new-game ajax-form-submit" method="post" action="<?php echo $this->url(['action' => 'create'], 'sudoku', true); ?>">
+        <form class="create-new-game ajax-form-submit form-inline" method="post" action="<?php echo $this->url(['action' => 'create'], 'sudoku', true); ?>">
             <input type="hidden" name="submit" value="1">
             <div class="form-message hidden"></div>
             <select class="select-difficulties" name="difficulty">
-                <?php $titleTemplate = '%s (%s open cells)'; ?>
-                <?php foreach ($this->difficulties as $code => $difficulty): ?>
+                <?php foreach ($this->difficulties as $difficulty): ?>
                     <?php
                         $openCells = $difficulty['openCells'];
                         if (is_array($openCells)) {
                             $openCells = $openCells['min'] . '..' . $openCells['max'];
                         }
                         $title = sprintf($titleTemplate, $difficulty['title'], $openCells);
-                        $selected = null == $code ? ' selected="selected"' : '';
+                        $selected = $selectedDifficulty['code'] == $difficulty['code'] ? ' selected="selected"' : '';
                     ?>
-                    <option value="<?php echo $code; ?>"<?php echo $selected; ?>><?php echo $title; ?></option>
+                    <option value="<?php echo $difficulty['code']; ?>"<?php echo $selected; ?>><?php echo $title; ?></option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" class="btn btn-mini btn-danger submit-form">New game</button>
+            <button type="submit" class="btn btn-danger submit-form">Начать новую игру</button>
         </form>
     </div>
-    <?php echo $this->partial('_extra/sudoku-board.phtml'); ?>
+    <div class="game-board-example">
+        <div class="game-board-example-container">
+            <?php echo $this->partial('_extra/sudoku-board.phtml', ['parameters' => $this->boardExample, 'hide' => true]); ?>
+        </div>
+        <span class="image-info">(Пример головоломки "Судоку")</span>
+    </div>
 </div>

@@ -1,0 +1,7 @@
+<?php
+$params = [
+    'parameters' => isset($this->boardExample) ? $this->boardExample : [],
+    'hide'       => isset($this->hide) ? $this->hide : false,
+];
+?>
+<?php echo $this->partial('_extra/sudoku-board.phtml', $params); ?>
