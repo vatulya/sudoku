@@ -23,9 +23,9 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
         return $result;
     }
 
-    public function getAll(array $parameters = [], array $order = ['full_name ASC'])
+    public function getAll(array $parameters = [], array $order = ['full_name ASC'], $limit = 0, $offset = 0)
     {
-        $result = parent::getAll($parameters, $order);
+        $result = parent::getAll($parameters, $order, $limit, $offset);
         if ($result && $this->_hideFields) {
             foreach ($result as $key => $row) {
                 $result[$key] = $this->hideFields($row);

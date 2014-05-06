@@ -16,9 +16,9 @@ $titleTemplate = '%s (%s открытых клеток)';
                             $openCells = $openCells['min'] . '..' . $openCells['max'];
                         }
                         $title = sprintf($titleTemplate, $difficulty['title'], $openCells);
-                        $selected = $selectedDifficulty['code'] == $difficulty['code'] ? ' selected="selected"' : '';
+                        $selected = $selectedDifficulty['id'] == $difficulty['id'] ? ' selected="selected"' : '';
                     ?>
-                    <option value="<?php echo $difficulty['code']; ?>"<?php echo $selected; ?>><?php echo $title; ?></option>
+                    <option value="<?php echo $difficulty['id']; ?>"<?php echo $selected; ?>><?php echo $title; ?></option>
                 <?php endforeach; ?>
             </select>
             <button type="submit" class="btn btn-danger submit-form">Начать новую игру</button>

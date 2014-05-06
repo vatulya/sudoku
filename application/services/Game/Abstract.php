@@ -9,6 +9,12 @@ abstract class Application_Service_Game_Abstract extends Application_Service_Abs
     const STATE_REJECTED    = 3;
     const STATE_FINISHED    = 4;
 
+    const STATE_CODE_NEW         = 'new';
+    const STATE_CODE_IN_PROGRESS = 'in_progress';
+    const STATE_CODE_PAUSED      = 'paused';
+    const STATE_CODE_REJECTED    = 'rejected';
+    const STATE_CODE_FINISHED    = 'finished';
+
     const DIFFICULTY_PRACTICE  = 1;
     const DIFFICULTY_EASY      = 2;
     const DIFFICULTY_NORMAL    = 4;
@@ -16,6 +22,14 @@ abstract class Application_Service_Game_Abstract extends Application_Service_Abs
     const DIFFICULTY_NIGHTMARE = 10;
     const DIFFICULTY_RANDOM    = 0;
     const DIFFICULTY_TEST      = -1;
+
+    const DIFFICULTY_CODE_PRACTICE  = 'practice';
+    const DIFFICULTY_CODE_EASY      = 'easy';
+    const DIFFICULTY_CODE_NORMAL    = 'normal';
+    const DIFFICULTY_CODE_EXPERT    = 'expert';
+    const DIFFICULTY_CODE_NIGHTMARE = 'nightmare';
+    const DIFFICULTY_CODE_RANDOM    = 'random';
+    const DIFFICULTY_CODE_TEST      = 'test';
 
     const DEFAULT_GAME_DIFFICULTY = 2;
 
@@ -57,11 +71,31 @@ abstract class Application_Service_Game_Abstract extends Application_Service_Abs
     public static function getStates()
     {
         return [
-            self::STATE_NEW,
-            self::STATE_IN_PROGRESS,
-            self::STATE_PAUSED,
-            self::STATE_REJECTED,
-            self::STATE_FINISHED,
+            self::STATE_NEW => [
+                'id' => self::STATE_NEW,
+                'code' => self::STATE_CODE_NEW,
+                'title' => 'Новая',
+            ],
+            self::STATE_IN_PROGRESS => [
+                'id' => self::STATE_IN_PROGRESS,
+                'code' => self::STATE_CODE_IN_PROGRESS,
+                'title' => 'В процессе',
+            ],
+            self::STATE_PAUSED => [
+                'id' => self::STATE_PAUSED,
+                'code' => self::STATE_CODE_PAUSED,
+                'title' => 'Приостановлена',
+            ],
+            self::STATE_REJECTED => [
+                'id' => self::STATE_REJECTED,
+                'code' => self::STATE_CODE_REJECTED,
+                'title' => 'Отменена',
+            ],
+            self::STATE_FINISHED => [
+                'id' => self::STATE_FINISHED,
+                'code' => self::STATE_CODE_FINISHED,
+                'title' => 'Завершена',
+            ],
         ];
     }
 
@@ -93,13 +127,41 @@ abstract class Application_Service_Game_Abstract extends Application_Service_Abs
     protected static function initDifficulties()
     {
         static::$difficulties = [
-            self::DIFFICULTY_PRACTICE  => ['code' => self::DIFFICULTY_PRACTICE, 'title' => 'Практика',],
-            self::DIFFICULTY_EASY      => ['code' => self::DIFFICULTY_EASY, 'title' => 'Легкая',],
-            self::DIFFICULTY_NORMAL    => ['code' => self::DIFFICULTY_NORMAL, 'title' => 'Средняя',],
-            self::DIFFICULTY_EXPERT    => ['code' => self::DIFFICULTY_EXPERT, 'title' => 'Сложная',],
-            self::DIFFICULTY_NIGHTMARE => ['code' => self::DIFFICULTY_NIGHTMARE, 'title' => 'Эксперт',],
-            self::DIFFICULTY_RANDOM    => ['code' => self::DIFFICULTY_RANDOM, 'title' => 'Случайная',],
-            self::DIFFICULTY_TEST      => ['code' => self::DIFFICULTY_TEST, 'title' => 'Test',],
+            self::DIFFICULTY_PRACTICE  => [
+                'id'    => self::DIFFICULTY_PRACTICE,
+                'code'  => self::DIFFICULTY_CODE_PRACTICE,
+                'title' => 'Практика',
+            ],
+            self::DIFFICULTY_EASY      => [
+                'id'    => self::DIFFICULTY_EASY,
+                'code'  => self::DIFFICULTY_CODE_EASY,
+                'title' => 'Легкая',
+            ],
+            self::DIFFICULTY_NORMAL    => [
+                'id'    => self::DIFFICULTY_NORMAL,
+                'code'  => self::DIFFICULTY_CODE_NORMAL,
+                'title' => 'Средняя',
+            ],
+            self::DIFFICULTY_EXPERT    => [
+                'id'    => self::DIFFICULTY_EXPERT,
+                'code'  => self::DIFFICULTY_CODE_EXPERT,
+                'title' => 'Сложная',
+            ],
+            self::DIFFICULTY_NIGHTMARE => [
+                'id'    => self::DIFFICULTY_NIGHTMARE,
+                'code'  => self::DIFFICULTY_CODE_NIGHTMARE,
+                'title' => 'Эксперт',
+            ],
+            self::DIFFICULTY_RANDOM    => [
+                'id'    => self::DIFFICULTY_RANDOM,
+                'code'  => self::DIFFICULTY_CODE_RANDOM,
+                'title' => 'Случайная',
+            ],
+            self::DIFFICULTY_TEST      => [
+                'id'    => self::DIFFICULTY_TEST,
+                'code'  => self::DIFFICULTY_CODE_TEST,
+                'title' => 'Test',
+            ],
         ];
     }
 

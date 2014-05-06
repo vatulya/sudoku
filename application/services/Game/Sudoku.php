@@ -11,6 +11,8 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
 
     const TOTAL_CELLS = 81;
 
+    protected $modelDb = 'Sudoku_Games';
+
     protected static $difficulties;
 
     /**
@@ -54,6 +56,18 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
     {
         $game = Application_Model_Game_Sudoku::loadByUserIdAndGameHash($userId, $gameHash);
         return $game;
+    }
+
+    /**
+     * @param int $userId
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
+    public function getUserGamesHistory($userId, $limit = 0, $offset = 0)
+    {
+        $history = $this->getModelDb()->getAll(['user_id' => $userId], ['created DESC'], $limit, $offset);
+        return $history;
     }
 
     /**

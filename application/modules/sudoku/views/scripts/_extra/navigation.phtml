@@ -1,8 +1,8 @@
 <div class="navigation-panel">
     <?php echo $this->partial('_extra/breadcrumbs.phtml', ['breadcrumbs' => $this->breadcrumbs]); ?>
     <div class="user-block">
-        <?php if ($this->user): ?>
-            <?php echo $this->partial('_extra/user-block.phtml', ['user' => $this->user]); ?>
+        <?php if ($this->currentUser): ?>
+            <?php echo $this->partial('_extra/user-block.phtml', ['currentUser' => $this->currentUser]); ?>
         <?php else: ?>
             <?php echo $this->partial('_extra/login-block.phtml'); ?>
         <?php endif; ?>

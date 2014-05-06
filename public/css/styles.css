@@ -29,10 +29,13 @@ ul {
   margin: 0;
   list-style: none;
 }
+.hlink {
+  cursor: pointer;
+}
 /**************************************** common ***************************************/
 .main-container {
   width: 100%;
-  min-width: 810px;
+  min-width: 610px;
   background-color: #dbcfc1;
 }
 .main-container .left-column, .main-container .center-column, .main-container .right-column {
@@ -45,14 +48,16 @@ ul {
 .center-column {
   margin-left: 300px;
   margin-right: 300px;
-  min-width: 800px;
+  min-width: 600px;
   background-color: #ffffff;
   border-left: 1px solid #998877;
   border-right: 1px solid #998877;
+  padding-right: 20px;
+  padding-left: 20px;
 }
 .center-column .content {
   margin: 0 auto;
-  width: 800px;
+  width: 600px;
 }
 .right-column {
   float: right;
@@ -74,7 +79,7 @@ ul {
   font-size: 16px;
   border-top: 1px solid #998877;
 }
-.right-column .section .show-game-history-container, .right-column .section .show-top-user-ratings-container {
+.right-column .section .show-games-history-container, .right-column .section .show-top-user-ratings-container {
   text-align: right;
 }
 .right-column .section table {
@@ -102,11 +107,17 @@ ul {
 .right-column .section table td {
   text-align: center;
 }
+.right-column .section table.games-history tr.hlink:hover {
+  background-color: #ffffff;
+}
 .game-state {
   font-weight: bold;
 }
 .game-state.new {
   color: #2d00b0;
+}
+.game-state.in_progress {
+  color: #0d9cd3;
 }
 .game-state.paused {
   color: #bd561d;
@@ -413,6 +424,36 @@ ul {
 }
 #login-modal .login-register.show-register-form .register-container, #login-modal .login-register.show-register-form .show-login {
   display: block;
+}
+body.user-games-history .center-column table.games-history {
+  width: 100%;
+  max-width: 600px;
+}
+body.user-games-history .center-column table.games-history tr {
+  background-color: #f0efde;
+}
+body.user-games-history .center-column table.games-history tr.head {
+  background-color: inherit;
+}
+body.user-games-history .center-column table.games-history tr.even {
+  background-color: #fffeed;
+}
+body.user-games-history .center-column table.games-history tr.me {
+  font-weight: bold;
+  border-top: 1px solid #998877;
+  border-right: 1px solid #998877;
+  border-bottom: 1px solid #998877;
+  border-left: 1px solid #998877;
+}
+body.user-games-history .center-column table.games-history th {
+  padding: 0 2px;
+}
+body.user-games-history .center-column table.games-history td {
+  text-align: center;
+  line-height: 30px;
+}
+body.user-games-history .center-column table.games-history.games-history tr.hlink:hover {
+  background-color: #ffffff;
 }
 .sudoku-table.resolved .congratulations {
   display: block;

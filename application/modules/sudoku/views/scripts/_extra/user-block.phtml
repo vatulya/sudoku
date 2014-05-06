@@ -1,5 +1,5 @@
 <?php
-    $user = $this->user;
+    $user = $this->currentUser;
     switch (true) {
         case !empty($user['full_name']) && $user['full_name'] != Application_Model_Db_Users::DEFAULT_USER_FULL_NAME:
             $greeting = $user['full_name'];

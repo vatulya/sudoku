@@ -25,6 +25,8 @@
   background-color: @common-center-column-background-color;
   border-left: @common-center-column-border-left;
   border-right: @common-center-column-border-right;
+  padding-right: @common-center-column-padding-right;
+  padding-left: @common-center-column-padding-left;
 
   .content {
     margin: 0 auto;
@@ -54,7 +56,7 @@
       border-top: @common-right-column-section-section-title-border-top;
     }
 
-    .show-game-history-container,
+    .show-games-history-container,
     .show-top-user-ratings-container {
       text-align: right;
     }
@@ -88,6 +90,16 @@
       td {
         text-align: center;
       }
+
+      &.games-history {
+        tr {
+          &.hlink {
+            &:hover {
+              background-color: lighten(@common-right-column-table-tr-background-color, 10%);
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -97,6 +109,10 @@
 
   &.new {
     color: @common-game-state-new-color;
+  }
+
+  &.in_progress {
+    color: @common-game-state-in-progress-color;
   }
 
   &.paused {

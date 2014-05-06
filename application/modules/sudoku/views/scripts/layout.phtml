@@ -28,7 +28,7 @@ $this->headScript()
     echo $this->headTitle();
 ?>
 </head>
-<body>
+<body class="<?php echo $this->pageCode; ?>">
 
 <?php echo $this->render('_extra/navigation.phtml'); ?>
 

@@ -17,6 +17,7 @@ abstract class Application_Model_Db_Abstract
 
     /**
      * @param array $parameters
+     * @param array $order
      * @return array
      */
     public function getOne(array $parameters = [], array $order = [])
@@ -36,9 +37,11 @@ abstract class Application_Model_Db_Abstract
     /**
      * @param array $parameters
      * @param array $order
+     * @param int $limit
+     * @param int $offset
      * @return array
      */
-    public function getAll(array $parameters = [], array $order = [])
+    public function getAll(array $parameters = [], array $order = [], $limit = 0, $offset = 0)
     {
         $select = $this->_db->select()->from(static::TABLE_NAME);
         foreach ($parameters as $field => $value) {
@@ -47,6 +50,11 @@ abstract class Application_Model_Db_Abstract
         }
         if (!empty($order)) {
             $select->order($order);
+        }
+        $limit = intval($limit);
+        $offset = intval($offset);
+        if ($limit > 0) {
+            $select->limit($limit, $offset > 0 ? $offset : null);
         }
         $result = $this->_db->fetchAll($select);
         return $result;

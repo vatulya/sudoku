@@ -28,9 +28,9 @@ class Application_Model_Db_Sudoku_Logs extends Application_Model_Db_GameAbstract
         return $data;
     }
 
-    public function getAll(array $parameters = [], array $order = [])
+    public function getAll(array $parameters = [], array $order = [], $limit = 0, $offset = 0)
     {
-        $data = parent::getAll($parameters, $order);
+        $data = parent::getAll($parameters, $order, $limit, $offset);
         foreach ($data as $key => $row) {
             try {
                 $row['new_parameters'] = Zend_Json::decode($row['new_parameters']);

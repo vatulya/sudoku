@@ -1,6 +1,17 @@
 (function (w, d, $) {
 
     $(d)
+        .on('click', '.hlink', function(e) {
+            e.preventDefault();
+            var el = $(e.currentTarget);
+            if (el.data('href')) {
+                if (el.data('target')) {
+                    w.open(el.data('href'), el.data('target'));
+                } else {
+                    w.location = el.data('href');
+                }
+            }
+        })
         .on('click', '.show-new-game-form', function(e) {
             var options = {
                 'url': '/sudoku/create',

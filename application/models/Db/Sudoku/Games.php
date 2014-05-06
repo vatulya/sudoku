@@ -17,9 +17,9 @@ class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstrac
         return $data;
     }
 
-    public function getAll(array $parameters = [], array $order = [])
+    public function getAll(array $parameters = [], array $order = [], $limit = 0, $offset = 0)
     {
-        $data = parent::getAll($parameters, $order);
+        $data = parent::getAll($parameters, $order, $limit, $offset);
         foreach ($data as $key => $row) {
             try {
                 $row['parameters'] = Zend_Json::decode($row['parameters']);
@@ -37,7 +37,7 @@ class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstrac
         $now = $this->getNow();
         $data = [
             'user_id'    => $data['user_id'],
-            'difficulty' => $data['difficulty']['code'],
+            'difficulty' => $data['difficulty']['id'],
             'parameters' => isset($data['parameters']) ? $data['parameters'] : [],
             'created'    => $now,
             'updated'    => $now,
