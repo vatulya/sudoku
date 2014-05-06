@@ -59,3 +59,16 @@ CREATE TABLE IF NOT EXISTS sudoku_logs (
     INDEX (created),
     INDEX (action_type)
 );
+
+CREATE TABLE IF NOT EXISTS sudoku_ratings (
+    id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    difficulty INT NOT NULL,
+    position INT NOT NULL,
+    rating INT NOT NULL,
+    updated TIMESTAMP NOT NULL,
+    PRIMARY KEY (id),
+    INDEX (user_id),
+    INDEX (difficulty),
+    INDEX (rating)
+);

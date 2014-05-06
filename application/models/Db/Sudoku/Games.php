@@ -12,7 +12,7 @@ class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstrac
             $data['parameters'] = Zend_Json::decode($data['parameters']);
         } catch (Exception $e) {
             // TODO: add logs
-            $data['paramters'] = [];
+            $data['parameters'] = [];
         }
         return $data;
     }
@@ -25,7 +25,7 @@ class Application_Model_Db_Sudoku_Games extends Application_Model_Db_GameAbstrac
                 $row['parameters'] = Zend_Json::decode($row['parameters']);
             } catch (Exception $e) {
                 // TODO: add logs
-                $row['paramters'] = [];
+                $row['parameters'] = [];
             }
             $data[$key] = $row;
         }

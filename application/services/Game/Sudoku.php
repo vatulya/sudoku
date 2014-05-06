@@ -71,6 +71,33 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
     }
 
     /**
+     * @param int $userId
+     * @param int $limit
+     * @return array $userRating
+     */
+    public function findUserRating($userId, $limit = 0)
+    {
+        $ratingModelDb = new Application_Model_Db_Sudoku_Ratings();
+        $userRating = $ratingModelDb->getOne(['user_id' => $userId]);
+        if (!$userRating) {
+            return [];
+        }
+        $position = $userRating['position'];
+        $offset = 0;
+        if ($position < ceil($limit / 2)) {
+            // the first page and the first part of page
+        } else {
+            if ($limit % 2) {
+                $offset = $position - floor($limit / 2); // User's rating will be in middle of page
+            } else {
+                $offset = $position - (($limit / 2) - 1); // User's rating will be in middle -1 of page
+            }
+        }
+        $userRating = $ratingModelDb->getAll(['user_id' => $userId], ['rating ASC'], $limit, $offset);
+        return $userRating;
+    }
+
+    /**
      * @return array
      */
     public function generateBoard()

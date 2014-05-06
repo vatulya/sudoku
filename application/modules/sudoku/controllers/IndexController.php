@@ -6,6 +6,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
     const EXAMPLE_OPEN_CELLS = 35;
 
     const DEFAULT_USER_GAMES_HISTORY_LIMIT = 5;
+    const DEFAULT_USER_RATING_LIMIT = 5;
 
     const DEFAULT_PAGE_SIZE = 20;
 
@@ -167,17 +168,18 @@ class Sudoku_IndexController extends Zend_Controller_Action
         }
 
         $limit  = static::DEFAULT_PAGE_SIZE;
-        $page = intval($this->_request->getParam('page'));
-        $page = $page > 1 ? $page : 1;
-        $offset = ($page - 1) * $limit;
+        $offset = intval($this->_request->getParam('offset'));
+        if ($offset < 0) {
+            $offset = 0;
+        }
 
         $userGamesHistory = $sudokuService->getUserGamesHistory($user['id'], $limit, $offset);
 
         $this->view->assign([
             'userGamesHistory' => $userGamesHistory,
             'user'             => $user,
-            'previousPage' => $page - 1,
-            'nextPage'     => $page + 1,
+            'previousPage' => $offset > $limit ? $offset - $limit : 0,
+            'nextPage'     => $offset + $limit,
         ]);
         $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'user-games-history'], 'sudoku', true)] = 'История игр';
         $this->view->pageCode = 'user-games-history';
@@ -192,6 +194,11 @@ class Sudoku_IndexController extends Zend_Controller_Action
         if (empty($modules) || in_array('my-games-history', $modules)) {
             $gamesHistory = $sudokuService->getUserGamesHistory($user['id'], static::DEFAULT_USER_GAMES_HISTORY_LIMIT);
             $this->view->gamesHistory = $gamesHistory;
+        }
+
+        if (empty($modules) || in_array('my-rating', $modules)) {
+            $bestUsers = $sudokuService->findUserRating($user['id'], static::DEFAULT_USER_RATING_LIMIT);
+            $this->view->bestUsers = $bestUsers;
         }
     }
 
