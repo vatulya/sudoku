@@ -1,7 +1,7 @@
 <?php
-if (isset($this->breadcrumbs) && is_array($this->breadcrumbs) && !empty($this->breadcrumbs)) {
-    $breadcrumbs = $this->breadcrumbs;
-} else {
+$breadcrumbs = $this->breadcrumbs;
+
+if (empty($breadcrumbs) || !is_array($breadcrumbs)) {
     $breadcrumbs = [
         '/' => 'Главная страница',
     ];

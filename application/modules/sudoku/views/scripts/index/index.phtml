@@ -2,64 +2,15 @@
     <div class="section create-new-game-container">
         <button type="button" class="show-new-game-form btn btn-success btn-large">Начать новую игру</button>
     </div>
-    <?php if (!empty($this->gamesHistory)): ?>
-    <div class="section games-history-container">
-        <div class="section-title">История ваших игр:</div>
-        <table class="games-history">
-            <tbody>
-            <tr class="head">
-                <th>Начало</th>
-                <th>Статус</th>
-                <th>В игре</th>
-            </tr>
-            <?php $i = 1; ?>
-            <?php foreach ($this->gamesHistory as $game): ?>
-                <?php
-                $state = $game['state'];
-                $state = isset($this->states[$state]) ? $this->states[$state] : '';
-                $duration = secondsToArray($game['duration']);
-                $time = isset($duration['seconds']) ? $duration['seconds'] : '';
-                if (isset($duration['days'])) {
-                    $time = $duration['days'] . ' ' . ($duration['days'] > 1 ? 'дней' : 'день');
-                } elseif (isset($duration['hours']) || isset($duration['minutes'])) {
-                    if (!isset($duration['hours'])) {
-                        $time = intval($duration['minutes']) . ':' . $time;
-                    } else {
-                        $time = $duration['hours'] . ':' . $duration['minutes'] . ':' . $time;
-                    }
-                } else {
-                    // only seconds
-                    $time = intval($time);
-                    $last = intval(substr($time, -1));
-                    if ($last == 0 || ($time >= 5 && $time <= 19)) {
-                        $time .= ' секунд'; // нуль секунд, пять секунд, четырнадцать секунд, двадцать секунд
-                    } elseif ($last == 1) {
-                        $time .= ' секунда'; // одна секунда, двадцать одна секунда
-                    } elseif ($last < 5) {
-                        $time .= ' секунды'; // две секунды, двадцать три секунды
-                    }
-                }
-                $even = ($i++ % 2) ? '' : ' even';
-                ?>
-                <tr class="hlink<?php echo $even; ?>" data-href="<?php echo $this->url(['gameHash' => $game['hash']], 'sudoku-game', true); ?>">
-                    <td class="game-created-datetime"><?php echo (new DateTime($game['created']))->format('d-m-Y H:i'); ?></td>
-                    <td class="game-state <?php echo $state['code']; ?>"><?php echo $state['title']; ?></td>
-                    <td class="time"><?php echo $time; ?></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-        <div class="show-games-history-container">
-            <a href="<?php echo $this->url(['action' => 'user-games-history'], 'sudoku', true); ?>" class="show-games-history">Просмотреть всю историю игр</a>
-        </div>
-    </div>
-    <?php endif; ?>
+
+    <?php echo $this->partial('_partials/right-col-user-games-history.phtml', ['gamesHistory' => $this->gamesHistory, 'states' => $this->states]); ?>
+
     <div class="section top-user-ratings-container">
         <div class="section-title">Лучшие игроки:</div>
         Сложность:
         <select class="change-top-user-ratings-difficulty change-difficulty btn-small">
             <?php foreach ($this->difficulties as $difficulty): ?>
-                <option value="<?php echo $difficulty['code']; ?>"><?php echo $difficulty['title']; ?></option>
+                <option value="<?php echo $difficulty['id']; ?>"><?php echo $difficulty['title']; ?></option>
             <?php endforeach; ?>
         </select>
         <table class="top-user-ratings">
@@ -105,7 +56,7 @@
         Сложность:
         <select class="my-user-ratings-difficulty change-difficulty btn-small">
             <?php foreach ($this->difficulties as $difficulty): ?>
-                <option value="<?php echo $difficulty['code']; ?>"><?php echo $difficulty['title']; ?></option>
+                <option value="<?php echo $difficulty['id']; ?>"><?php echo $difficulty['title']; ?></option>
             <?php endforeach; ?>
         </select>
         <table class="my-user-ratings">
@@ -154,7 +105,7 @@
             <a href="http://ru.wikipedia.org/wiki/%D0%A1%D1%83%D0%B4%D0%BE%D0%BA%D1%83" rel="nofollow" target="_blank" class="wiki-link">статью об игре</a>.
         </p>
         <div class="game-board-example">
-            <?php echo $this->partial('_extra/sudoku-board.phtml', ['parameters' => $this->boardExample,]); ?>
+            <?php echo $this->partial('_partials/sudoku-board.phtml', ['parameters' => $this->boardExample]); ?>
             <span class="image-info">(Пример головоломки "Судоку")</span>
         </div>
         <p>
@@ -162,7 +113,7 @@
             Необходимо заполнить поле цифрами от 1 до 9 так, чтоб в каждой колонке, строчке и под-квадрате не было повторяющихся цифр.
         </p>
         <div class="game-board-example">
-            <?php echo $this->partial('_extra/sudoku-board.phtml', ['parameters' => $this->boardSolvedExample,]); ?>
+            <?php echo $this->partial('_partials/sudoku-board.phtml', ['parameters' => $this->boardSolvedExample]); ?>
             <span class="image-info">(Пример решенной головоломки "Судоку")</span>
         </div>
         <div class="to-top">

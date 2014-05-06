@@ -44,14 +44,14 @@ class Sudoku_IndexController extends Zend_Controller_Action
         );
         $this->view->assign([
             'uLoginData'   => Application_Service_User::getULoginData($uLoginRedirectUrl),
-            'difficulties' => Application_Service_Game_Sudoku::getAllDifficulties(),
             'currentUser'  => Application_Service_User::getInstance()->getCurrentUser(),
+            'states'       => Application_Service_Game_Sudoku::getStates(),
+            'difficulties' => Application_Service_Game_Sudoku::getAllDifficulties(),
         ]);
     }
 
     public function indexAction()
     {
-        $user = Application_Service_User::getInstance()->getCurrentUser();
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
         $board = $sudokuService->generateBoard();
         $board = $sudokuService->normalizeBoardKeys($board);
@@ -63,15 +63,12 @@ class Sudoku_IndexController extends Zend_Controller_Action
             'openCells'    => $openCells,
             'checkedCells' => array_diff_key($board, $openCells),
         ];
-        $gamesHistory = $sudokuService->getUserGamesHistory($user['id'], static::DEFAULT_USER_GAMES_HISTORY_LIMIT);
         $this->view->assign([
-            'states'             => $sudokuService::getStates(),
-            'difficulties'       => $sudokuService::getAllDifficulties(),
             'boardExample'       => $boardExample,
             'boardSolvedExample' => $boardSolvedExample,
-            'gamesHistory'       => $gamesHistory,
         ]);
         $this->view->pageCode = 'index';
+        $this->_rightColumn();
     }
 
     public function createAction()
@@ -86,7 +83,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
         }
         $vars['selectedDifficulty'] = $difficulty;
 
-        if ($this->_request->getParam('submit')) {
+        if ($this->_request->getParam('submitted')) {
             $sudokuGame = null;
             try {
                 $user = Application_Service_User::getInstance()->getCurrentUser();
@@ -145,13 +142,57 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $sudokuGame = $sudokuService->loadByUserIdAndGameHash($user['id'], $gameHash);
         if (empty($sudokuGame)) {
             $this->getHelper('redirector')->gotoRoute([], 'sudoku', true);
-
         }
         $this->view->assign([
-            'sudoku' => $sudokuGame,
+            'sudoku'       => $sudokuGame,
         ]);
         $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'create'], 'sudoku', true)] = 'Игра';
         $this->view->pageCode = 'game';
+        $this->_rightColumn();
+    }
+
+    public function userGamesHistoryAction()
+    {
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+
+        $user = $this->_request->getParam('user');
+        if ($user) {
+            $user = Application_Service_User::getInstance()->getById($user);
+            if (!$user) {
+                echo 'Wrong user'; die();
+                // TODO: error
+            }
+        } else {
+            $user = Application_Service_User::getInstance()->getCurrentUser();
+        }
+
+        $limit  = static::DEFAULT_PAGE_SIZE;
+        $page = intval($this->_request->getParam('page'));
+        $page = $page > 1 ? $page : 1;
+        $offset = ($page - 1) * $limit;
+
+        $userGamesHistory = $sudokuService->getUserGamesHistory($user['id'], $limit, $offset);
+
+        $this->view->assign([
+            'userGamesHistory' => $userGamesHistory,
+            'user'             => $user,
+            'previousPage' => $page - 1,
+            'nextPage'     => $page + 1,
+        ]);
+        $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'user-games-history'], 'sudoku', true)] = 'История игр';
+        $this->view->pageCode = 'user-games-history';
+        $this->_rightColumn();
+    }
+
+    protected function _rightColumn($modules = [])
+    {
+        $user          = Application_Service_User::getInstance()->getCurrentUser();
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+
+        if (empty($modules) || in_array('my-games-history', $modules)) {
+            $gamesHistory = $sudokuService->getUserGamesHistory($user['id'], static::DEFAULT_USER_GAMES_HISTORY_LIMIT);
+            $this->view->gamesHistory = $gamesHistory;
+        }
     }
 
     public function getBoardAction()
@@ -175,42 +216,6 @@ class Sudoku_IndexController extends Zend_Controller_Action
             'boardExample' => $boardExample,
             'hide'         => $this->_request->getParam('hide', false),
         ]);
-    }
-
-    public function userGamesHistoryAction()
-    {
-        $sudokuService = Application_Service_Game_Sudoku::getInstance();
-
-        $user = $this->_request->getParam('user');
-        if ($user) {
-            $user = Application_Service_User::getInstance()->getById($user);
-            if (!$user) {
-                echo 'Wrong user'; die();
-                // TODO: error
-            }
-        } else {
-            $user = Application_Service_User::getInstance()->getCurrentUser();
-        }
-
-        $limit  = static::DEFAULT_PAGE_SIZE;
-        $page = intval($this->_request->getParam('page'));
-        $page = $page > 1 ? $page : 1;
-        $offset = ($page - 1) * $limit;
-
-        $gamesHistory     = $sudokuService->getUserGamesHistory($user['id'], static::DEFAULT_USER_GAMES_HISTORY_LIMIT);
-        $userGamesHistory = $sudokuService->getUserGamesHistory($user['id'], $limit, $offset);
-
-        $this->view->assign([
-            'states'           => $sudokuService::getStates(),
-            'difficulties'     => $sudokuService::getAllDifficulties(),
-            'gamesHistory'     => $gamesHistory,
-            'userGamesHistory' => $userGamesHistory,
-            'user'             => $user,
-            'previousPage' => $page - 1,
-            'nextPage'     => $page + 1,
-        ]);
-        $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'user-games-history'], 'sudoku', true)] = 'История игр';
-        $this->view->pageCode = 'user-games-history';
     }
 
     public function checkFieldAction()

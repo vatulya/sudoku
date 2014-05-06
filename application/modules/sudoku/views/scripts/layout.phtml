@@ -18,7 +18,6 @@ $this->headScript()
     ->prependFile('/js/jquery-2.0.3.js')
 ;
 ?>
-
 <?php header('Content-type: text/html; charset=utf-8'); ?>
 <?php echo $this->doctype() ?>
 <html>
@@ -45,6 +44,9 @@ $this->headScript()
     <div class="modal-body">
     </div>
 </div>
+
+<?php echo $this->render('_extra/login-modal.phtml'); ?>
+
 <?php $this->headScript()->appendScript('window.$Modal = new window.Modal(\'#modal\');'); ?>
 
 <?php echo $this->headScript(); ?>

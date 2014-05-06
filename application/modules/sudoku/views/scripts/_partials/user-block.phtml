@@ -1,5 +1,6 @@
 <?php
     $user = $this->currentUser;
+
     switch (true) {
         case !empty($user['full_name']) && $user['full_name'] != Application_Model_Db_Users::DEFAULT_USER_FULL_NAME:
             $greeting = $user['full_name'];
@@ -20,8 +21,8 @@
     <div class="user-info-title-container">
         <span class="user-info-title">
             Привет, <?php echo $greeting; ?>.
-            <?php if ($user['role_id'] == Application_Service_User::ROLE_GUEST): ?>
-            Может <a href="" class="login-button">залогинишься</a>?
+            <?php if (!isset($user['role_id']) || $user['role_id'] == Application_Service_User::ROLE_GUEST): ?>
+                Может <a href="" class="login-button">залогинишься</a>?
             <?php endif; ?>
             <i class="user-menu-open-icon icon-chevron-down"></i>
             <i class="user-menu-close-icon icon-chevron-up"></i>
@@ -43,5 +44,3 @@
         </div>
     </div>
 </div>
-
-<?php echo $this->render('_extra/login-modal.phtml'); ?>

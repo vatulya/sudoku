@@ -164,50 +164,9 @@
             </div>
             <?php endif; ?>
         </div>
-        <table class="games-history">
-            <tbody>
-            <tr class="head">
-                <th>Начало</th>
-                <th>Статус</th>
-                <th>В игре</th>
-            </tr>
-            <?php $i = 1; ?>
-            <?php foreach ($this->userGamesHistory as $game): ?>
-                <?php
-                $state = $game['state'];
-                $state = isset($this->states[$state]) ? $this->states[$state] : '';
-                $duration = secondsToArray($game['duration']);
-                $time = isset($duration['seconds']) ? $duration['seconds'] : '';
-                if (isset($duration['days'])) {
-                    $time = $duration['days'] . ' ' . ($duration['days'] > 1 ? 'дней' : 'день');
-                } elseif (isset($duration['hours']) || isset($duration['minutes'])) {
-                    if (!isset($duration['hours'])) {
-                        $time = intval($duration['minutes']) . ':' . $time;
-                    } else {
-                        $time = $duration['hours'] . ':' . $duration['minutes'] . ':' . $time;
-                    }
-                } else {
-                    // only seconds
-                    $time = intval($time);
-                    $last = intval(substr($time, -1));
-                    if ($last == 0 || ($time >= 5 && $time <= 19)) {
-                        $time .= ' секунд'; // нуль секунд, пять секунд, четырнадцать секунд, двадцать секунд
-                    } elseif ($last == 1) {
-                        $time .= ' секунда'; // одна секунда, двадцать одна секунда
-                    } elseif ($last < 5) {
-                        $time .= ' секунды'; // две секунды, двадцать три секунды
-                    }
-                }
-                $even = ($i++ % 2) ? '' : ' even';
-                ?>
-                <tr class="hlink<?php echo $even; ?>" data-href="<?php echo $this->url(['gameHash' => $game['hash']], 'sudoku-game', true); ?>">
-                    <td class="game-created-datetime"><?php echo (new DateTime($game['created']))->format('d-m-Y H:i'); ?></td>
-                    <td class="game-state <?php echo $state['code']; ?>"><?php echo $state['title']; ?></td>
-                    <td class="time"><?php echo $time; ?></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+
+        <?php echo $this->render('index/user-games-history.ajax.phtml'); ?>
+
         <?php if (count($this->userGamesHistory) > 20): ?>
         <div class="pagination">
             <?php if ($this->previousPage): ?>

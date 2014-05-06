@@ -12,17 +12,17 @@ $sudoku = $this->sudoku;
 
     <div class="congratulations">
         <div class="message">
-            Congratulations!<br>
-            You have solved this sudoku!
+            Поздравляем!<br>
+            Вы решили эту Судоку!
         </div>
     </div>
 
-    <?php echo $this->partial('_extra/sudoku-board.phtml'); ?>
+    <?php echo $this->partial('_partials/sudoku-board.phtml'); ?>
 
-    <?php echo $this->partial('_extra/sudoku-controls.phtml'); ?>
+    <?php echo $this->partial('_partials/sudoku-controls.phtml'); ?>
 
     <div class="time">
-        Time: <div class="game-time">synchronization...</div>
+        Время игры: <div class="game-time">синхронизация...</div>
     </div>
 </div>
 
