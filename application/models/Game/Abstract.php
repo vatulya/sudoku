@@ -77,6 +77,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
         if (!$game) {
             throw new RuntimeException('Wrong game ID "' . $id . '".');
         }
+        try { $parameters = (array)Zend_Json::decode($game['parameters']); } catch (Exception $e) { $parameters = []; }
         $this->id         = $game['id'];
         $this->user       = (new Application_Model_Db_Users())->getOne(['id' => $game['user_id']]);
         $this->state      = (int)$game['state'];
@@ -85,7 +86,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
         $this->started    = (string)$game['started'];
         $this->ended      = (string)$game['ended'];
         $this->duration   = (int)$game['duration'];
-        $this->parameters = (array)$game['parameters'];
+        $this->parameters = $parameters;
         $this->hash       = (string)$game['hash'];
         $this->updated    = (string)$game['updated'];
     }

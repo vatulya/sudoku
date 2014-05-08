@@ -37,27 +37,34 @@ abstract class Application_Model_Db_Abstract
     /**
      * @param array $parameters
      * @param array $order
-     * @param int $limit
-     * @param int $offset
-     * @return array
+     * @return My_Paginator
      */
-    public function getAll(array $parameters = [], array $order = [], $limit = 0, $offset = 0)
+    public function getAll(array $parameters = [], array $order = []/*, $limit = 0, $offset = 0*/)
     {
         $select = $this->_db->select()->from(static::TABLE_NAME);
         foreach ($parameters as $field => $value) {
-            $expression = is_array($value) ? ' IN (?)' : ' = ?';
+            if (null === $value) {
+                $expression = ' IS NULL';
+            } elseif ('!null' === $value) {
+                $expression = ' IS NOT NULL';
+            } else {
+                $expression = is_array($value) ? ' IN (?)' : ' = ?';
+            }
             $select->where($field . $expression, $value);
         }
         if (!empty($order)) {
             $select->order($order);
         }
-        $limit = intval($limit);
-        $offset = intval($offset);
-        if ($limit > 0) {
-            $select->limit($limit, $offset > 0 ? $offset : null);
-        }
-        $result = $this->_db->fetchAll($select);
-        return $result;
+//        $limit = intval($limit);
+//        $offset = intval($offset);
+//        if ($limit > 0) {
+//            $select->limit($limit, $offset > 0 ? $offset : null);
+//        }
+        $paginator = new Zend_Paginator_Adapter_DbSelect($select);
+        $paginator = new My_Paginator($paginator);
+        return $paginator;
+//        $result = $this->_db->fetchAll($select);
+//        return $result;
     }
 
     public function getNow()

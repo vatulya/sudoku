@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS sudoku_games (
     duration INT NOT NULL,
     client_duration INT NOT NULL,
     parameters TEXT NOT NULL,
+    rating INT DEFAULT NULL,
     hash VARCHAR(50) NOT NULL,
     updated TIMESTAMP NOT NULL,
     PRIMARY KEY (id),
@@ -44,6 +45,7 @@ CREATE TABLE IF NOT EXISTS sudoku_games (
     INDEX (created),
     INDEX (started),
     INDEX (duration),
+    INDEX (rating),
     INDEX (hash)
 );
 
@@ -68,7 +70,9 @@ CREATE TABLE IF NOT EXISTS sudoku_ratings (
     rating INT NOT NULL,
     updated TIMESTAMP NOT NULL,
     PRIMARY KEY (id),
+    UNIQUE (user_id, difficulty),
     INDEX (user_id),
     INDEX (difficulty),
+    INDEX (position),
     INDEX (rating)
 );

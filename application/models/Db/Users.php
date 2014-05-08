@@ -7,31 +7,9 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
 
     const DEFAULT_USER_FULL_NAME = 'мистер Гость';
 
-    protected $_hiddenFields = [
-        'password',
-    ];
-
-    protected $_hideFields = true;
-
-    public function getOne(array $parameters = [], array $order = [])
-    {
-        $result = parent::getOne($parameters, $order);
-        if ($result && $this->_hideFields) {
-            $result = $this->hideFields($result);
-            $this->_hideFields = true;
-        }
-        return $result;
-    }
-
     public function getAll(array $parameters = [], array $order = ['full_name ASC'], $limit = 0, $offset = 0)
     {
         $result = parent::getAll($parameters, $order, $limit, $offset);
-        if ($result && $this->_hideFields) {
-            foreach ($result as $key => $row) {
-                $result[$key] = $this->hideFields($row);
-            }
-            $this->_hideFields = true;
-        }
         return $result;
     }
 
@@ -62,29 +40,6 @@ class Application_Model_Db_Users extends Application_Model_Db_Abstract
     public function delete($id)
     {
         return false;
-    }
-
-    /**
-     * @return Application_Model_Db_Users
-     */
-    public function withHiddenFields()
-    {
-        $this->_hideFields = false;
-        return $this;
-    }
-
-    /**
-     * @param array $array
-     * @return array
-     */
-    public function hideFields(array $array)
-    {
-        foreach ($this->_hiddenFields as $field) {
-            if (isset($array[$field])) {
-                unset($array[$field]);
-            }
-        }
-        return $array;
     }
 
 }

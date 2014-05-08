@@ -167,19 +167,12 @@ class Sudoku_IndexController extends Zend_Controller_Action
             $user = Application_Service_User::getInstance()->getCurrentUser();
         }
 
-        $limit  = static::DEFAULT_PAGE_SIZE;
         $offset = intval($this->_request->getParam('offset'));
-        if ($offset < 0) {
-            $offset = 0;
-        }
-
-        $userGamesHistory = $sudokuService->getUserGamesHistory($user['id'], $limit, $offset);
+        $userGamesHistory = $sudokuService->getUserGamesHistory($user['id'], static::DEFAULT_PAGE_SIZE, $offset);
 
         $this->view->assign([
             'userGamesHistory' => $userGamesHistory,
             'user'             => $user,
-            'previousPage' => $offset > $limit ? $offset - $limit : 0,
-            'nextPage'     => $offset + $limit,
         ]);
         $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'user-games-history'], 'sudoku', true)] = 'История игр';
         $this->view->pageCode = 'user-games-history';
@@ -196,9 +189,11 @@ class Sudoku_IndexController extends Zend_Controller_Action
             $this->view->gamesHistory = $gamesHistory;
         }
 
-        if (empty($modules) || in_array('my-rating', $modules)) {
-            $bestUsers = $sudokuService->findUserRating($user['id'], static::DEFAULT_USER_RATING_LIMIT);
-            $this->view->bestUsers = $bestUsers;
+        if (false && empty($modules) || in_array('my-rating', $modules)) {
+            $topUsersRating = $sudokuService->getUsersRating(
+                $this->getParam('my-rating-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY)
+            );
+            $this->view->topUsersRating = $topUsersRating;
         }
     }
 

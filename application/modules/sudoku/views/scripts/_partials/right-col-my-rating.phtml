@@ -1,60 +1,39 @@
 <?php
-$users = $this->bestUsers;
+$users = $this->topUsersRating;
 $difficulties = $this->difficulties ?: [];
 ?>
 <?php if (!empty($users)): ?>
-    <div class="section top-user-ratings-container">
+    <div class="section my-rating-container">
         <div class="section-title">Лучшие игроки:</div>
         Сложность:
-        <select class="change-top-user-ratings-difficulty change-difficulty btn-small">
+        <select name="my-rating-difficulty" class="change-my-rating-difficulty change-difficulty btn-small">
             <?php foreach ($difficulties as $difficulty): ?>
                 <option value="<?php echo $difficulty['id']; ?>"><?php echo $difficulty['title']; ?></option>
             <?php endforeach; ?>
         </select>
-        <table class="top-user-ratings">
+        <table class="my-rating">
         <tbody>
         <tr class="head">
             <th>#</th>
             <th>Имя</th>
             <th>Время</th>
         </tr>
+        <?php $i = 1; ?>
         <?php foreach ($users as $user): ?>
             <?php
-            $duration = secondsToArray($user['bestDuration']);
-            $time = isset($duration['seconds']) ? $duration['seconds'] : '';
-            if (isset($duration['days'])) {
-                $time = $duration['days'] . ' ' . ($duration['days'] > 1 ? 'дней' : 'день');
-            } elseif (isset($duration['hours']) || isset($duration['minutes'])) {
-                if (!isset($duration['hours'])) {
-                    $time = intval($duration['minutes']) . ':' . $time;
-                } else {
-                    $time = $duration['hours'] . ':' . $duration['minutes'] . ':' . $time;
-                }
-            } else {
-                // only seconds
-                $time = intval($time);
-                $last = intval(substr($time, -1));
-                if ($last == 0 || ($time >= 5 && $time <= 19)) {
-                    $time .= ' секунд'; // нуль секунд, пять секунд, четырнадцать секунд, двадцать секунд
-                } elseif ($last == 1) {
-                    $time .= ' секунда'; // одна секунда, двадцать одна секунда
-                } elseif ($last < 5) {
-                    $time .= ' секунды'; // две секунды, двадцать три секунды
-                }
-            }
             $even = ($i++ % 2) ? '' : ' even';
             $me = ($user['id'] == $this->currentUser['id']) ? ' me' : '';
             ?>
             <tr class="hlink<?php echo $even . $me; ?>" data-href="<?php echo $this->url(['userId' => $user['id']], 'user-page', true); ?>">
                 <td class="user-position"><?php echo $user['position']; ?></td>
                 <td class="user-full-name"><?php echo $user['full_name']; ?></td>
-                <td class="time"><?php echo $time; ?></td>
+                <td class="user-rating"><?php echo $user['rating']; ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
-    <div class="show-my-ratings-container">
-        <a href="<?php echo $this->url(['action' => 'user-rating'], 'sudoku', true); ?>?user=<?php echo $this->currentUser['id']; ?>" class="show-top-user-ratings">Просмотреть весь список игроков</a>
+    <div class="show-users-rating-container">
+        <a href="<?php echo $this->url(['action' => 'users-rating'], 'sudoku', true); ?>?order=rating&direction=desc&user=<?php echo $this->currentUser['id']; ?>" class="show-users-rating">Просмотреть рейтинги всех игроков</a>
     </div>
 </div>
 <?php endif; ?>

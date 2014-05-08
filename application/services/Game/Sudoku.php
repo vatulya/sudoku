@@ -66,21 +66,25 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      */
     public function getUserGamesHistory($userId, $limit = 0, $offset = 0)
     {
-        $history = $this->getModelDb()->getAll(['user_id' => $userId], ['created DESC'], $limit, $offset);
+        $history = $this->getModelDb()->getAll(['user_id' => $userId], ['created DESC']);
+        $history->setLimit($limit)->setOffset($offset);
+//        $history->
         return $history;
     }
 
     /**
-     * @param int $userId
-     * @param int $limit
+     * @param int $difficulty
      * @return array $userRating
      */
-    public function findUserRating($userId, $limit = 0)
+    public function getUsersRating($difficulty)
     {
         $ratingModelDb = new Application_Model_Db_Sudoku_Ratings();
-        $userRating = $ratingModelDb->getOne(['user_id' => $userId]);
+        $userRating = $ratingModelDb->getOne(['user_id' => $userId, 'difficulty' => $difficulty]);
         if (!$userRating) {
             return [];
+        }
+        if ($limit == 1) {
+            return $userRating;
         }
         $position = $userRating['position'];
         $offset = 0;
@@ -93,7 +97,7 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
                 $offset = $position - (($limit / 2) - 1); // User's rating will be in middle -1 of page
             }
         }
-        $userRating = $ratingModelDb->getAll(['user_id' => $userId], ['rating ASC'], $limit, $offset);
+        $userRating = $ratingModelDb->getAll([], ['position ASC'], $limit, $offset);
         return $userRating;
     }
 
@@ -358,6 +362,20 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
         }
         if (self::TOTAL_CELLS == count($cells)) {
             $game->finish();
+            // Update user's rating
+            $ratingModelDb = new Application_Model_Db_Sudoku_Ratings();
+            $rating = $this->calculateRating($game->getDifficulty(), $game->getDuration());
+            $user = $game->getUser();
+            $userRating = $this->findUserRating($user['id'], $game->getDifficulty(), 1);
+            if ($userRating) {
+                $ratingModelDb->update($userRating['id'], ['rating' => $userRating + $rating]);
+            } else {
+                $ratingModelDb->insert([
+                    'user_id'    => $user['id'],
+                    'difficulty' => $game->getDifficulty(),
+                    'rating'     => $rating,
+                ]);
+            }
             return true;
         }
         return false;
@@ -427,6 +445,60 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
                 static::$difficulties[$code] += $additionalParameters[$code];
             }
         }
+    }
+
+    /**
+     * @param int $difficulty
+     * @param int $duration in seconds
+     * @return int
+     */
+    public function calculateRating($difficulty, $duration)
+    {
+        $difficulty = intval($difficulty);
+        $duration   = intval($duration);
+        $settings = [
+            self::DIFFICULTY_PRACTICE  => [
+                'startRating' => 1000,
+                'minimalRating' => 1000,
+                'perSecond' => 0,
+            ],
+            self::DIFFICULTY_EASY      => [
+                'startRating' => 5000,
+                'minimalRating' => 1000,
+                'perSecond' => 10,
+            ],
+            self::DIFFICULTY_NORMAL    => [
+                'startRating' => 10000,
+                'minimalRating' => 1200,
+                'perSecond' => 15,
+            ],
+            self::DIFFICULTY_EXPERT    => [
+                'startRating' => 16000,
+                'minimalRating' => 2000,
+                'perSecond' => 20,
+            ],
+            self::DIFFICULTY_NIGHTMARE => [
+                'startRating' => 25000,
+                'minimalRating' => 2500,
+                'perSecond' => 25,
+            ],
+        ];
+        if (!isset($settings[$difficulty])) {
+            // This difficulty doesn't change user's rating
+            return 0;
+        }
+        $difficultySettings = $settings[$difficulty];
+        if (self::DIFFICULTY_PRACTICE === $difficulty) {
+            return $difficultySettings['minimalRating'];
+        }
+        $maxTime = ($difficultySettings['startRating'] - $difficultySettings['minimalRating']) / $difficultySettings['perSecond'];
+        $maxTime = floor($maxTime);
+        if ($duration >= $maxTime) {
+            return $difficultySettings['minimalRating'];
+        }
+        $bonus = ($maxTime - $duration) * $difficultySettings['perSecond'];
+        $rating = $difficultySettings['minimalRating'] + $bonus;
+        return $rating;
     }
 
 }

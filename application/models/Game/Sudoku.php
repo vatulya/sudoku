@@ -126,8 +126,8 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
     public function getUndoRedoMoves()
     {
         $moves = [
-            'undo' => [],
-            'redo' => [],
+            'undo' => '[]',
+            'redo' => '[]',
         ];
         $logs = $this->getLogs();
         $undos = 0;
@@ -193,6 +193,9 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
                 break;
             }
         }
+        try { $moves['undo'] = (array)Zend_Json::decode($moves['undo']); } catch (Exception $e) { $moves['undo'] = []; }
+        try { $moves['redo'] = (array)Zend_Json::decode($moves['redo']); } catch (Exception $e) { $moves['redo'] = []; }
+
         return $moves;
     }
 

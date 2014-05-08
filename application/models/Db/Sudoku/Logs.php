@@ -10,45 +10,6 @@ class Application_Model_Db_Sudoku_Logs extends Application_Model_Db_GameAbstract
     const ACTION_TYPE_UNDO              = 'undo';
     const ACTION_TYPE_REDO              = 'redo';
 
-    public function getOne(array $parameters = [], array $order = [])
-    {
-        $data = parent::getOne($parameters, $order);
-        try {
-            $data['new_parameters'] = Zend_Json::decode($data['new_parameters']);
-        } catch (Exception $e) {
-            // TODO: add logs
-            $data['new_parameters'] = [];
-        }
-        try {
-            $data['old_parameters'] = Zend_Json::decode($data['old_parameters']);
-        } catch (Exception $e) {
-            // TODO: add logs
-            $data['old_parameters'] = [];
-        }
-        return $data;
-    }
-
-    public function getAll(array $parameters = [], array $order = [], $limit = 0, $offset = 0)
-    {
-        $data = parent::getAll($parameters, $order, $limit, $offset);
-        foreach ($data as $key => $row) {
-            try {
-                $row['new_parameters'] = Zend_Json::decode($row['new_parameters']);
-            } catch (Exception $e) {
-                // TODO: add logs
-                $row['new_parameters'] = [];
-            }
-            try {
-                $row['old_parameters'] = Zend_Json::decode($row['old_parameters']);
-            } catch (Exception $e) {
-                // TODO: add logs
-                $row['old_parameters'] = [];
-            }
-            $data[$key] = $row;
-        }
-        return $data;
-    }
-
     public function insert(array $data)
     {
         if (!in_array($data['action_type'], $this->getAllowedActionTypes())) {

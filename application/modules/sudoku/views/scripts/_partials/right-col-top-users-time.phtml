@@ -1,17 +1,17 @@
 <?php
-$users = $this->bestUsers;
+$users = $this->topUsersTime;
 $difficulties = $this->difficulties ?: [];
 ?>
 <?php if (!empty($users)): ?>
-    <div class="section top-user-ratings-container">
-        <div class="section-title">Лучшие игроки:</div>
+    <div class="section top-users-time-container">
+        <div class="section-title">Быстрейшие игроки:</div>
         Сложность:
-        <select class="change-top-user-ratings-difficulty change-difficulty btn-small">
+        <select name="top-users-game-difficulty" class="change-top-users-game-difficulty change-difficulty btn-small">
             <?php foreach ($difficulties as $difficulty): ?>
                 <option value="<?php echo $difficulty['id']; ?>"><?php echo $difficulty['title']; ?></option>
             <?php endforeach; ?>
         </select>
-        <table class="top-user-ratings">
+        <table class="top-users-game">
         <tbody>
         <tr class="head">
             <th>#</th>
@@ -53,8 +53,8 @@ $difficulties = $this->difficulties ?: [];
         <?php endforeach; ?>
         </tbody>
     </table>
-    <div class="show-top-user-ratings-container">
-        <a href="<?php echo $this->url(['action' => 'user-rating'], 'sudoku', true); ?>" class="show-top-user-ratings">Просмотреть весь список игроков</a>
+    <div class="show-users-time-container">
+        <a href="<?php echo $this->url(['action' => 'users-rating'], 'sudoku', true); ?>?sort=bestDuration&direction=desc" class="show-users-time">Просмотреть лучшее время всех игроков</a>
     </div>
 </div>
 <?php endif; ?>
