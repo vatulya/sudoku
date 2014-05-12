@@ -8,7 +8,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
     const DEFAULT_USER_GAMES_HISTORY_LIMIT = 5;
     const DEFAULT_USER_RATING_LIMIT = 5;
 
-    const DEFAULT_PAGE_SIZE = 20;
+    const DEFAULT_PAGE_SIZE = 10;
 
     public $ajaxable = [
         'index'              => ['html'],

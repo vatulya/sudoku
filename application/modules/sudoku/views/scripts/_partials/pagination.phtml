@@ -1,0 +1,46 @@
+<?php
+/** @var My_Paginator $paginator */
+$paginator = $this->paginator;
+$url = $this->url;
+$separator = strpos($url, '?') === false ? '?' : '&';
+?>
+
+<?php if (count(($paginator))): ?>
+<div class="pagination pagination-centered">
+    <ul>
+        <?php
+            $previousOffset = $paginator->getPreviousOffset();
+            $classes = [];
+            if (false === $previousOffset) {
+                $classes[] = 'disabled';
+                $previousLink = '#';
+            } else {
+                $previousLink = $url . $separator . 'offset=' . $previousOffset;
+            }
+        ?>
+        <li class="<?php echo implode(' ', $classes); ?>">
+            <a href="<?php echo $previousLink; ?>">&laquo;</a>
+        </li>
+
+        <?php foreach ($paginator->getPages() as $page): ?>
+            <li class="<?php if ($page['isCurrent']) echo 'active'; ?>">
+                <a href="<?php echo $url . $separator; ?>offset=<?php echo $page['offset']; ?>"><?php echo $page['page']; ?></a>
+            </li>
+        <?php endforeach; ?>
+
+        <?php
+            $nextOffset = $paginator->getNextOffset();
+            $classes = [];
+            if (false === $nextOffset) {
+                $classes[] = 'disabled';
+                $nextLink = '#';
+            } else {
+                $nextLink = $url . $separator . 'offset=' . $nextOffset;
+            }
+        ?>
+        <li class="<?php echo implode(' ', $classes); ?>">
+            <a href="<?php echo $nextLink; ?>">&raquo;</a>
+        </li>
+    </ul>
+</div>
+<?php endif; ?>

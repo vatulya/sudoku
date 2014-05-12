@@ -2,147 +2,11 @@
     <div class="section create-new-game-container">
         <button type="button" class="show-new-game-form btn btn-success btn-large">Начать новую игру</button>
     </div>
-    <?php if (!empty($this->gamesHistory)): ?>
-    <div class="section games-history-container">
-        <div class="section-title">История ваших игр:</div>
-        <table class="games-history">
-            <tbody>
-            <tr class="head">
-                <th>Начало</th>
-                <th>Статус</th>
-                <th>В игре</th>
-            </tr>
-            <?php $i = 1; ?>
-            <?php foreach ($this->gamesHistory as $game): ?>
-                <?php
-                $state = $game['state'];
-                $state = isset($this->states[$state]) ? $this->states[$state] : '';
-                $duration = secondsToArray($game['duration']);
-                $time = isset($duration['seconds']) ? $duration['seconds'] : '';
-                if (isset($duration['days'])) {
-                    $time = $duration['days'] . ' ' . ($duration['days'] > 1 ? 'дней' : 'день');
-                } elseif (isset($duration['hours']) || isset($duration['minutes'])) {
-                    if (!isset($duration['hours'])) {
-                        $time = intval($duration['minutes']) . ':' . $time;
-                    } else {
-                        $time = $duration['hours'] . ':' . $duration['minutes'] . ':' . $time;
-                    }
-                } else {
-                    // only seconds
-                    $time = intval($time);
-                    $last = intval(substr($time, -1));
-                    if ($last == 0 || ($time >= 5 && $time <= 19)) {
-                        $time .= ' секунд'; // нуль секунд, пять секунд, четырнадцать секунд, двадцать секунд
-                    } elseif ($last == 1) {
-                        $time .= ' секунда'; // одна секунда, двадцать одна секунда
-                    } elseif ($last < 5) {
-                        $time .= ' секунды'; // две секунды, двадцать три секунды
-                    }
-                }
-                $even = ($i++ % 2) ? '' : ' even';
-                ?>
-                <tr class="hlink<?php echo $even; ?>" data-href="<?php echo $this->url(['gameHash' => $game['hash']], 'sudoku-game', true); ?>">
-                    <td class="game-created-datetime"><?php echo (new DateTime($game['created']))->format('d-m-Y H:i'); ?></td>
-                    <td class="game-state <?php echo $state['code']; ?>"><?php echo $state['title']; ?></td>
-                    <td class="time"><?php echo $time; ?></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-        <div class="show-games-history-container">
-            <a href="<?php echo $this->url(['action' => 'user-games-history'], 'sudoku', true); ?>" class="show-games-history">Просмотреть всю историю игр</a>
-        </div>
-    </div>
-    <?php endif; ?>
-    <div class="section top-user-ratings-container">
-        <div class="section-title">Лучшие игроки:</div>
-        Сложность:
-        <select class="change-top-user-ratings-difficulty change-difficulty btn-small">
-            <?php foreach ($this->difficulties as $difficulty): ?>
-                <option value="<?php echo $difficulty['code']; ?>"><?php echo $difficulty['title']; ?></option>
-            <?php endforeach; ?>
-        </select>
-        <table class="top-user-ratings">
-            <tbody>
-            <tr class="head">
-                <th>#</th>
-                <th>Имя</th>
-                <th>Время</th>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Вася</td>
-                <td class="time">5:55</td>
-            </tr>
-            <tr class="even">
-                <td>2</td>
-                <td>Коля</td>
-                <td class="time">5:55</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Петя</td>
-                <td class="time">5:55</td>
-            </tr>
-            <tr class="even">
-                <td>4</td>
-                <td>Иван</td>
-                <td class="time">5:55</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Ористарх</td>
-                <td class="time">5:55</td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="show-top-user-ratings-container">
-            <a href="" class="show-top-user-ratings">Просмотреть весь список игроков</a>
-        </div>
-    </div>
-    <div class="section my-ratings-container">
-        <div class="section-title">Ваш рейтинг:</div>
-        Сложность:
-        <select class="my-user-ratings-difficulty change-difficulty btn-small">
-            <?php foreach ($this->difficulties as $difficulty): ?>
-                <option value="<?php echo $difficulty['code']; ?>"><?php echo $difficulty['title']; ?></option>
-            <?php endforeach; ?>
-        </select>
-        <table class="my-user-ratings">
-            <tbody>
-            <tr class="head">
-                <th>#</th>
-                <th>Имя</th>
-                <th>Время</th>
-            </tr>
-            <tr class="even">
-                <td>8</td>
-                <td>Вася</td>
-                <td class="time">5:55</td>
-            </tr>
-            <tr>
-                <td>9</td>
-                <td>Коля</td>
-                <td class="time">5:55</td>
-            </tr>
-            <tr class="me even">
-                <td>10</td>
-                <td>Петя</td>
-                <td class="time">5:55</td>
-            </tr>
-            <tr>
-                <td>11</td>
-                <td>Иван</td>
-                <td class="time">5:55</td>
-            </tr>
-            <tr class="even">
-                <td>12</td>
-                <td>Ористарх</td>
-                <td class="time">5:55</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+
+    <?php echo $this->partial('_partials/right-col-user-games-history.phtml', ['gamesHistory' => $this->gamesHistory, 'states' => $this->states]); ?>
+    <?php //echo $this->partial('_partials/right-col-top-users-time.phtml', ['topUsersTime' => $this->topUsersTime, 'difficulties' => $this->difficulties]); ?>
+    <?php //echo $this->partial('_partials/right-col-my-rating.phtml', ['topUsersRating' => $this->topUsersRating, 'difficulties' => $this->difficulties, 'currentUser' => $this->currentUser]); ?>
+
 </div>
 
 <div class="center-column">
@@ -152,35 +16,9 @@
         <?php else: ?>
             <h1>История игр игрока <?php echo $this->user['full_name']; ?></h1>
         <?php endif; ?>
-        <div class="pagination">
-            <?php if ($this->previousPage): ?>
-            <div class="pull-left">
-                <i class="ficon-left-open"></i><a href="<?php echo $this->url(['action' => 'user-games-history'], 'sudoku', true); ?>?page=<?php echo $this->previousPage; ?>">Предыдущая страница</a>
-            </div>
-            <?php endif; ?>
-            <?php if ($this->nextPage): ?>
-            <div class="pull-right">
-                <a href="<?php echo $this->url(['action' => 'user-games-history'], 'sudoku', true); ?>?page=<?php echo $this->nextPage; ?>">Следующая страница</a><i class="ficon-right-open"></i>
-            </div>
-            <?php endif; ?>
-        </div>
 
         <?php echo $this->render('index/user-games-history.ajax.phtml'); ?>
 
-        <?php if (count($this->userGamesHistory) > 20): ?>
-        <div class="pagination">
-            <?php if ($this->previousPage): ?>
-                <div class="pull-left">
-                    <i class="ficon-left-open"></i><a href="<?php echo $this->url(['action' => 'user-games-history'], 'sudoku', true); ?>?page=<?php echo $this->previousPage; ?>">Предыдущая страница</a>
-                </div>
-            <?php endif; ?>
-            <?php if ($this->nextPage): ?>
-                <div class="pull-right">
-                    <a href="<?php echo $this->url(['action' => 'user-games-history'], 'sudoku', true); ?>?page=<?php echo $this->nextPage; ?>">Следующая страница</a><i class="ficon-right-open"></i>
-                </div>
-            <?php endif; ?>
-        </div>
-        <?php endif; ?>
         <div class="to-top">
             <a href="" class="scroll-to-top">Вверх <i class="icon-chevron-up"></i></a>
         </div>

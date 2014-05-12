@@ -1,3 +1,13 @@
+<?php
+/** @var My_Paginator $userGamesHistory */
+$userGamesHistory = $this->userGamesHistory;
+
+$url = $this->url(['action' => 'user-games-history'], 'sudoku', true);
+$pagination = $this->partial('_partials/pagination.phtml', ['paginator' => $userGamesHistory, 'url' => $url]);
+?>
+
+<?php echo $pagination; ?>
+
 <table class="games-history">
     <tbody>
     <tr class="head">
@@ -6,7 +16,7 @@
         <th>В игре</th>
     </tr>
     <?php $i = 1; ?>
-    <?php foreach ($this->userGamesHistory as $game): ?>
+    <?php foreach ($userGamesHistory as $game): ?>
         <?php
         $state = $game['state'];
         $state = isset($this->states[$state]) ? $this->states[$state] : '';
@@ -35,6 +45,7 @@
         $even = ($i++ % 2) ? '' : ' even';
         ?>
         <tr class="hlink<?php echo $even; ?>" data-href="<?php echo $this->url(['gameHash' => $game['hash']], 'sudoku-game', true); ?>">
+            <td class="game-id"><?php echo $game['id']; ?></td>
             <td class="game-created-datetime"><?php echo (new DateTime($game['created']))->format('d-m-Y H:i'); ?></td>
             <td class="game-state <?php echo $state['code']; ?>"><?php echo $state['title']; ?></td>
             <td class="time"><?php echo $time; ?></td>
@@ -42,3 +53,9 @@
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<?php if (count($userGamesHistory) > 20): ?>
+
+    <?php echo $pagination; ?>
+
+<?php endif; ?>

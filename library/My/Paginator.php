@@ -14,6 +14,8 @@ class My_Paginator implements Countable, IteratorAggregate
 
     protected $_totalItems;
 
+    protected $_fullLastPage = false;
+
     /**
      * @param Zend_Paginator_Adapter_Interface $adapter
      */
@@ -39,7 +41,7 @@ class My_Paginator implements Countable, IteratorAggregate
      */
     public function count()
     {
-        return count($this->_adapter);
+        return $this->getTotalItems();
     }
 
     /**
@@ -47,7 +49,7 @@ class My_Paginator implements Countable, IteratorAggregate
      */
     public function getItems()
     {
-        return $this->_adapter->getItems($this->_offset, $this->_limit);
+        return $this->_adapter->getItems($this->getOffset(), $this->getLimit());
     }
 
     /**
@@ -70,8 +72,8 @@ class My_Paginator implements Countable, IteratorAggregate
     public function getPreviousOffset()
     {
         $previous = false;
-        if ($this->_offset > 0) {
-            $previous = $this->normalizeOffset($this->_offset - $this->_limit);
+        if ($this->getOffset() > 0) {
+            $previous = $this->normalizeOffset($this->getOffset() - $this->getLimit());
         }
         return $previous;
     }
@@ -82,8 +84,8 @@ class My_Paginator implements Countable, IteratorAggregate
     public function getNextOffset()
     {
         $next = false;
-        if ($this->getTotalItems() > $this->_offset + $this->_limit) {
-            $next = $this->normalizeOffset($this->_offset + $this->_limit);
+        if ($this->getTotalItems() > $this->getOffset() + $this->getLimit()) {
+            $next = $this->normalizeOffset($this->getOffset() + $this->getLimit());
         }
         return $next;
     }
@@ -94,7 +96,7 @@ class My_Paginator implements Countable, IteratorAggregate
      */
     public function setLimit($limit)
     {
-        $this->_limit = intval($limit);
+        $this->_limit = $this->normalizeLimit($limit);
         return $this;
     }
 
@@ -112,7 +114,7 @@ class My_Paginator implements Countable, IteratorAggregate
      */
     public function setOffset($offset)
     {
-        $this->_offset = $offset;
+        $this->_offset = $this->normalizeOffset($offset);
         return $this;
     }
 
@@ -128,22 +130,75 @@ class My_Paginator implements Countable, IteratorAggregate
      * @param int $page
      * @return $this
      */
-    public function setPage($page)
+    public function setCurrentPage($page)
     {
         $page = $this->normalizePage($page);
-        $this->_offset = (intval($page) - 1) * $this->_limit;
+        $this->setOffset(($page - 1) * $this->getLimit());
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getPage()
+    public function getCurrentPage()
     {
-        if (!$this->_limit) {
+        if (!$this->getLimit()) {
             return 1;
         }
-        return ceil($this->_offset / $this->_limit) + 1;
+        return (int)ceil($this->getOffset() / $this->getLimit()) + 1;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalPages()
+    {
+        if (!$this->getLimit() || !$this->getTotalItems()) {
+            return 1;
+        }
+        return (int)ceil($this->getTotalItems() / $this->getLimit());
+    }
+
+    /**
+     * Example:
+     * [
+     *     ['page' => 1, 'offset' =  0, 'isCurrent' = false],
+     *     ['page' => 2, 'offset' = 10, 'isCurrent' = true ],
+     *     ['page' => 3, 'offset' = 20, 'isCurrent' = false],
+     * ]
+     *
+     * @return array
+     */
+    public function getPages()
+    {
+        $pages = [];
+        $totalPages = $this->getTotalPages();
+        for ($i = 1; $totalPages >= $i; $i++) {
+            $pages[] = [
+                'page'      => $i,
+                'offset'    => $this->normalizeOffset(($i - 1) * $this->getLimit()),
+                'isCurrent' => $i == $this->getCurrentPage(),
+            ];
+        }
+        return $pages;
+    }
+
+    /**
+     * @param boolean $fullLastPage
+     * @return $this
+     */
+    public function setFullLastPage($fullLastPage)
+    {
+        $this->_fullLastPage = (bool)$fullLastPage;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getFullLastPage()
+    {
+        return $this->_fullLastPage;
     }
 
     /**
@@ -182,8 +237,14 @@ class My_Paginator implements Countable, IteratorAggregate
         if ($offset < 0) {
             $offset = 0;
         }
-        if ($offset > 0 && $this->getTotalItems() > $offset + $this->_limit) {
-            $offset = $this->getTotalItems() - $this->_limit; // show one full page
+        if ($offset > 0 && ($offset + $this->getLimit()) > $this->getTotalItems()) {
+            if ($this->getFullLastPage()) {
+                $offset = $this->getTotalItems() - $this->getLimit(); // show one full page
+            } else {
+                if ($offset > $this->getTotalItems()) {
+                    $offset = $this->getTotalItems() - 1; // absolutely wrong offset. show only one element
+                }
+            }
         }
         return $offset;
     }
