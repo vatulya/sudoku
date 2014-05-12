@@ -2,6 +2,8 @@
 /** @var My_Paginator $paginator */
 $paginator = $this->paginator;
 $url = $this->url;
+$maxPages = (int)$this->maxPages ?: 10;
+
 $separator = strpos($url, '?') === false ? '?' : '&';
 ?>
 
@@ -22,7 +24,9 @@ $separator = strpos($url, '?') === false ? '?' : '&';
             <a href="<?php echo $previousLink; ?>">&laquo;</a>
         </li>
 
+        <?php $i = 1; ?>
         <?php foreach ($paginator->getPages() as $page): ?>
+            <?php if ($maxPages < $i++) break; ?>
             <li class="<?php if ($page['isCurrent']) echo 'active'; ?>">
                 <a href="<?php echo $url . $separator; ?>offset=<?php echo $page['offset']; ?>"><?php echo $page['page']; ?></a>
             </li>

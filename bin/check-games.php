@@ -93,6 +93,8 @@ class CheckGames
                 id INT NOT NULL AUTO_INCREMENT,
                 user_id INT NOT NULL,
                 difficulty INT NOT NULL,
+                faster_game_hash VARCHAR(50) NOT NULL DEFAULT "",
+                faster_game_duration INT NOT NULL DEFAULT 0,
                 PRIMARY KEY (id),
                 INDEX (user_id),
                 INDEX (difficulty)
@@ -106,7 +108,9 @@ class CheckGames
                 SELECT
                     NULL AS id,
                     user_id AS user_id,
-                    difficulty AS difficulty
+                    difficulty AS difficulty,
+                    "" AS faster_game_hash,
+                    0 AS faster_game_duration
                 FROM
                     ' . $sudokuRatingsDbModel::TABLE_NAME . '
                 WHERE
@@ -116,10 +120,24 @@ class CheckGames
             $this->_db->query($sql);
 
             $sql = '
+                UPDATE tmp_sudoku_ratings tsr
+                INNER JOIN ' . $sudokuGamesDbModel::TABLE_NAME . ' sg ON (tsr.user_id = sg.user_id AND tsr.difficulty = sg.difficulty)
+                SET
+                    tsr.faster_game_hash = sg.hash,
+                    tsr.faster_game_duration = sg.duration
+                WHERE
+                    tsr.faster_game_hash = ""
+                    OR sg.duration < tsr.faster_game_duration
+            ';
+            $this->_db->query($sql);
+
+            $sql = '
                 UPDATE ' . $sudokuRatingsDbModel::TABLE_NAME . ' sr
                 INNER JOIN tmp_sudoku_ratings tsr ON (sr.user_id = tsr.user_id AND sr.difficulty = tsr.difficulty)
                 SET
-                    sr.position = tsr.id
+                    sr.position = tsr.id,
+                    sr.faster_game_hash = tsr.faster_game_hash,
+                    sr.faster_game_duration = tsr.faster_game_duration
             ';
             $this->_db->query($sql);
 

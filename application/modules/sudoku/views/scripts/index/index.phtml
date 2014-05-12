@@ -4,7 +4,7 @@
     </div>
 
     <?php echo $this->partial('_partials/right-col-user-games-history.phtml', ['gamesHistory' => $this->gamesHistory, 'states' => $this->states]); ?>
-    <?php //echo $this->partial('_partials/right-col-top-users-time.phtml', ['topUsersTime' => $this->topUsersTime, 'difficulties' => $this->difficulties]); ?>
+    <?php echo $this->partial('_partials/right-col-top-users-time.phtml', ['topUsersTime' => $this->topUsersTime, 'difficulties' => $this->difficulties, 'currentUser' => $this->currentUser]); ?>
     <?php //echo $this->partial('_partials/right-col-my-rating.phtml', ['topUsersRating' => $this->topUsersRating, 'difficulties' => $this->difficulties, 'currentUser' => $this->currentUser]); ?>
 
 </div>

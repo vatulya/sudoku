@@ -68,11 +68,14 @@ CREATE TABLE IF NOT EXISTS sudoku_ratings (
     difficulty INT NOT NULL,
     position INT NOT NULL,
     rating INT NOT NULL,
+    faster_game_hash VARCHAR(50) NOT NULL,
+    faster_game_duration INT NOT NULL
     updated TIMESTAMP NOT NULL,
     PRIMARY KEY (id),
     UNIQUE (user_id, difficulty),
     INDEX (user_id),
     INDEX (difficulty),
     INDEX (position),
-    INDEX (rating)
+    INDEX (rating),
+    INDEX (faster_game_duration)
 );

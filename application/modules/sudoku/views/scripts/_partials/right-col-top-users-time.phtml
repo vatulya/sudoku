@@ -1,6 +1,7 @@
 <?php
 $users = $this->topUsersTime;
 $difficulties = $this->difficulties ?: [];
+$currentUser = $this->currentUser;
 ?>
 <?php if (!empty($users)): ?>
     <div class="section top-users-time-container">
@@ -18,9 +19,10 @@ $difficulties = $this->difficulties ?: [];
             <th>Имя</th>
             <th>Время</th>
         </tr>
+        <?php $i = 1; ?>
         <?php foreach ($users as $user): ?>
             <?php
-            $duration = secondsToArray($user['bestDuration']);
+            $duration = secondsToArray($user['faster_game_duration']);
             $time = isset($duration['seconds']) ? $duration['seconds'] : '';
             if (isset($duration['days'])) {
                 $time = $duration['days'] . ' ' . ($duration['days'] > 1 ? 'дней' : 'день');
@@ -42,14 +44,15 @@ $difficulties = $this->difficulties ?: [];
                     $time .= ' секунды'; // две секунды, двадцать три секунды
                 }
             }
-            $even = ($i++ % 2) ? '' : ' even';
+            $even = (($i + 1) % 2) ? '' : ' even';
             $me = ($user['id'] == $this->currentUser['id']) ? ' me' : '';
             ?>
-            <tr class="hlink<?php echo $even . $me; ?>" data-href="<?php echo $this->url(['gameHash' => $user['bestGameHash']], 'sudoku-game', true); ?>">
-                <td class="user-position"><?php echo $user['position']; ?></td>
-                <td class="user-full-name"><?php echo $user['full_name']; ?></td>
+            <tr class="hlink<?php echo $even . $me; ?>" data-href="<?php echo $this->url(['gameHash' => $user['faster_game_hash']], 'sudoku-game', true); ?>">
+                <td class="user-position"><?php echo $i; ?></td>
+                <td class="user-full-name"><?php //echo $user['full_name']; ?></td>
                 <td class="time"><?php echo $time; ?></td>
             </tr>
+            <?php $i++; ?>
         <?php endforeach; ?>
         </tbody>
     </table>

@@ -60,45 +60,24 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
 
     /**
      * @param int $userId
-     * @param int $limit
-     * @param int $offset
-     * @return array
+     * @return My_Paginator
      */
-    public function getUserGamesHistory($userId, $limit = 0, $offset = 0)
+    public function getUserGamesHistory($userId)
     {
         $history = $this->getModelDb()->getAll(['user_id' => $userId], ['created DESC']);
-        $history->setLimit($limit)->setOffset($offset);
-//        $history->
         return $history;
     }
 
     /**
      * @param int $difficulty
-     * @return array $userRating
+     * @@param array $order
+     * @return My_Paginator $userRatings
      */
-    public function getUsersRating($difficulty)
+    public function getUsersRating($difficulty, $order = [])
     {
         $ratingModelDb = new Application_Model_Db_Sudoku_Ratings();
-        $userRating = $ratingModelDb->getOne(['user_id' => $userId, 'difficulty' => $difficulty]);
-        if (!$userRating) {
-            return [];
-        }
-        if ($limit == 1) {
-            return $userRating;
-        }
-        $position = $userRating['position'];
-        $offset = 0;
-        if ($position < ceil($limit / 2)) {
-            // the first page and the first part of page
-        } else {
-            if ($limit % 2) {
-                $offset = $position - floor($limit / 2); // User's rating will be in middle of page
-            } else {
-                $offset = $position - (($limit / 2) - 1); // User's rating will be in middle -1 of page
-            }
-        }
-        $userRating = $ratingModelDb->getAll([], ['position ASC'], $limit, $offset);
-        return $userRating;
+        $userRatings = $ratingModelDb->getAll(['difficulty' => $difficulty], $order);
+        return $userRatings;
     }
 
     /**
