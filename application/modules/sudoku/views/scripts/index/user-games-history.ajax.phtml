@@ -54,7 +54,7 @@ $pagination = $this->partial('_partials/pagination.phtml', ['paginator' => $user
     </tbody>
 </table>
 
-<?php if (count($userGamesHistory) > 20): ?>
+<?php if ($i > 10): ?>
 
     <?php echo $pagination; ?>
 
