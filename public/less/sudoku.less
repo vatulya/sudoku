@@ -2,6 +2,8 @@
 @import "sudoku-variables";
 
 .sudoku-table {
+  width: 600px;
+  height: 420px;
 
   &.resolved {
 
@@ -15,6 +17,7 @@
       }
     }
   }
+
   .congratulations {
     width: 550px;
     display: none;
@@ -36,6 +39,19 @@
       vertical-align: middle;
     }
   }
+
+  .sudoku-board {
+    float: left;
+    margin-right: 20px;
+  }
+
+  .sudoku-controls {
+    float: left;
+  }
+
+  .sudoku-game-info {
+    clear: both;
+  }
 }
 
 .sudoku-board {
@@ -55,6 +71,8 @@
   border: @sudoku-default-board-cell-border-width @sudoku-default-board-cell-border-style @sudoku-default-board-cell-border-color;
   margin: -@sudoku-default-board-cell-border-width 0 0 -@sudoku-default-board-cell-border-width;
   font-size: @sudoku-default-board-cell-font-size;
+
+  .box-sizing-mixin(@sudoku-default-board-cell-box-sizing);
 }
 
 .sudoku-board .cell.gray {
@@ -111,48 +129,102 @@
   border-color: @sudoku-default-success-board-border-color;
 }
 
-/********************************** numpad *********************************/
+/********************************** controls *********************************/
+.sudoku-controls {
+  width: 165px;
+
+  .sudoku-controls-row {
+    margin-bottom: 6px;
+  }
+
+  .mark-mode,
+  .check-field,
+  .clear-field {
+    &.btn {
+      width: 100%;
+    }
+  }
+
+  .undo-move,
+  .redo-move {
+    &.btn {
+      width: 54%;
+    }
+  }
+}
+
 .sudoku-numpad {
   /*display: none;*/
 }
 
 .sudoku-numpad table {
-  border: @sudoku-numpad-default-table-border;
-  padding: @sudoku-numpad-default-table-padding;
-  background-color: @sudoku-numpad-default-table-background-color;
-
-  .border-radius-mixin(@sudoku-numpad-default-table-border-radius);
+  margin-left: 1px;
 
   &.popup {
     position: absolute;
   }
 
+  tr {
+    &:first-child {
+      .number {
+        &:first-child {
+          .border-radius-mixin(3px 0 0 0);
+        }
+
+        &:last-child {
+          .border-radius-mixin(0 3px 0 0);
+        }
+      }
+    }
+
+    .number.clear {
+      .border-radius-mixin(0 0 3px 3px);
+    }
+  }
+
   .number {
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px;
+
+    border-bottom-color: #b3b3b3;
+    //    border: @sudoku-numpad-default-number-border;
+
     float: left;
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
     font-weight: bold;
+    font-size: 2em;
+    line-height: 46px;
     background-color: @sudoku-numpad-default-number-background-color;
     width: @sudoku-numpad-default-number-width;
     height: @sudoku-numpad-default-number-height;
-    border: @sudoku-numpad-default-number-border;
     margin: @sudoku-numpad-default-number-margin;
     padding: @sudoku-numpad-default-number-padding;
 
+    .box-sizing-mixin(@sudoku-numpad-default-number-box-sizing);
+    .linear-gradient-mixin(#fff, #e6e6e6);
+
     &.disabled {
+      color: #999;
+      padding-top: @sudoku-numpad-default-number-padding-top + 1;
       background-color: @sudoku-numpad-default-number-disabled-background-color;
       font-weight: normal;
+
+      .linear-gradient-mixin(@sudoku-numpad-default-number-disabled-background-color, @sudoku-numpad-default-number-disabled-background-color);
     }
 
     &.clear {
       width: @sudoku-numpad-default-clear-width;
+      padding-top: 0;
     }
 
     &.enabled {
       &:hover,
       &.hover {
         background-color: @sudoku-numpad-default-number-hover-background-color;
+        .linear-gradient-mixin(#e6e6e6, #fff);
       }
     }
   }

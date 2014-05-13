@@ -213,7 +213,7 @@ ul {
   background-color: #dbcfc1;
   border-bottom: 1px solid #998877;
   padding: 5px 0 5px 0;
-  background: #ffeedd;
+  background-color: #ffeedd;
   background: -moz-linear-gradient(top, #ffeedd 0%, #dbcfc1 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffeedd), color-stop(100%, #dbcfc1));
   background: -webkit-linear-gradient(top, #ffeedd 0%, #dbcfc1 100%);
@@ -221,7 +221,7 @@ ul {
   background: -ms-linear-gradient(top, #ffeedd 0%, #dbcfc1 100%);
   background: linear-gradient(to bottom, #ffeedd 0%, #dbcfc1 100%);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
-  background: #ffeedd;
+  background-color: #ffeedd;
   background: -moz-linear-gradient(top, #ffeedd 0%, #dbcfc1 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffeedd), color-stop(100%, #dbcfc1));
   background: -webkit-linear-gradient(top, #ffeedd 0%, #dbcfc1 100%);
@@ -229,7 +229,7 @@ ul {
   background: -ms-linear-gradient(top, #ffeedd 0%, #dbcfc1 100%);
   background: linear-gradient(to bottom, #ffeedd 0%, #dbcfc1 100%);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
-  background: #ffeedd;
+  background-color: #ffeedd;
   background: -moz-linear-gradient(top, #ffeedd 0%, #dbcfc1 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffeedd), color-stop(100%, #dbcfc1));
   background: -webkit-linear-gradient(top, #ffeedd 0%, #dbcfc1 100%);
@@ -455,6 +455,10 @@ body.user-games-history .center-column table.games-history td {
 body.user-games-history .center-column table.games-history.games-history tr.hlink:hover {
   background-color: #ffffff;
 }
+.sudoku-table {
+  width: 600px;
+  height: 420px;
+}
 .sudoku-table.resolved .congratulations {
   display: block;
 }
@@ -481,6 +485,16 @@ body.user-games-history .center-column table.games-history.games-history tr.hlin
   text-align: center;
   vertical-align: middle;
 }
+.sudoku-table .sudoku-board {
+  float: left;
+  margin-right: 20px;
+}
+.sudoku-table .sudoku-controls {
+  float: left;
+}
+.sudoku-table .sudoku-game-info {
+  clear: both;
+}
 .sudoku-board {
   border: 2px solid #000000;
 }
@@ -490,12 +504,21 @@ body.user-games-history .center-column table.games-history.games-history tr.hlin
   text-align: center;
   vertical-align: middle;
   font-weight: bold;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   background-color: #ffffff;
   border: 1px solid #000000;
   margin: -1px 0 0 -1px;
   font-size: 1.5em;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .sudoku-board .cell.gray {
   background-color: #eeeeee;
@@ -535,50 +558,173 @@ body.user-games-history .center-column table.games-history.games-history tr.hlin
 .sudoku-board.no-errors {
   border-color: #008800;
 }
-/********************************** numpad *********************************/
+/********************************** controls *********************************/
+.sudoku-controls {
+  width: 165px;
+}
+.sudoku-controls .sudoku-controls-row {
+  margin-bottom: 6px;
+}
+.sudoku-controls .mark-mode.btn, .sudoku-controls .check-field.btn, .sudoku-controls .clear-field.btn {
+  width: 100%;
+}
+.sudoku-controls .undo-move.btn, .sudoku-controls .redo-move.btn {
+  width: 54%;
+}
 .sudoku-numpad {
   /*display: none;*/
 
 }
 .sudoku-numpad table {
-  border: 1px solid #000000;
-  padding: 5px;
-  background-color: #dddddd;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  margin-left: 1px;
 }
 .sudoku-numpad table.popup {
   position: absolute;
 }
+.sudoku-numpad table tr:first-child .number:first-child {
+  -webkit-border-radius: 3px 0 0 0;
+  -moz-border-radius: 3px 0 0 0;
+  border-radius: 3px 0 0 0;
+  -webkit-border-radius: 3px 0 0 0;
+  -moz-border-radius: 3px 0 0 0;
+  border-radius: 3px 0 0 0;
+  -webkit-border-radius: 3px 0 0 0;
+  -moz-border-radius: 3px 0 0 0;
+  border-radius: 3px 0 0 0;
+}
+.sudoku-numpad table tr:first-child .number:last-child {
+  -webkit-border-radius: 0 3px 0 0;
+  -moz-border-radius: 0 3px 0 0;
+  border-radius: 0 3px 0 0;
+  -webkit-border-radius: 0 3px 0 0;
+  -moz-border-radius: 0 3px 0 0;
+  border-radius: 0 3px 0 0;
+  -webkit-border-radius: 0 3px 0 0;
+  -moz-border-radius: 0 3px 0 0;
+  border-radius: 0 3px 0 0;
+}
+.sudoku-numpad table tr .number.clear {
+  -webkit-border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  border-radius: 0 0 3px 3px;
+  -webkit-border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  border-radius: 0 0 3px 3px;
+  -webkit-border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  border-radius: 0 0 3px 3px;
+}
 .sudoku-numpad table .number {
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 1px;
+  border-bottom-color: #b3b3b3;
   float: left;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
   font-weight: bold;
+  font-size: 2em;
+  line-height: 46px;
   background-color: #ffffff;
-  width: 20px;
-  height: 20px;
-  border: 1px solid #000000;
-  margin: 2px;
-  padding: 2px;
+  width: 56px;
+  height: 56px;
+  margin: -1px;
+  padding: 3px 0 0 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  background: -moz-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #e6e6e6));
+  background: -webkit-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: -o-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: -ms-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #e6e6e6 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
+  background-color: #ffffff;
+  background: -moz-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #e6e6e6));
+  background: -webkit-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: -o-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: -ms-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #e6e6e6 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
+  background-color: #ffffff;
+  background: -moz-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #e6e6e6));
+  background: -webkit-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: -o-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: -ms-linear-gradient(top, #ffffff 0%, #e6e6e6 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #e6e6e6 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
 }
 .sudoku-numpad table .number.disabled {
+  color: #999;
+  padding-top: 4px;
   background-color: #dddddd;
   font-weight: normal;
+  background-color: #dddddd;
+  background: -moz-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(100%, #dddddd));
+  background: -webkit-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: -o-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: -ms-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: linear-gradient(to bottom, #dddddd 0%, #dddddd 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
+  background-color: #dddddd;
+  background: -moz-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(100%, #dddddd));
+  background: -webkit-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: -o-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: -ms-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: linear-gradient(to bottom, #dddddd 0%, #dddddd 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
+  background-color: #dddddd;
+  background: -moz-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(100%, #dddddd));
+  background: -webkit-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: -o-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: -ms-linear-gradient(top, #dddddd 0%, #dddddd 100%);
+  background: linear-gradient(to bottom, #dddddd 0%, #dddddd 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
 }
 .sudoku-numpad table .number.clear {
-  width: 80px;
+  width: 164px;
+  padding-top: 0;
 }
 .sudoku-numpad table .number.enabled:hover, .sudoku-numpad table .number.enabled.hover {
-  background-color: #ffff66;
+  background-color: #e6e6e6;
+  background-color: #e6e6e6;
+  background: -moz-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e6e6e6), color-stop(100%, #ffffff));
+  background: -webkit-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: -o-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: -ms-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: linear-gradient(to bottom, #e6e6e6 0%, #ffffff 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
+  background-color: #e6e6e6;
+  background: -moz-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e6e6e6), color-stop(100%, #ffffff));
+  background: -webkit-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: -o-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: -ms-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: linear-gradient(to bottom, #e6e6e6 0%, #ffffff 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
+  background-color: #e6e6e6;
+  background: -moz-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e6e6e6), color-stop(100%, #ffffff));
+  background: -webkit-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: -o-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: -ms-linear-gradient(top, #e6e6e6 0%, #ffffff 100%);
+  background: linear-gradient(to bottom, #e6e6e6 0%, #ffffff 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
 }
 .sudoku-numpad table .none {
   visibility: hidden;

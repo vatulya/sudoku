@@ -9,7 +9,7 @@
 @sudoku-default-board-around-section-border-style: solid;
 @sudoku-default-success-board-around-section-border-color: #080;
 
-@sudoku-default-board-cell-width: 30px;
+@sudoku-default-board-cell-width: 40px;
 @sudoku-default-board-cell-height: @sudoku-default-board-cell-width;
 @sudoku-default-board-cell-background-color: #fff;
 @sudoku-default-board-cell-border-color: #000;
@@ -17,6 +17,7 @@
 @sudoku-default-board-cell-border-style: solid;
 @sudoku-default-board-cell-font-size: 1.5em;
 @sudoku-default-success-board-cell-border-color: #080;
+@sudoku-default-board-cell-box-sizing: border-box;
 
 @sudoku-default-board-cell-selected-background-color: #ffb;
 @sudoku-default-board-cell-hover-background-color: #ffb;
@@ -35,14 +36,19 @@
 @sudoku-numpad-default-table-border-radius: 3px;
 
 @sudoku-numpad-default-number-background-color: #fff;
-@sudoku-numpad-default-number-width: 20px;
+@sudoku-numpad-default-number-width: 56px;
 @sudoku-numpad-default-number-height: @sudoku-numpad-default-number-width;
 @sudoku-numpad-default-number-border: 1px solid #000;
-@sudoku-numpad-default-number-margin: 2px;
-@sudoku-numpad-default-number-padding: 2px;
+@sudoku-numpad-default-number-margin: -1px;
+@sudoku-numpad-default-number-padding-top: 3px;
+@sudoku-numpad-default-number-padding-right: 0;
+@sudoku-numpad-default-number-padding-bottom: 0;
+@sudoku-numpad-default-number-padding-left: 0;
+@sudoku-numpad-default-number-padding: @sudoku-numpad-default-number-padding-top @sudoku-numpad-default-number-padding-right @sudoku-numpad-default-number-padding-bottom @sudoku-numpad-default-number-padding-left;
+@sudoku-numpad-default-number-box-sizing: border-box;
 
 @sudoku-numpad-default-number-disabled-background-color: #ddd;
 
-@sudoku-numpad-default-number-hover-background-color: #ff6;
+@sudoku-numpad-default-number-hover-background-color: #e6e6e6;
 
-@sudoku-numpad-default-clear-width: (@sudoku-numpad-default-number-width * 3) + (@sudoku-numpad-default-number-margin * 4) + (@sudoku-numpad-default-number-padding * 6);
+@sudoku-numpad-default-clear-width: (@sudoku-numpad-default-number-width * 3) + (@sudoku-numpad-default-number-margin * 4);

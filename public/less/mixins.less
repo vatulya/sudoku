@@ -1,5 +1,10 @@
+//.linear-gradient-mixin(@firstColor, @endColor) when (@firstColor = @endColor) {
+//  background-color: @firstColor;
+//}
+
+//.linear-gradient-mixin(@firstColor, @endColor) when not (@firstColor = @endColor) {
 .linear-gradient-mixin(@firstColor, @endColor) {
-  background: @firstColor;
+  background-color: @firstColor;
   background: -moz-linear-gradient(top,  @firstColor 0%, @endColor 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@firstColor), color-stop(100%,@endColor));
   background: -webkit-linear-gradient(top,  @firstColor 0%,@endColor 100%);
