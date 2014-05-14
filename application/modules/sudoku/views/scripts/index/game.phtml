@@ -10,20 +10,6 @@
 <div class="center-column">
     <div class="content">
 
-        <?php
-        $currentDifficulty = $this->sudoku->getDifficulty();
-        $currentDifficulty = $this->difficulties[$currentDifficulty];
-        $openCells = $currentDifficulty['openCells'];
-        if (is_array($openCells)) {
-            $openCells = $openCells['min'] . '..' . $openCells['max'];
-        }
-        $currentDifficultyText = sprintf('%s (%s открытых клеток)', $currentDifficulty['title'], $openCells);
-        ?>
-        <h1 class="game-title">Судоку</h1>
-
-        <div class="game-info">
-            Сложность: <span class="current-difficulty"><?php echo $currentDifficultyText; ?></span>
-        </div>
         <?php echo $this->partial('_partials/sudoku-game.phtml', ['sudoku' => $this->sudoku]); ?>
         <?php $this->headScript()->appendScript('var $game = new window.Sudoku(\'' .  $this->sudoku->getHash() . '\');'); ?>
 

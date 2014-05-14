@@ -48,7 +48,9 @@
                     $Sudoku.checkBoard(this);
                 })
                 .on('click', '.clear-field', function() {
-                    $Sudoku.clearBoard(this);
+                    if (confirm('Вы действительно хотите очистить поле? Это действие удалит все ваши ходы и пометки.')) {
+                        $Sudoku.clearBoard(this);
+                    }
                 })
                 .on('click', '.undo-move', function() {
                     $Sudoku.undoMove(this);

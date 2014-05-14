@@ -1,6 +1,6 @@
 <div class="sudoku-controls">
     <div class="sudoku-controls-row">
-        <button class="mark-mode btn">Режим пометок</button>
+        <button class="mark-mode btn btn-info" data-toggle="button">Режим пометок</button>
     </div>
     <div class="sudoku-controls-row">
         <div class="sudoku-numpad">
@@ -23,14 +23,14 @@
                     </tr>
                 <?php endfor; ?>
                 <tr>
-                    <td class="number clear" colspan="3" data-number="">пусто</td>
+                    <td class="number clear" colspan="3" data-number="" title="очистить поле">&#8212;</td>
                 </tr>
             </table>
         </div>
     </div>
     <div class="sudoku-controls-row btn-group">
-        <button class="undo-move btn disabled" data-moves=""><i class="icon-chevron-left"></i> Undo</button>
-        <button class="redo-move btn disabled" data-moves="">Redo <i class="icon-chevron-right"></i></button>
+        <button class="undo-move btn disabled" data-moves="" title="отменить ход"><i class="ficon-reply"></i></button>
+        <button class="redo-move btn disabled" data-moves="" title="повторить ход"><i class="ficon-forward"></i></button>
     </div>
     <div class="sudoku-controls-row">
         <button class="check-field btn">Проверить поле</button>

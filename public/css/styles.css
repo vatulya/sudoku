@@ -563,17 +563,16 @@ body.user-games-history .center-column table.games-history.games-history tr.hlin
   width: 165px;
 }
 .sudoku-controls .sudoku-controls-row {
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 .sudoku-controls .mark-mode.btn, .sudoku-controls .check-field.btn, .sudoku-controls .clear-field.btn {
   width: 100%;
 }
 .sudoku-controls .undo-move.btn, .sudoku-controls .redo-move.btn {
-  width: 54%;
+  width: 83px;
 }
 .sudoku-numpad {
-  /*display: none;*/
-
+  margin: 24px 0;
 }
 .sudoku-numpad table {
   margin-left: 1px;
@@ -624,7 +623,7 @@ body.user-games-history .center-column table.games-history.games-history tr.hlin
   vertical-align: middle;
   cursor: pointer;
   font-weight: bold;
-  font-size: 2em;
+  font-size: 1.2em;
   line-height: 46px;
   background-color: #ffffff;
   width: 56px;
@@ -696,8 +695,9 @@ body.user-games-history .center-column table.games-history.games-history tr.hlin
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffeedd', endColorstr='#dbcfc1', GradientType=0);
 }
 .sudoku-numpad table .number.clear {
+  height: 30px;
+  line-height: 22px;
   width: 164px;
-  padding-top: 0;
 }
 .sudoku-numpad table .number.enabled:hover, .sudoku-numpad table .number.enabled.hover {
   background-color: #e6e6e6;

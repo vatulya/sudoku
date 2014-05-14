@@ -25,6 +25,18 @@ $sudoku = $this->sudoku;
         <div class="time">
             Время игры: <div class="game-time">синхронизация...</div>
         </div>
+        <?php
+        $currentDifficulty = $sudoku->getDifficulty();
+        $currentDifficulty = $sudoku->getService()->getAllDifficulties()[$currentDifficulty];
+        $openCells = $currentDifficulty['openCells'];
+        if (is_array($openCells)) {
+            $openCells = $openCells['min'] . '..' . $openCells['max'];
+        }
+        $currentDifficultyText = sprintf('%s (%s открытых клеток)', $currentDifficulty['title'], $openCells);
+        ?>
+        <div class="game-difficulty">
+            Сложность: <span class="current-difficulty"><?php echo $currentDifficultyText; ?></span>
+        </div>
     </div>
 </div>
 

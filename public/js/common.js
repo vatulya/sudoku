@@ -1,5 +1,7 @@
 (function (w, d, $) {
 
+    $('.show-tooltip').tooltip();
+
     w.disableSelect = function(el) {
         el = $(el);
         el
