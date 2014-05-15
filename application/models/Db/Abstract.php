@@ -60,9 +60,16 @@ abstract class Application_Model_Db_Abstract
         return $paginator;
     }
 
-    public function getNow()
+    /**
+     * @param string $format or return DateTime if $format is FALSE
+     * @return string|DateTime
+     */
+    public static function getNow($format = 'Y-m-d H:i:s')
     {
-        return (new \DateTime('NOW', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+        if (false === $format) {
+            return new \DateTime('NOW', new \DateTimeZone('UTC'));
+        }
+        return (new \DateTime('NOW', new \DateTimeZone('UTC')))->format($format);
     }
 
     /**
