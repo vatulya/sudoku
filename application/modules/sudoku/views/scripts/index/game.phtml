@@ -1,17 +1,6 @@
-<div class="right-column">
-    <div class="section create-new-game-container">
-        <button type="button" class="show-new-game-form btn btn-success btn-large">Начать новую игру</button>
-    </div>
+<div class="content">
 
-    <?php echo $this->partial('_partials/right-col-user-games-history.phtml', ['gamesHistory' => $this->gamesHistory, 'states' => $this->states]); ?>
+    <?php echo $this->partial('_partials/sudoku-game.phtml', ['sudoku' => $this->sudoku]); ?>
+    <?php $this->headScript()->appendScript('var $game = new window.Sudoku(\'' .  $this->sudoku->getHash() . '\');'); ?>
 
-</div>
-
-<div class="center-column">
-    <div class="content">
-
-        <?php echo $this->partial('_partials/sudoku-game.phtml', ['sudoku' => $this->sudoku]); ?>
-        <?php $this->headScript()->appendScript('var $game = new window.Sudoku(\'' .  $this->sudoku->getHash() . '\');'); ?>
-
-    </div>
 </div>

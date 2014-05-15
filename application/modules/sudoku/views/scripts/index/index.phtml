@@ -1,36 +1,25 @@
-<div class="right-column">
-    <div class="section create-new-game-container">
-        <button type="button" class="show-new-game-form btn btn-success btn-large">Начать новую игру</button>
+<div class="content">
+    <h1>Судоку</h1>
+    <p>
+        Логическая игра, в которой нужно заполнить поле цифрами, придерживаясь определенных правил.<br>
+        В Википедии вы можете почитать подробную
+        <a href="http://ru.wikipedia.org/wiki/%D0%A1%D1%83%D0%B4%D0%BE%D0%BA%D1%83" rel="nofollow" target="_blank" class="wiki-link">статью об игре</a>.
+    </p>
+    <div class="game-board-example">
+        <?php echo $this->partial('_partials/sudoku-board.phtml', ['parameters' => $this->boardExample]); ?>
+        <span class="image-info">(Пример головоломки "Судоку")</span>
     </div>
-
-    <?php echo $this->partial('_partials/right-col-user-games-history.phtml', ['gamesHistory' => $this->gamesHistory, 'states' => $this->states]); ?>
-    <?php echo $this->partial('_partials/right-col-top-users-time.phtml', ['topUsersTime' => $this->topUsersTime, 'difficulties' => $this->difficulties, 'currentUser' => $this->currentUser]); ?>
-    <?php //echo $this->partial('_partials/right-col-my-rating.phtml', ['topUsersRating' => $this->topUsersRating, 'difficulties' => $this->difficulties, 'currentUser' => $this->currentUser]); ?>
-
-</div>
-
-<div class="center-column">
-    <div class="content">
-        <h1>Судоку</h1>
-        <p>
-            Логическая игра, в которой нужно заполнить поле цифрами, придерживаясь определенных правил.<br>
-            В Википедии вы можете почитать подробную
-            <a href="http://ru.wikipedia.org/wiki/%D0%A1%D1%83%D0%B4%D0%BE%D0%BA%D1%83" rel="nofollow" target="_blank" class="wiki-link">статью об игре</a>.
-        </p>
-        <div class="game-board-example">
-            <?php echo $this->partial('_partials/sudoku-board.phtml', ['parameters' => $this->boardExample]); ?>
-            <span class="image-info">(Пример головоломки "Судоку")</span>
-        </div>
-        <p>
-            <span class="sudoku-game-goal">Цель игры:</span><br>
-            Необходимо заполнить поле цифрами от 1 до 9 так, чтоб в каждой колонке, строчке и под-квадрате не было повторяющихся цифр.
-        </p>
-        <div class="game-board-example">
-            <?php echo $this->partial('_partials/sudoku-board.phtml', ['parameters' => $this->boardSolvedExample]); ?>
-            <span class="image-info">(Пример решенной головоломки "Судоку")</span>
-        </div>
-        <div class="to-top">
-            <a href="" class="scroll-to-top">Вверх <i class="icon-chevron-up"></i></a>
-        </div>
+    <p>
+        <span class="sudoku-game-goal">Цель игры:</span><br>
+        Необходимо заполнить поле цифрами от 1 до 9 так, чтоб в каждой колонке, строчке и под-квадрате не было повторяющихся цифр.
+    </p>
+    <div class="game-board-example">
+        <?php echo $this->partial('_partials/sudoku-board.phtml', ['parameters' => $this->boardSolvedExample]); ?>
+        <span class="image-info">(Пример решенной головоломки "Судоку")</span>
+    </div>
+    <div class="to-top">
+        <a href="" class="scroll-to-top">Вверх <i class="icon-chevron-up"></i></a>
     </div>
 </div>
+
+

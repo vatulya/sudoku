@@ -9,6 +9,7 @@ $this->headScript()
     ->prependFile('/js/sudoku.js')
     ->prependFile('/js/user.js')
     ->prependFile('/js/modal.js')
+    ->prependFile('/js/game.js')
     ->prependFile('/js/websocket.js')
     ->prependFile('/js/common.js')
     ->prependFile('/js/form.js')
@@ -32,8 +33,26 @@ $this->headScript()
 <?php echo $this->render('_extra/navigation.phtml'); ?>
 
 <div class="main-container" id="main-container">
-    <div class="left-column">&nbsp;</div>
-    <?php echo $this->layout()->content; ?>
+    <div class="left-column">
+        <div class="column-container">
+            <?php echo $this->render('_columns/_left-column.phtml'); ?>
+        </div>
+    </div>
+    <div class="center-column">
+        <div class="content-blocker hide">
+            <div class="blocker-backdrop"></div>
+            <div class="blocker-content"></div>
+        </div>
+
+        <div class="column-container">
+            <?php echo $this->layout()->content; ?>
+        </div>
+    </div>
+    <div class="right-column">
+        <div class="column-container">
+            <?php echo $this->render('_columns/_right-column.phtml'); ?>
+        </div>
+    </div>
 </div>
 
 <div id="modal" class="modal hide fade">

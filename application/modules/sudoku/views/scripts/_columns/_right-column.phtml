@@ -1,0 +1,45 @@
+<?php
+if (!empty($this->rightColumnModules) && is_array($this->rightColumnModules)) {
+    foreach ($this->rightColumnModules as $module) {
+        switch ($module) {
+            case 'new-game-button':
+                $content = $this->partial('_columns/new-game-button.phtml');
+                break;
+
+            case 'pause-game-button':
+                $content = $this->partial('_columns/pause-game-button.phtml');
+                break;
+
+            case 'my-games-history':
+                $parameters = [
+                    'gamesHistory' => $this->gamesHistory,
+                    'states'       => $this->states,
+                ];
+                $content = $this->partial('_columns/user-games-history.phtml', $parameters);
+                break;
+
+            case 'top-users-time':
+                $parameters = [
+                    'topUsersTime' => $this->topUsersTime,
+                    'difficulties' => $this->difficulties,
+                    'currentUser'  => $this->currentUser,
+                ];
+                $content = $this->partial('_columns/top-users-time.phtml', $parameters);
+                break;
+
+            case 'my-rating':
+                $parameters = [
+                    'topUsersRating' => $this->topUsersRating,
+                    'difficulties'   => $this->difficulties,
+                    'currentUser'    => $this->currentUser,
+                ];
+                $content = $this->partial('_columns/my-rating.phtml', $parameters);
+                break;
+
+            default:
+                $content = '';
+        }
+        echo $content;
+    }
+}
+

@@ -182,13 +182,6 @@
     }
 
     .number {
-      border-color: #ccc;
-      border-style: solid;
-      border-width: 1px;
-
-      border-bottom-color: #b3b3b3;
-      //    border: @sudoku-numpad-default-number-border;
-
       float: left;
       text-align: center;
       vertical-align: middle;
@@ -196,14 +189,21 @@
       font-weight: bold;
       font-size: 1.2em;
       line-height: 46px;
-      background-color: @sudoku-numpad-default-number-background-color;
       width: @sudoku-numpad-default-number-width;
       height: @sudoku-numpad-default-number-height;
       margin: @sudoku-numpad-default-number-margin;
       padding: @sudoku-numpad-default-number-padding;
+      border-width: @sudoku-numpad-default-number-border-width;
+      border-style: @sudoku-numpad-default-number-border-style;
+      border-color: @sudoku-numpad-default-number-border-color;
+      background-color: @sudoku-numpad-default-number-background-color;
 
       .box-sizing-mixin(@sudoku-numpad-default-number-box-sizing);
-      .linear-gradient-mixin(#fff, #e6e6e6);
+      .linear-gradient-mixin(@sudoku-numpad-default-number-gradient-start, @sudoku-numpad-default-number-gradient-end);
+
+      &:active {
+        .box-shadow-mixin(@default-push-box-shadow);
+      }
 
       &.disabled {
         color: #999;
@@ -256,10 +256,5 @@
   line-height: 30px;
 }
 
-/********************************** right col *********************************/
-
-.show-new-game-form {
-  width: 100%;
-}
 
 

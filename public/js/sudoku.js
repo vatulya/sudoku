@@ -93,6 +93,9 @@
                 .on('websocket' + S + 'message' + S + 'sudoku' + S + 'forceRefresh', function(e, data) {
                     $Sudoku.forceRefresh(data['reason'] || '');
                 })
+                .on('game.pause', function(e, state) {
+                    state ? $Sudoku.pause() : $Sudoku.start();
+                })
             ;
 
         };
@@ -143,7 +146,9 @@
 
             $Sudoku.pause = function() {
                 $Sudoku._hideBoard();
+                $Sudoku._stopPing();
                 $Sudoku.sendUserAction('pause', {}, true);
+                $Sudoku._stopDurationTimer();
             };
 
             /**************************** /GAME START / STOP ********************/
@@ -239,6 +244,7 @@
 
             $Sudoku._stopPing = function() {
                 clearInterval($Sudoku.pingTimer);
+                $Sudoku.pingTimer = false;
             };
 
             /**************************** /PING *********************************/
@@ -256,6 +262,7 @@
 
             $Sudoku._stopDurationTimer = function() {
                 clearInterval($Sudoku.durationTimer);
+                $Sudoku.durationTimer = false;
             };
 
             $Sudoku.updateGameServerTime = function(time) {

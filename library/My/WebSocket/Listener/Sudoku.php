@@ -107,6 +107,17 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
      * @param array $data
      * @return bool
      */
+    protected function pauseAction(array $data)
+    {
+        $this->game->pause();
+        $this->send('sudoku', '', [], $this->getSystemData());
+        return true;
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
     protected function checkBoardAction(array $data)
     {
         $errors = $this->service->checkGameSolution($this->game);

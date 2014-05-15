@@ -20,6 +20,12 @@ class Sudoku_IndexController extends Zend_Controller_Action
         'user-action'        => ['json'],
     ];
 
+    protected $_modules = [
+        'index'              => ['my-games-history', 'my-rating', 'top-users-time'],
+        'game'               => ['pause-game-button', 'my-rating', 'top-users-time'],
+        'user-games-history' => ['my-games-history', 'my-rating', 'top-users-time'],
+    ];
+
     public function init()
     {
         $this->_helper->getHelper('AjaxContext')->initContext();
@@ -44,11 +50,17 @@ class Sudoku_IndexController extends Zend_Controller_Action
             'sudoku-default',
             true
         );
+        $currentAction = $this->_request->getActionName();
+
+        $modules = isset($this->_modules[$currentAction]) ? $this->_modules[$currentAction] : [];
+        array_unshift($modules, 'new-game-button');
+
         $this->view->assign([
-            'uLoginData'   => Application_Service_User::getULoginData($uLoginRedirectUrl),
-            'currentUser'  => Application_Service_User::getInstance()->getCurrentUser(),
-            'states'       => Application_Service_Game_Sudoku::getStates(),
-            'difficulties' => Application_Service_Game_Sudoku::getAllDifficulties(),
+            'uLoginData'         => Application_Service_User::getULoginData($uLoginRedirectUrl),
+            'currentUser'        => Application_Service_User::getInstance()->getCurrentUser(),
+            'states'             => Application_Service_Game_Sudoku::getStates(),
+            'difficulties'       => Application_Service_Game_Sudoku::getAllDifficulties(),
+            'rightColumnModules' => $modules,
         ]);
     }
 

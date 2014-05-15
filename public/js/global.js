@@ -21,6 +21,15 @@
             };
             w.$Modal.load('Начинаем новую игру "Судоку"', options);
         })
+        .on('click', '.pause-game-button', function(e) {
+            var el = $(e.currentTarget);
+            if (el.hasClass('active')) {
+                w.Game.showPause();
+            } else {
+                w.Game.hidePause();
+            }
+            $(d).trigger('game.pause', el.hasClass('active'));
+        })
         .on('change', 'form.create-new-game .select-difficulties', function(e) {
             var options = {
                 'url': '/sudoku/get-board',

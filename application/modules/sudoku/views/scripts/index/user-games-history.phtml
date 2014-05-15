@@ -1,26 +1,15 @@
-<div class="right-column">
-    <div class="section create-new-game-container">
-        <button type="button" class="show-new-game-form btn btn-success btn-large">Начать новую игру</button>
-    </div>
+<div class="content">
+    <?php if ($this->user['id'] == $this->currentUser['id']): ?>
+        <h1>История ваших игр</h1>
+    <?php else: ?>
+        <h1>История игр игрока <?php echo $this->user['full_name']; ?></h1>
+    <?php endif; ?>
 
-    <?php echo $this->partial('_partials/right-col-user-games-history.phtml', ['gamesHistory' => $this->gamesHistory, 'states' => $this->states]); ?>
-    <?php //echo $this->partial('_partials/right-col-top-users-time.phtml', ['topUsersTime' => $this->topUsersTime, 'difficulties' => $this->difficulties]); ?>
-    <?php //echo $this->partial('_partials/right-col-my-rating.phtml', ['topUsersRating' => $this->topUsersRating, 'difficulties' => $this->difficulties, 'currentUser' => $this->currentUser]); ?>
+    <?php echo $this->render('index/user-games-history.ajax.phtml'); ?>
 
-</div>
-
-<div class="center-column">
-    <div class="content">
-        <?php if ($this->user['id'] == $this->currentUser['id']): ?>
-            <h1>История ваших игр</h1>
-        <?php else: ?>
-            <h1>История игр игрока <?php echo $this->user['full_name']; ?></h1>
-        <?php endif; ?>
-
-        <?php echo $this->render('index/user-games-history.ajax.phtml'); ?>
-
-        <div class="to-top">
-            <a href="" class="scroll-to-top">Вверх <i class="icon-chevron-up"></i></a>
-        </div>
+    <div class="to-top">
+        <a href="" class="scroll-to-top">Вверх <i class="icon-chevron-up"></i></a>
     </div>
 </div>
+
+
