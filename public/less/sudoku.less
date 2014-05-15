@@ -60,19 +60,98 @@
 
 /********************************** board cells *********************************/
 
-.sudoku-board .cell {
-  cursor: pointer;
+.sudoku-board {
+  .cell {
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+    width: @sudoku-default-board-cell-width;
+    height: @sudoku-default-board-cell-height;
+    background-color: @sudoku-default-board-cell-background-color;
+    border: @sudoku-default-board-cell-border-width @sudoku-default-board-cell-border-style @sudoku-default-board-cell-border-color;
+    margin: -@sudoku-default-board-cell-border-width 0 0 -@sudoku-default-board-cell-border-width;
+    font-size: @sudoku-default-board-cell-font-size;
+
+    .box-sizing-mixin(@sudoku-default-board-cell-box-sizing);
+
+    &.marks {
+      .number-container {
+        display: none;
+      }
+
+      .mark {
+        display: block;
+      }
+
+      &.mark-1 {
+        .mark-1 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-2 {
+        .mark-2 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-3 {
+        .mark-3 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-4 {
+        .mark-4 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-5 {
+        .mark-5 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-6 {
+        .mark-6 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-7 {
+        .mark-7 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-8 {
+        .mark-8 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-9 {
+        .mark-9 {
+          visibility: visible;
+        }
+      }
+    }
+  }
+}
+
+.mark {
+  display: none;
+  visibility: hidden;
+  float: left;
   text-align: center;
   vertical-align: middle;
-  font-weight: bold;
-  width: @sudoku-default-board-cell-width;
-  height: @sudoku-default-board-cell-height;
-  background-color: @sudoku-default-board-cell-background-color;
-  border: @sudoku-default-board-cell-border-width @sudoku-default-board-cell-border-style @sudoku-default-board-cell-border-color;
-  margin: -@sudoku-default-board-cell-border-width 0 0 -@sudoku-default-board-cell-border-width;
-  font-size: @sudoku-default-board-cell-font-size;
-
-  .box-sizing-mixin(@sudoku-default-board-cell-box-sizing);
+  color: #333;
+  font-size: 0.6em;
+  line-height: 1em;
+  width: 12px;
+  height: 12px;
 }
 
 .sudoku-board .cell.gray {

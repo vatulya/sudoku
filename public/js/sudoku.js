@@ -173,7 +173,8 @@
                     var coords = '' + $Sudoku.getCellCoords(cell);
                     var data = {
                         'coords': coords,
-                        'number': number
+                        'number': cell.data('number'),
+                        'marks': $Sudoku.getCellMarks(cell)
                     };
                     $Sudoku.sendUserAction('setCellNumber', data, true);
                 }
@@ -183,13 +184,21 @@
                 cell = $(cell);
                 number = number ? '' + number : '';
                 if (cell.hasClass('open')) {
-                    cell.html(number).data('number', number);
-                    if (number) {
-                        cell.removeClass('empty');
+                    if ($Sudoku.isMarkMode() && cell.hasClass('empty')) {
+                        cell.addClass('marks');
+                        if (number) {
+                            cell.toggleClass('mark-' + number);
+                        }
                     } else {
-                        cell.addClass('empty');
+                        cell.data('number', number);
+                        cell.find('.number-container').html(number);
+                        if (number) {
+                            cell.removeClass('empty marks');
+                        } else {
+                            cell.addClass('empty marks');
+                        }
+                        $Sudoku.checkNumbersCount(cell);
                     }
-                    $Sudoku.checkNumbersCount(cell);
                     return true;
                 }
                 return false;
@@ -200,10 +209,12 @@
             /************************ CLEAR BOARD ****************************/
 
             $Sudoku.clearBoard = function() {
+                var classes = 'marks mark-1 mark-2 mark-3 mark-4 mark-5 mark-6 mark-7 mark-8 mark-9';
                 $Sudoku.table.find('.cell.open').each(function(i, el) {
                     el = $(el);
                     el.data('number', '');
-                    el.html('');
+                    el.find('.number-container').html('');
+                    el.removeClass(classes);
                 });
                 $Sudoku.clearHistory();
                 $Sudoku.sendUserAction('clearBoard', {}, true);
@@ -471,6 +482,20 @@
         // PROTECTED METHODS
         var protectedMethods = function() {
 
+            $Sudoku.isMarkMode = function() {
+                return $Sudoku.table.find('.mark-mode').hasClass('active');
+            };
+
+            $Sudoku.getCellMarks = function(cell) {
+                var marks = '';
+                for (var i = 1; i <= 9; i++) {
+                    if (cell.hasClass('mark-' + i)) {
+                        marks += (marks == '') ? i : ',' + i;
+                    }
+                }
+                return marks;
+            };
+
             $Sudoku._fillBoard = function(data) {
                 $Sudoku._clearBoard();
                 $.each(data['openCells'] || {}, function(coords, number) {
@@ -497,15 +522,15 @@
                 $Sudoku.table.find('.cell')
                     .removeClass('locked selected hover')
                     .addClass('open empty')
-                    .html('')
                     .data('number', '')
+                    .find('.number-container').html('')
                 ;
             };
 
             $Sudoku._showBoard = function() {
                 $Sudoku.table.find('.cell').each(function(i, el) {
                     el = $(el);
-                    el.html(el.data('number'));
+                    el.find('.number-container').html(el.data('number'));
                 });
             };
 

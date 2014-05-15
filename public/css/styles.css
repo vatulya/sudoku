@@ -693,6 +693,51 @@ body.user-games-history .center-column table.games-history.games-history tr.hlin
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+.sudoku-board .cell.marks .number-container {
+  display: none;
+}
+.sudoku-board .cell.marks .mark {
+  display: block;
+}
+.sudoku-board .cell.marks.mark-1 .mark-1 {
+  visibility: visible;
+}
+.sudoku-board .cell.marks.mark-2 .mark-2 {
+  visibility: visible;
+}
+.sudoku-board .cell.marks.mark-3 .mark-3 {
+  visibility: visible;
+}
+.sudoku-board .cell.marks.mark-4 .mark-4 {
+  visibility: visible;
+}
+.sudoku-board .cell.marks.mark-5 .mark-5 {
+  visibility: visible;
+}
+.sudoku-board .cell.marks.mark-6 .mark-6 {
+  visibility: visible;
+}
+.sudoku-board .cell.marks.mark-7 .mark-7 {
+  visibility: visible;
+}
+.sudoku-board .cell.marks.mark-8 .mark-8 {
+  visibility: visible;
+}
+.sudoku-board .cell.marks.mark-9 .mark-9 {
+  visibility: visible;
+}
+.mark {
+  display: none;
+  visibility: hidden;
+  float: left;
+  text-align: center;
+  vertical-align: middle;
+  color: #333;
+  font-size: 0.6em;
+  line-height: 1em;
+  width: 12px;
+  height: 12px;
+}
 .sudoku-board .cell.gray {
   background-color: #eeeeee;
 }

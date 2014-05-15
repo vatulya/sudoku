@@ -35,6 +35,13 @@ $getCell = function($row, $col) use ($parameters, $isGray) {
     } elseif (isset($parameters['checkedCells'][$coords])) {
         $number = $parameters['checkedCells'][$coords];
         $classes[] = 'open';
+    } elseif (isset($parameters['markedCells'][$coords])) {
+        $marks = explode(',', $parameters['markedCells'][$coords]);
+        $classes[] = 'open';
+        $classes[] = 'marks';
+        foreach ($marks as $mark) {
+            $classes[] = 'mark-' . $mark;
+        }
     } else {
         $classes[] = 'open';
         $classes[] = 'empty';
@@ -49,7 +56,10 @@ $getCell = function($row, $col) use ($parameters, $isGray) {
     data-col="<?php echo $col; ?>"
     data-number="<?php echo $number; ?>"
     >
-    <?php echo $number; ?>
+    <span class="number-container"><?php echo $number; ?></span>
+    <?php for ($i = 1; $i <= 9; $i++): ?>
+        <div class="mark mark-<?php echo $i; ?>"><?php echo $i; ?></div>
+    <?php endfor; ?>
 </td>
 <?php
 }; // $getCell
