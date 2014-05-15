@@ -341,20 +341,6 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
         }
         if (self::TOTAL_CELLS == count($cells)) {
             $game->finish();
-            // Update user's rating
-            $ratingModelDb = new Application_Model_Db_Sudoku_Ratings();
-            $rating = $this->calculateRating($game->getDifficulty(), $game->getDuration());
-            $user = $game->getUser();
-            $userRating = $this->findUserRating($user['id'], $game->getDifficulty(), 1);
-            if ($userRating) {
-                $ratingModelDb->update($userRating['id'], ['rating' => $userRating + $rating]);
-            } else {
-                $ratingModelDb->insert([
-                    'user_id'    => $user['id'],
-                    'difficulty' => $game->getDifficulty(),
-                    'rating'     => $rating,
-                ]);
-            }
             return true;
         }
         return false;
