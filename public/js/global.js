@@ -30,6 +30,24 @@
             }
             $(d).trigger('game.pause', el.hasClass('active'));
         })
+        .on('change', '.right-column-change-difficulty', function(e) {
+            var el = $(e.currentTarget),
+                action = el.data('action'),
+                container = el.closest('.' + el.data('container-class'))
+                data = {
+                    'format': 'html'
+                },
+                data[el.attr('name')] = el.val()
+            ;
+            var options = {
+                'url': action,
+                'data': data
+            };
+            $.ajax(options)
+                .done(function(response) {
+                    container.replaceWith(response);
+                });
+        })
         .on('change', 'form.create-new-game .select-difficulties', function(e) {
             var options = {
                 'url': '/sudoku/get-board',

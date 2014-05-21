@@ -6,24 +6,26 @@ class Sudoku_IndexController extends Zend_Controller_Action
     const EXAMPLE_OPEN_CELLS = 35;
 
     const DEFAULT_USER_GAMES_HISTORY_LIMIT = 5;
-    const DEFAULT_USER_RATING_LIMIT = 5;
+    const DEFAULT_TOP_USERS_RATING_LIMIT = 5;
     const DEFAULT_TOP_USERS_TIME_LIMIT = 5;
 
     const DEFAULT_PAGE_SIZE = 20;
 
     public $ajaxable = [
-        'index'              => ['html'],
-        'create'             => ['html', 'json'],
-        'get-board'          => ['html'],
-        'user-games-history' => ['html'],
-        'check-field'        => ['json'],
-        'user-action'        => ['json'],
+        'index'                => ['html'],
+        'create'               => ['html', 'json'],
+        'get-board'            => ['html'],
+        'user-games-history'   => ['html'],
+        'check-field'          => ['json'],
+        'user-action'          => ['json'],
+        'get-top-users-time'   => ['html'],
+        'get-top-users-rating' => ['html'],
     ];
 
     protected $_modules = [
-        'index'              => ['my-games-history', 'my-rating', 'top-users-time'],
-        'game'               => ['pause-game-button', 'my-rating', 'top-users-time'],
-        'user-games-history' => ['my-games-history', 'my-rating', 'top-users-time'],
+        'index'              => ['my-games-history', 'top-users-rating', 'top-users-time'],
+        'game'               => ['pause-game-button', 'top-users-rating', 'top-users-time'],
+        'user-games-history' => ['my-games-history', 'top-users-rating', 'top-users-time'],
     ];
 
     public function init()
@@ -193,35 +195,6 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $this->_rightColumn();
     }
 
-    protected function _rightColumn($modules = [])
-    {
-        $user          = Application_Service_User::getInstance()->getCurrentUser();
-        $sudokuService = Application_Service_Game_Sudoku::getInstance();
-
-        if (empty($modules) || in_array('my-games-history', $modules)) {
-            $gamesHistory = $sudokuService->getUserGamesHistory($user['id']);
-            $gamesHistory->setLimit(static::DEFAULT_USER_GAMES_HISTORY_LIMIT);
-            $this->view->gamesHistory = $gamesHistory;
-        }
-
-        if (empty($modules) || in_array('my-rating', $modules)) {
-            $topUsersRating = $sudokuService->getUsersRating(
-                $this->getParam('my-rating-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY),
-                ['rating DESC']
-            );
-            $topUsersRating->setLimit(static::DEFAULT_USER_RATING_LIMIT);
-            $this->view->topUsersRating = $topUsersRating;
-        }
-
-        if (empty($modules) || in_array('top-users-time', $modules)) {
-            $topUsersTime = $sudokuService->getUsersRating(
-                $this->getParam('my-rating-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY),
-                ['faster_game_duration ASC']
-            );
-            $topUsersTime->setLimit(static::DEFAULT_TOP_USERS_TIME_LIMIT);
-            $this->view->topUsersTime = $topUsersTime;
-        }
-    }
 
     public function getBoardAction()
     {
@@ -269,6 +242,55 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
         $game = $sudokuService->load($game);
         $game->logUserAction($action, $parameters);
+    }
+
+    public function getTopUsersTimeAction()
+    {
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+        $difficulty = $this->getParam('top-users-time-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
+        $topUsersTime = $sudokuService->getUsersRating(
+            $difficulty,
+            ['faster_game_duration ASC']
+        );
+        $topUsersTime->setLimit(static::DEFAULT_TOP_USERS_TIME_LIMIT);
+        $this->view->assign([
+            'topUsersTimeDifficulty' => $difficulty,
+            'topUsersTime'           => $topUsersTime,
+        ]);
+    }
+
+    public function getTopUsersRatingAction()
+    {
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+        $difficulty = $this->getParam('top-users-rating-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
+        $topUsersRating = $sudokuService->getUsersRating(
+            $this->getParam('top-users-rating-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY),
+            ['rating DESC']
+        );
+        $topUsersRating->setLimit(static::DEFAULT_TOP_USERS_RATING_LIMIT);
+        $this->view->assign([
+            'topUsersRatingDifficulty' => $difficulty,
+            'topUsersRating'           => $topUsersRating,
+        ]);
+    }
+
+    protected function _rightColumn($modules = [])
+    {
+        $user          = Application_Service_User::getInstance()->getCurrentUser();
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+
+        if (empty($modules) || in_array('my-games-history', $modules)) {
+            $gamesHistory = $sudokuService->getUserGamesHistory($user['id']);
+            $gamesHistory->setLimit(static::DEFAULT_USER_GAMES_HISTORY_LIMIT);
+            $this->view->gamesHistory = $gamesHistory;
+        }
+
+        if (empty($modules) || in_array('top-users-rating', $modules)) {
+            $this->getTopUsersRatingAction();
+        }
+        if (empty($modules) || in_array('top-users-time', $modules)) {
+            $this->getTopUsersTimeAction();
+        }
     }
 
 }

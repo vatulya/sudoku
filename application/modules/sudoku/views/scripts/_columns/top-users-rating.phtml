@@ -1,19 +1,24 @@
 <?php
+$topUsersRatingDifficulty = $this->topUsersRatingDifficulty ? : Application_Service_Game_Sudoku::DEFAULT_GAME_DIFFICULTY;
 $users = $this->topUsersRating;
 $difficulties = $this->difficulties ?: [];
-// TODO: turned off
-return '';
 ?>
 <?php if (!empty($users)): ?>
-    <div class="section my-rating-container">
+    <div class="section top-users-rating-container">
         <div class="section-title">Лучшие игроки:</div>
         Сложность:
-        <select name="my-rating-difficulty" class="change-my-rating-difficulty change-difficulty btn-small">
+        <select
+            name="top-users-rating-difficulty"
+            class="change-top-users-rating-difficulty change-difficulty btn-small right-column-change-difficulty"
+            data-action="<?php echo $this->url(['action' => 'get-top-users-rating'], 'sudoku', true); ?>"
+            data-container-class="top-users-rating-container"
+            >
             <?php foreach ($difficulties as $difficulty): ?>
-                <option value="<?php echo $difficulty['id']; ?>"><?php echo $difficulty['title']; ?></option>
+                <?php $selected = $difficulty['id'] == $topUsersRatingDifficulty ? ' selected="selected"' : ''; ?>
+                <option value="<?php echo $difficulty['id']; ?>"<?php echo $selected; ?>><?php echo $difficulty['title']; ?></option>
             <?php endforeach; ?>
         </select>
-        <table class="my-rating">
+        <table class="top-users-rating">
         <tbody>
         <tr class="head">
             <th>#</th>
@@ -24,11 +29,11 @@ return '';
         <?php foreach ($users as $user): ?>
             <?php
             $even = ($i++ % 2) ? '' : ' even';
-            $me = ($user['id'] == $this->currentUser['id']) ? ' me' : '';
+            $me = ($user['user_id'] == $this->currentUser['id']) ? ' me' : '';
             ?>
-            <tr class="hlink<?php echo $even . $me; ?>" data-href="<?php echo $this->url(['userId' => $user['id']], 'user-page', true); ?>">
+            <tr class="hlink<?php echo $even . $me; ?>" data-href="<?php //echo $this->url(['userId' => $user['id']], 'user-page', true); ?>">
                 <td class="user-position"><?php echo $user['position']; ?></td>
-                <td class="user-full-name"><?php echo $user['full_name']; ?></td>
+                <td class="user-full-name"><?php //echo $user['full_name']; ?></td>
                 <td class="user-rating"><?php echo $user['rating']; ?></td>
             </tr>
         <?php endforeach; ?>

@@ -1,15 +1,22 @@
 <?php
+$topUsersTimeDifficulty = $this->topUsersTimeDifficulty ? : Application_Service_Game_Sudoku::DEFAULT_GAME_DIFFICULTY;
 $users = $this->topUsersTime;
-$difficulties = $this->difficulties ?: [];
+$difficulties = $this->difficulties ? : [];
 $currentUser = $this->currentUser;
 ?>
 <?php if (!empty($users)): ?>
     <div class="section top-users-time-container">
         <div class="section-title">Быстрейшие игроки:</div>
         Сложность:
-        <select name="top-users-game-difficulty" class="change-top-users-game-difficulty change-difficulty btn-small">
+        <select
+            name="top-users-time-difficulty"
+            class="change-top-users-time-difficulty change-difficulty btn-small right-column-change-difficulty"
+            data-action="<?php echo $this->url(['action' => 'get-top-users-time'], 'sudoku', true); ?>"
+            data-container-class="top-users-time-container"
+            >
             <?php foreach ($difficulties as $difficulty): ?>
-                <option value="<?php echo $difficulty['id']; ?>"><?php echo $difficulty['title']; ?></option>
+                <?php $selected = $difficulty['id'] == $topUsersTimeDifficulty ? ' selected="selected"' : ''; ?>
+                <option value="<?php echo $difficulty['id']; ?>"<?php echo $selected; ?>><?php echo $difficulty['title']; ?></option>
             <?php endforeach; ?>
         </select>
         <table class="top-users-game">
@@ -45,7 +52,7 @@ $currentUser = $this->currentUser;
                 }
             }
             $even = (($i + 1) % 2) ? '' : ' even';
-            $me = ($user['id'] == $this->currentUser['id']) ? ' me' : '';
+            $me = ($user['user_id'] == $this->currentUser['id']) ? ' me' : '';
             ?>
             <tr class="hlink<?php echo $even . $me; ?>" data-href="<?php echo $this->url(['gameHash' => $user['faster_game_hash']], 'sudoku-game', true); ?>">
                 <td class="user-position"><?php echo $i; ?></td>
@@ -55,9 +62,9 @@ $currentUser = $this->currentUser;
             <?php $i++; ?>
         <?php endforeach; ?>
         </tbody>
-    </table>
-    <div class="show-users-time-container">
-        <a href="<?php echo $this->url(['action' => 'users-rating'], 'sudoku', true); ?>?sort=bestDuration&direction=desc" class="show-users-time">Просмотреть лучшее время всех игроков</a>
+        </table>
+        <div class="show-users-time-container">
+            <a href="<?php echo $this->url(['action' => 'users-rating'], 'sudoku', true); ?>?sort=bestDuration&direction=desc" class="show-users-time">Просмотреть лучшее время всех игроков</a>
+        </div>
     </div>
-</div>
 <?php endif; ?>

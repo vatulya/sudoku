@@ -20,20 +20,22 @@ if (!empty($this->rightColumnModules) && is_array($this->rightColumnModules)) {
 
             case 'top-users-time':
                 $parameters = [
-                    'topUsersTime' => $this->topUsersTime,
-                    'difficulties' => $this->difficulties,
-                    'currentUser'  => $this->currentUser,
+                    'topUsersTimeDifficulty' => $this->topUsersTimeDifficulty,
+                    'topUsersTime'           => $this->topUsersTime,
+                    'difficulties'           => $this->difficulties,
+                    'currentUser'            => $this->currentUser,
                 ];
                 $content = $this->partial('_columns/top-users-time.phtml', $parameters);
                 break;
 
-            case 'my-rating':
+            case 'top-users-rating':
                 $parameters = [
-                    'topUsersRating' => $this->topUsersRating,
-                    'difficulties'   => $this->difficulties,
-                    'currentUser'    => $this->currentUser,
+                    'topUsersRatingDifficulty' => $this->topUsersRatingDifficulty,
+                    'topUsersRating'           => $this->topUsersRating,
+                    'difficulties'             => $this->difficulties,
+                    'currentUser'              => $this->currentUser,
                 ];
-                $content = $this->partial('_columns/my-rating.phtml', $parameters);
+                $content = $this->partial('_columns/top-users-rating.phtml', $parameters);
                 break;
 
             default:

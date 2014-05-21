@@ -1,0 +1,10 @@
+<?php
+$parameters = [
+    'topUsersRatingDifficulty' => $this->topUsersRatingDifficulty,
+    'topUsersRating'           => $this->topUsersRating,
+    'difficulties'             => $this->difficulties,
+    'currentUser'              => $this->currentUser,
+];
+echo $this->partial('_columns/top-users-rating.phtml', $parameters);
+
+
