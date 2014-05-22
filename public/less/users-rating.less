@@ -1,0 +1,50 @@
+body.users-rating {
+
+  .center-column {
+
+    table.users-rating {
+      width: 100%;
+      max-width: 600px;
+
+      tr {
+        background-color: @common-right-column-table-tr-background-color;
+
+        &.head {
+          background-color: inherit;
+        }
+        &.even {
+          background-color: @common-right-column-table-tr-even-background-color;
+        }
+
+        &.me {
+          font-weight: @common-right-column-table-tr-me-font-weight;
+          border-top: @common-right-column-table-tr-me-border-top;
+          border-right: @common-right-column-table-tr-me-border-right;
+          border-bottom: @common-right-column-table-tr-me-border-bottom;
+          border-left: @common-right-column-table-tr-me-border-left;
+        }
+      }
+
+      th {
+        padding: @common-right-column-table-th-padding;
+      }
+
+      td {
+        text-align: center;
+        line-height: 30px;
+      }
+
+      &.games-history {
+        tr {
+          &.hlink {
+            &:hover {
+              background-color: lighten(@common-right-column-table-tr-background-color, 10%);
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+}

@@ -33,14 +33,14 @@ $difficulties = $this->difficulties ?: [];
             ?>
             <tr class="hlink<?php echo $even . $me; ?>" data-href="<?php //echo $this->url(['userId' => $user['id']], 'user-page', true); ?>">
                 <td class="user-position"><?php echo $user['position']; ?></td>
-                <td class="user-full-name"><?php //echo $user['full_name']; ?></td>
+                <td class="user-full-name"><?php echo $user['full_name']; ?></td>
                 <td class="user-rating"><?php echo $user['rating']; ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
     <div class="show-users-rating-container">
-        <a href="<?php echo $this->url(['action' => 'users-rating'], 'sudoku', true); ?>?order=rating&direction=desc&user=<?php echo $this->currentUser['id']; ?>" class="show-users-rating">Просмотреть рейтинги всех игроков</a>
+        <a href="<?php echo $this->url(['action' => 'users-rating'], 'sudoku', true); ?>?order=rating&user=<?php echo $this->currentUser['id']; ?>" class="show-users-rating">Просмотреть рейтинги всех игроков</a>
     </div>
 </div>
 <?php endif; ?>

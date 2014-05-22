@@ -56,7 +56,7 @@ $currentUser = $this->currentUser;
             ?>
             <tr class="hlink<?php echo $even . $me; ?>" data-href="<?php echo $this->url(['gameHash' => $user['faster_game_hash']], 'sudoku-game', true); ?>">
                 <td class="user-position"><?php echo $i; ?></td>
-                <td class="user-full-name"><?php //echo $user['full_name']; ?></td>
+                <td class="user-full-name"><?php echo $user['full_name']; ?></td>
                 <td class="time"><?php echo $time; ?></td>
             </tr>
             <?php $i++; ?>
@@ -64,7 +64,7 @@ $currentUser = $this->currentUser;
         </tbody>
         </table>
         <div class="show-users-time-container">
-            <a href="<?php echo $this->url(['action' => 'users-rating'], 'sudoku', true); ?>?sort=bestDuration&direction=desc" class="show-users-time">Просмотреть лучшее время всех игроков</a>
+            <a href="<?php echo $this->url(['action' => 'users-rating'], 'sudoku', true); ?>?sort=faster_game_duration&direction=desc" class="show-users-time">Просмотреть лучшее время всех игроков</a>
         </div>
     </div>
 <?php endif; ?>

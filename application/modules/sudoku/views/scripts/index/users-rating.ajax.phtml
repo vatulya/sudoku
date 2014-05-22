@@ -1,0 +1,61 @@
+<?php
+/** @var My_Paginator $usersRating */
+$usersRating = $this->usersRating;
+
+$url = $this->url(['action' => 'users-rating'], 'sudoku', true);
+$pagination = $this->partial('_partials/pagination.phtml', ['paginator' => $usersRating, 'url' => $url]);
+?>
+
+<?php echo $pagination; ?>
+
+<table class="users-rating">
+    <tbody>
+    <tr class="head">
+        <th>Позиция</th>
+        <th>Имя</th>
+        <th>Рейтинг</th>
+        <th>Лучшее время</th>
+    </tr>
+    <?php $i = 1; ?>
+    <?php foreach ($usersRating as $rating): ?>
+        <?php
+        $duration = secondsToArray($rating['faster_game_duration']);
+        $time = isset($duration['seconds']) ? $duration['seconds'] : '';
+        if (isset($duration['days'])) {
+            $time = $duration['days'] . ' ' . ($duration['days'] > 1 ? 'дней' : 'день');
+        } elseif (isset($duration['hours']) || isset($duration['minutes'])) {
+            if (!isset($duration['hours'])) {
+                $time = intval($duration['minutes']) . ':' . $time;
+            } else {
+                $time = $duration['hours'] . ':' . $duration['minutes'] . ':' . $time;
+            }
+        } else {
+            // only seconds
+            $time = intval($time);
+            $last = intval(substr($time, -1));
+            if ($last == 0 || ($time >= 5 && $time <= 19)) {
+                $time .= ' секунд'; // нуль секунд, пять секунд, четырнадцать секунд, двадцать секунд
+            } elseif ($last == 1) {
+                $time .= ' секунда'; // одна секунда, двадцать одна секунда
+            } elseif ($last < 5) {
+                $time .= ' секунды'; // две секунды, двадцать три секунды
+            }
+        }
+        $even = ($i++ % 2) ? '' : ' even';
+        $me = ($rating['user_id'] == $this->currentUser['id']) ? ' me' : '';
+        ?>
+        <tr class="hlink<?php echo $even . $me; ?>" data-href="<?php //echo $this->url(['id' => $rating['user_id']], 'user-page', true); ?>">
+            <td class="position"><?php echo $rating['position']; ?></td>
+            <td class="user-full-name"><?php echo $rating['full_name']; ?></td>
+            <td class="rating"><?php echo $rating['rating']; ?></td>
+            <td class="time faster-game-time"><?php echo $time; ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php if ($i > 10): ?>
+
+    <?php echo $pagination; ?>
+
+<?php endif; ?>

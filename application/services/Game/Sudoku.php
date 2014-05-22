@@ -69,14 +69,14 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
     }
 
     /**
-     * @param int $difficulty
+     * @param array $where
      * @@param array $order
      * @return My_Paginator $userRatings
      */
-    public function getUsersRating($difficulty, $order = [])
+    public function getUsersRating(array $where = [], $order = [])
     {
         $ratingModelDb = new Application_Model_Db_Sudoku_Ratings();
-        $userRatings = $ratingModelDb->getAll(['difficulty' => $difficulty], $order);
+        $userRatings = $ratingModelDb->getAllUsersRatings($where, $order);
         return $userRatings;
     }
 

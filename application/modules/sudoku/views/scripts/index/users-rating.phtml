@@ -1,0 +1,33 @@
+<div class="content">
+    <h1>Рейтинг игроков</h1>
+
+    <div class="filters">
+        <div class="filter-container filter-difficulty">
+            <label for="difficulty">Сложность:</label>
+            <select name="difficulty" class="btn-small">
+                <?php foreach ($difficulties as $difficulty): ?>
+                    <?php $selected = $difficulty['id'] == $topUsersRatingDifficulty ? ' selected="selected"' : ''; ?>
+                    <option value="<?php echo $difficulty['id']; ?>"
+                    <?php echo $selected; ?>><?php echo $difficulty['title']; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="filter-container filter-user">
+            <label for="search-user">Поиск игрока:</label>
+            <input type="text" name="search-user" value="" class="btn-small" placeholder="Введите имя пользователя">
+        </div>
+
+        <div class="filters-submit-container">
+            <input type="submit" name="submit" value="Искать">
+        </div>
+    </div>
+
+    <?php echo $this->render('index/users-rating.ajax.phtml'); ?>
+
+    <div class="to-top">
+        <a href="" class="scroll-to-top">Вверх <i class="icon-chevron-up"></i></a>
+    </div>
+</div>
+
+

@@ -16,6 +16,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
         'create'               => ['html', 'json'],
         'get-board'            => ['html'],
         'user-games-history'   => ['html'],
+        'users-rating'         => ['html'],
         'check-field'          => ['json'],
         'user-action'          => ['json'],
         'get-top-users-time'   => ['html'],
@@ -26,6 +27,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
         'index'              => ['my-games-history', 'top-users-rating', 'top-users-time'],
         'game'               => ['pause-game-button', 'top-users-rating', 'top-users-time'],
         'user-games-history' => ['my-games-history', 'top-users-rating', 'top-users-time'],
+        'users-rating'       => ['my-games-history', 'top-users-rating', 'top-users-time'],
     ];
 
     public function init()
@@ -182,9 +184,8 @@ class Sudoku_IndexController extends Zend_Controller_Action
             $user = Application_Service_User::getInstance()->getCurrentUser();
         }
 
-        $offset = intval($this->_request->getParam('offset'));
         $userGamesHistory = $sudokuService->getUserGamesHistory($user['id']);
-        $userGamesHistory->setLimit(static::DEFAULT_PAGE_SIZE)->setOffset($offset);
+        $userGamesHistory->setLimit(static::DEFAULT_PAGE_SIZE)->setOffset($this->_request->getParam('offset'));
 
         $this->view->assign([
             'userGamesHistory' => $userGamesHistory,
@@ -195,6 +196,32 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $this->_rightColumn();
     }
 
+    public function usersRatingAction()
+    {
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
+        $where = [];
+
+        $user = $this->_request->getParam('user');
+        if ($user) {
+            if ($user = Application_Service_User::getInstance()->getById($user)) {
+//                $where['user_id'] = $user['id'];
+            }
+        }
+        $where['difficulty'] = $this->getParam('difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
+
+        $order = $this->_request->getParam('sort', 'position') . ' ' . $this->_request->getParam('direction', 'ASC');
+
+        $usersRating = $sudokuService->getUsersRating($where, [$order]);
+        $usersRating->setLimit(static::DEFAULT_PAGE_SIZE)->setOffset($this->_request->getParam('offset'));
+
+        $this->view->assign([
+            'usersRating' => $usersRating,
+            'user'        => $user ?: null,
+        ]);
+        $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'users-rating'], 'sudoku', true)] = 'Рейтинг игроков';
+        $this->view->pageCode = 'users-rating';
+        $this->_rightColumn();
+    }
 
     public function getBoardAction()
     {
@@ -249,7 +276,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
         $difficulty = $this->getParam('top-users-time-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
         $topUsersTime = $sudokuService->getUsersRating(
-            $difficulty,
+            ['difficulty' => $difficulty],
             ['faster_game_duration ASC']
         );
         $topUsersTime->setLimit(static::DEFAULT_TOP_USERS_TIME_LIMIT);
@@ -264,7 +291,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
         $difficulty = $this->getParam('top-users-rating-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
         $topUsersRating = $sudokuService->getUsersRating(
-            $this->getParam('top-users-rating-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY),
+            ['difficulty' => $difficulty],
             ['rating DESC']
         );
         $topUsersRating->setLimit(static::DEFAULT_TOP_USERS_RATING_LIMIT);

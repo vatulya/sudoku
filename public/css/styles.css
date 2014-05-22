@@ -622,6 +622,36 @@ body.user-games-history .center-column table.games-history td {
 body.user-games-history .center-column table.games-history.games-history tr.hlink:hover {
   background-color: #ffffff;
 }
+body.users-rating .center-column table.users-rating {
+  width: 100%;
+  max-width: 600px;
+}
+body.users-rating .center-column table.users-rating tr {
+  background-color: #f0efde;
+}
+body.users-rating .center-column table.users-rating tr.head {
+  background-color: inherit;
+}
+body.users-rating .center-column table.users-rating tr.even {
+  background-color: #fffeed;
+}
+body.users-rating .center-column table.users-rating tr.me {
+  font-weight: bold;
+  border-top: 1px solid #998877;
+  border-right: 1px solid #998877;
+  border-bottom: 1px solid #998877;
+  border-left: 1px solid #998877;
+}
+body.users-rating .center-column table.users-rating th {
+  padding: 0 2px;
+}
+body.users-rating .center-column table.users-rating td {
+  text-align: center;
+  line-height: 30px;
+}
+body.users-rating .center-column table.users-rating.games-history tr.hlink:hover {
+  background-color: #ffffff;
+}
 .sudoku-table {
   width: 600px;
   height: 420px;
