@@ -10,6 +10,7 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
 
     const PARAMETER_KEY_OPEN_CELLS    = 'openCells';
     const PARAMETER_KEY_CHECKED_CELLS = 'checkedCells';
+    const PARAMETER_KEY_MARKED_CELLS  = 'markedCells';
 
     protected static $modelDb = 'Sudoku_Games';
     protected static $modelDbLogs = 'Sudoku_Logs';
@@ -17,83 +18,100 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
     protected static $service = 'Sudoku';
 
     /**
-     * @param string $coords
-     * @param int $number
+     * @param array $cells coords => [number => 1, marks => [1,2,3]]
+     * @param string $logAction like Application_Model_Db_Sudoku_Logs::ACTION_TYPE_SET_CELLS
      * @return bool
      */
-    public function setCellNumber($coords, $number)
+    public function setCells(array $cells, $logAction = Application_Model_Db_Sudoku_Logs::ACTION_TYPE_SET_CELLS)
     {
-        list($oldParameters, $newParameters) = $this->setCellsNumbers([$coords => $number]);
-        $this->addLog(Application_Model_Db_Sudoku_Logs::ACTION_TYPE_SET_CELLS_NUMBERS, $oldParameters, $newParameters);
-    }
+        $oldParameters = $newParameters = [];
 
-    /**
-     * @param array $cellsNumbers coords => number
-     * @return bool
-     */
-    protected function setCellsNumbers(array $cellsNumbers)
-    {
-        $newParameters = [];
-        $oldParameters = [];
+        $openCells    = $this->getParameter(static::PARAMETER_KEY_OPEN_CELLS) ?: [];
         $checkedCells = $this->getParameter(static::PARAMETER_KEY_CHECKED_CELLS) ?: [];
+        $markedCells  = $this->getParameter(static::PARAMETER_KEY_MARKED_CELLS) ?: [];
 
-        foreach ($cellsNumbers as $coords => $number) {
-            if (!$this->isCorrectCellNumber($coords, $number)) {
-                unset($cellsNumbers[$coords]);
+        foreach ($cells as $coords => $data) {
+            if (!$this->getService()->checkCoords($coords)) {
+                // TODO: error
+                unset($cells[$coords]);
                 continue;
             }
-            $oldNumber = isset($checkedCells[$coords]) ? $checkedCells[$coords] : 0;
-            $checkedCells[$coords] = (int)$number;
+            if (isset($openCells[$coords])) {
+                // TODO: error
+                unset($cells[$coords]);
+                continue;
+            }
+            if (isset($data['number']) && !$this->getService()->checkNumber($data['number'])) {
+                // TODO: error
+                unset($cells[$coords]);
+                continue;
+            }
+            if (isset($data['marks'])) {
+                $data['marks'] = array_filter($data['marks']);
+                foreach ($data['marks'] as $mark) {
+                    if (!$this->getService()->checkNumber($mark)) {
+                        // TODO: error
+                        unset($cells[$coords]);
+                        continue 2;
+                    }
+                }
+            }
 
-            $newParameters[$coords] = (int)$number;
-            $oldParameters[$coords] = (int)$oldNumber;
+            $newParameters[$coords] = $oldParameters[$coords] = [
+                'number' => 0,
+                'marks'  => [],
+            ];
+            if (isset($checkedCells[$coords])) {
+                $oldParameters[$coords]['number'] = $checkedCells[$coords];
+            }
+            if (isset($markedCells[$coords])) {
+                $oldParameters[$coords]['marks'] = $markedCells[$coords];
+            }
+            $newParameters[$coords]['number'] = isset($data['number']) ? $data['number'] : $oldParameters[$coords]['number'];
+            $newParameters[$coords]['marks']  = isset($data['marks'])  ? $data['marks']  : $oldParameters[$coords]['marks'];
+
+            // Set cells
+            $checkedCells[$coords] = $newParameters[$coords]['number'];
+            $markedCells[$coords]  = $newParameters[$coords]['marks'];
         }
 
-        if (!empty($newParameters) && !empty($oldParameters)) {
-            array_filter($checkedCells);
+        if (!empty($newParameters) || !empty($oldParameters)) {
+            $checkedCells = array_filter($checkedCells);
+            $markedCells = array_filter($markedCells);
             $this->setParameter(static::PARAMETER_KEY_CHECKED_CELLS, $checkedCells);
+            $this->setParameter(static::PARAMETER_KEY_MARKED_CELLS, $markedCells);
 
-            $newParameters = [
-                'cells' => $newParameters,
-            ];
-            $oldParameters = [
-                'cells' => $oldParameters,
-            ];
-        }
-        return [$oldParameters, $newParameters];
-    }
-
-    /**
-     * @param string $coords
-     * @param int $number
-     * @return bool
-     */
-    protected function isCorrectCellNumber($coords, $number)
-    {
-        settype($number, 'int');
-        if (!$this->getService()->checkCoords($coords)) {
-            // Wrong coords
-            return false;
-        }
-        if ($number < 0 || $number > 9) {
-            // Wrong value
-            return false;
-        }
-        $openCells = $this->getParameter(static::PARAMETER_KEY_OPEN_CELLS) ?: [];
-        if (isset($openCells[$coords])) {
-            // This cell already filled
-            return false;
+            $this->addLog($logAction, $oldParameters, $newParameters);
         }
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function clearBoard()
     {
-        $newParameters = ['cells' => []];
-        $oldParameters = $this->getParameter(static::PARAMETER_KEY_CHECKED_CELLS) ?: [];
-        $oldParameters = ['cells' => $oldParameters];
+        $checkedCells = $this->getParameter(static::PARAMETER_KEY_CHECKED_CELLS) ?: [];
+        $markedCells  = $this->getParameter(static::PARAMETER_KEY_MARKED_CELLS) ?: [];
+        $newParameters = $oldParameters = [];
+
+        $cells = array_unique(array_merge(array_keys($checkedCells), array_keys($markedCells)));
+        foreach ($cells as $cell) {
+            $oldParameters[$cell] = $newParameters = [
+                'number' => 0,
+                'marks'  => [],
+            ];
+            if (isset($checkedCells[$cell])) {
+                $oldParameters[$cell]['number'] = $checkedCells[$cell];
+            }
+            if (isset($markedCells[$cell])) {
+                $oldParameters[$cell]['marks'] = $markedCells[$cell];
+            }
+        }
 
         $this->setParameter(static::PARAMETER_KEY_CHECKED_CELLS, []);
+        $this->setParameter(static::PARAMETER_KEY_MARKED_CELLS, []);
+
         $this->addLog(Application_Model_Db_Sudoku_Logs::ACTION_TYPE_CLEAR_BOARD, $oldParameters, $newParameters);
         return true;
     }
@@ -126,8 +144,8 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
     public function getUndoRedoMoves()
     {
         $moves = [
-            'undo' => '[]',
-            'redo' => '[]',
+            'undo' => [],
+            'redo' => [],
         ];
         $logs = $this->getLogs();
         $undos = 0;
@@ -135,7 +153,7 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
         $exit = false;
         foreach ($logs as $log) {
             switch ($log['action_type']) {
-                case Application_Model_Db_Sudoku_Logs::ACTION_TYPE_SET_CELLS_NUMBERS:
+                case Application_Model_Db_Sudoku_Logs::ACTION_TYPE_SET_CELLS:
                     if (!empty($moves['undo'])) {
                         $exit = 1;
                         break;
@@ -193,8 +211,12 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
                 break;
             }
         }
-        try { $moves['undo'] = (array)Zend_Json::decode($moves['undo']); } catch (Exception $e) { $moves['undo'] = []; }
-        try { $moves['redo'] = (array)Zend_Json::decode($moves['redo']); } catch (Exception $e) { $moves['redo'] = []; }
+        try {
+            $moves['undo'] = is_string($moves['undo']) ? (array)Zend_Json::decode($moves['undo']) : (array)$moves['undo'];
+        } catch (Exception $e) { $moves['undo'] = []; }
+        try {
+            $moves['redo'] = is_string($moves['redo']) ? (array)Zend_Json::decode($moves['redo']) : (array)$moves['redo'];
+        } catch (Exception $e) { $moves['redo'] = []; }
 
         return $moves;
     }

@@ -5,10 +5,10 @@ class Application_Model_Db_Sudoku_Logs extends Application_Model_Db_GameAbstract
 
     const TABLE_NAME = 'sudoku_logs';
 
-    const ACTION_TYPE_SET_CELLS_NUMBERS = 'setCellsNumbers';
-    const ACTION_TYPE_CLEAR_BOARD       = 'clearBoard';
-    const ACTION_TYPE_UNDO              = 'undo';
-    const ACTION_TYPE_REDO              = 'redo';
+    const ACTION_TYPE_SET_CELLS   = 'setCells';
+    const ACTION_TYPE_CLEAR_BOARD = 'clearBoard';
+    const ACTION_TYPE_UNDO        = 'undo';
+    const ACTION_TYPE_REDO        = 'redo';
 
     public function insert(array $data)
     {
@@ -40,7 +40,7 @@ class Application_Model_Db_Sudoku_Logs extends Application_Model_Db_GameAbstract
     static public function getAllowedActionTypes()
     {
         return [
-            self::ACTION_TYPE_SET_CELLS_NUMBERS,
+            self::ACTION_TYPE_SET_CELLS,
             self::ACTION_TYPE_CLEAR_BOARD,
             self::ACTION_TYPE_UNDO,
             self::ACTION_TYPE_REDO,

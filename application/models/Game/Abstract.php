@@ -402,7 +402,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     /**
      * @return array
      */
-    protected function getLogs()
+    public function getLogs()
     {
         $where = [
             'game_id' => $this->getId(),
@@ -419,7 +419,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
      * @param array $newParameters
      * @return int
      */
-    protected function addLog($actionType, array $oldParameters = [], array $newParameters = [])
+    public function addLog($actionType, array $oldParameters = [], array $newParameters = [])
     {
         $data = [
             'game_id'        => $this->getId(),

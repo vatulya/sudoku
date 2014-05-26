@@ -137,12 +137,10 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
      * @param array $data
      * @return bool
      */
-    protected function setCellNumberAction(array $data)
+    protected function setCellAction(array $data)
     {
-        $coords = !empty($data['coords']) ? $data['coords'] : '';
-        $number = !empty($data['number']) ? $data['number'] : '';
-        $this->game->setCellNumber($coords, $number);
-        $this->send('sudoku', 'setCellNumber', [], $this->getSystemData());
+        $this->service->applyGameState($this->game, $data);
+        $this->send('sudoku', 'setCell', [], $this->getSystemData());
         return true;
     }
 
@@ -163,7 +161,7 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
      */
     protected function undoMoveAction(array $data)
     {
-        $this->game->undoMove();
+        $this->service->applyGameState($this->game, $data, Application_Model_Db_Sudoku_Logs::ACTION_TYPE_UNDO);
         $this->send('sudoku', 'undoMove', [], $this->getSystemData());
         return true;
     }
@@ -174,7 +172,7 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
      */
     protected function redoMoveAction(array $data)
     {
-        $this->game->redoMove();
+        $this->service->applyGameState($this->game, $data, Application_Model_Db_Sudoku_Logs::ACTION_TYPE_REDO);
         $this->send('sudoku', 'redoMove', [], $this->getSystemData());
         return true;
     }

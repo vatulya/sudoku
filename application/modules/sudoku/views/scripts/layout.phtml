@@ -6,6 +6,7 @@ $this->headLink()
     ->appendStylesheet('/css/styles.css');
 
 $this->headScript()
+    ->prependFile('/js/sudoku_board.js')
     ->prependFile('/js/sudoku.js')
     ->prependFile('/js/user.js')
     ->prependFile('/js/modal.js')

@@ -350,12 +350,26 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      * @param string $coords
      * @return bool
      */
-    public function checkCoords($coords) {
+    public function checkCoords($coords)
+    {
         list($col, $row) = str_split($coords);
         if ($col >= 1 && $col <= 9) {
             if ($row >= 1 && $row <= 9) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * @param int $number
+     * @return bool
+     */
+    public function checkNumber($number)
+    {
+        settype($number, 'int');
+        if ($number >= 0 && $number <= 9) {
+            return true;
         }
         return false;
     }
@@ -464,6 +478,70 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
         $bonus = ($maxTime - $duration) * $difficultySettings['perSecond'];
         $rating = $difficultySettings['minimalRating'] + $bonus;
         return $rating;
+    }
+
+    /**
+     * @param Application_Model_Game_Sudoku $game
+     * @param array $state
+     * @param string $logAction like Application_Model_Db_Sudoku_Logs::ACTION_TYPE_SET_CELLS
+     * @return bool
+     */
+    public function applyGameState(Application_Model_Game_Sudoku $game, array $state, $logAction = Application_Model_Db_Sudoku_Logs::ACTION_TYPE_SET_CELLS)
+    {
+        $parameters = $game->getParameters();
+        $cellsNumber = $cellsMarks = $cellsDiffs = [];
+
+        // Number
+        $old = isset($parameters[Application_Model_Game_Sudoku::PARAMETER_KEY_CHECKED_CELLS]) ? $parameters[Application_Model_Game_Sudoku::PARAMETER_KEY_CHECKED_CELLS] : [];
+        $new = $state[Application_Model_Game_Sudoku::PARAMETER_KEY_CHECKED_CELLS];
+        $cells = array_unique(array_merge(array_keys($old), array_keys($new)));
+        foreach ($cells as $cell) {
+            if (isset($old[$cell], $new[$cell]) && $old[$cell] == $new[$cell]) {
+                // cell without changes
+                continue;
+            }
+            if (isset($new[$cell])) {
+                $cellsNumber[$cell] = $new[$cell]; // set new number
+            } else {
+                $cellsNumber[$cell] = 0; // clear number
+            }
+        }
+
+        // Marks
+        $old = isset($parameters[Application_Model_Game_Sudoku::PARAMETER_KEY_MARKED_CELLS]) ? $parameters[Application_Model_Game_Sudoku::PARAMETER_KEY_MARKED_CELLS] : [];
+        $new = isset($state[Application_Model_Game_Sudoku::PARAMETER_KEY_MARKED_CELLS]) ? $state[Application_Model_Game_Sudoku::PARAMETER_KEY_MARKED_CELLS] : [];
+        $cells = array_unique(array_merge(array_keys($old), array_keys($new)));
+        foreach ($cells as $cell) {
+            isset($old[$cell]) ? sort($old[$cell]) : $old[$cell] = [];
+            isset($new[$cell]) ? sort($new[$cell]) : $new[$cell] = [];
+            if (isset($old[$cell], $new[$cell]) && $old[$cell] == $new[$cell]) {
+                // cell without changes
+                continue;
+            }
+            if (isset($new[$cell])) {
+                $cellsMarks[$cell] = $new[$cell]; // set new marks
+            } else {
+                $cellsMarks[$cell] = []; // clear marks
+            }
+        }
+
+        // Merge Number and Marks
+        $cells = array_unique(array_merge(array_keys($cellsNumber), array_keys($cellsMarks)));
+        foreach ($cells as $cell) {
+            $cellsDiffs[$cell] = [
+                'number' => null,
+                'marks' => null,
+            ];
+            if (isset($cellsNumber[$cell])) {
+                $cellsDiffs[$cell]['number'] = $cellsNumber[$cell];
+            }
+            if (isset($cellsMarks[$cell])) {
+                $cellsDiffs[$cell]['marks'] = $cellsMarks[$cell];
+            }
+        }
+
+        $game->setCells($cellsDiffs, $logAction);
+        return true;
     }
 
 }

@@ -46,9 +46,6 @@ $getCell = function($row, $col) use ($parameters, $isGray) {
         $classes[] = 'open';
         $classes[] = 'empty';
     }
-    if ($this->hide) {
-        $number = '';
-    }
 ?>
 <td
     class="<?php echo implode(' ', array_filter($classes)); ?>"
@@ -64,7 +61,7 @@ $getCell = function($row, $col) use ($parameters, $isGray) {
 <?php
 }; // $getCell
 ?>
-<table class="sudoku-board">
+<table class="sudoku-board<?php if ($this->hide) echo ' hide-game'; ?>">
     <?php for ($row = 1; $row <= $rows; $row++): ?>
     <tr>
         <?php for ($col = 1; $col <= $cols; $col++): ?>

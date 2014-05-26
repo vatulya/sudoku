@@ -61,6 +61,14 @@
 /********************************** board cells *********************************/
 
 .sudoku-board {
+
+  &.hide-game {
+    .number-container,
+    .mark {
+      display: none;
+    }
+  }
+
   .cell {
     cursor: pointer;
     text-align: center;
