@@ -165,15 +165,12 @@
 
             $Sudoku.systemDataResponse = function (response) {
                 if (typeof response['microtime'] != 'undefined' && response['microtime'] > $Sudoku.lastSystemDataMicrotime) {
-                    console.log('true');
                     $Sudoku.lastSystemDataMicrotime = response['microtime'];
                     $Sudoku.checkGameHash(response['gameHash'] || '');
                     $Sudoku.setHistory('undo', response['undoMove'] || {});
                     $Sudoku.setHistory('redo', response['redoMove'] || {});
                     $Sudoku.checkHistoryButtons();
                     $Sudoku.updateGameServerTime(response['duration']);
-                } else {
-                    console.log('false');
                 }
             };
 
@@ -436,9 +433,12 @@
                     coords = $cell.position(),
                     popupNumpad = $Sudoku.getPopupNumpad().show()
                     ;
-                coords.top = coords.top - (popupNumpad.outerHeight() / 2) + $cell.outerHeight();
-                coords.left = coords.left - (popupNumpad.outerWidth() / 2) + ($cell.outerWidth() / 2);
-                popupNumpad.offset(coords);
+//                coords.top = coords.top - (popupNumpad.outerHeight() / 2)/* + $cell.outerHeight()*/;
+//                coords.left = coords.left - (popupNumpad.outerWidth() / 2)/* + ($cell.outerWidth() / 2)*/;
+//                popupNumpad.offset(coords);
+                popupNumpad.css('position', 'absolute');
+                popupNumpad.css('top', coords.top - (popupNumpad.outerHeight() / 2));
+                popupNumpad.css('left', coords.left - (popupNumpad.outerWidth() / 2));
             };
 
             $Sudoku.hidePopupNumpad = function () {
