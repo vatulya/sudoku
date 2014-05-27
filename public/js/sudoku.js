@@ -238,7 +238,6 @@
 
             $Sudoku._startPing = function () {
                 $Sudoku._stopPing();
-                return true;
                 $Sudoku.pingTimer = setInterval(function () {
                     $Sudoku.sendUserAction('ping');
                 }, 3000);
