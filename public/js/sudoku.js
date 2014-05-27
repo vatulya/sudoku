@@ -447,7 +447,7 @@
             };
 
             $Sudoku.keyPress = function (charCode) {
-                if (charCode == 96) { // ~`
+                if (charCode == 96 || charCode == 42) { // ~` OR *
                     $Sudoku.table.find('.mark-mode').click();
                 } else {
                     var number = parseInt(String.fromCharCode(charCode));
