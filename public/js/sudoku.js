@@ -19,7 +19,7 @@
         $Sudoku.lastSystemDataMicrotime = 0;
 
         $Sudoku.selectedCell = undefined;
-        $Sudoku.allowedNumbers = {'1': true, '2': true, '3': true, '4': true, '5': true, '6': true, '7': true, '8': true, '9': true};
+        $Sudoku.allowedNumbers = [true, true, true, true, true, true, true, true, true, true]; // 0..9
         $Sudoku.history = {'undo': false, 'redo': false};
 
         // BIND EVENTS
@@ -182,7 +182,8 @@
             /**************************** SET CELL NUMBER ***********************/
 
             $Sudoku.setCellNumber = function ($cell, number) {
-                if ($Sudoku['allowedNumbers'].hasOwnProperty(number) && $Sudoku['allowedNumbers'][number]) {
+                number = parseInt(number);
+                if ($Sudoku['allowedNumbers'][number]) {
                     $Sudoku.board.setCell($cell, number);
                     var data = $Sudoku.board.getBoardState();
                     $Sudoku.sendUserAction('setCell', data, true);
@@ -195,7 +196,7 @@
             /**************************** SET CELL MARK *************************/
 
             $Sudoku.setCellMark = function ($cell, mark) {
-                $Sudoku.board.addCellMark($cell, mark);
+                mark ? $Sudoku.board.addCellMark($cell, mark) : $Board.setCellMarks($cell, []);
                 var data = $Sudoku.board.getBoardState();
                 $Sudoku.sendUserAction('setCell', data, true);
             };
@@ -284,10 +285,12 @@
 
             $Sudoku.checkNumber = function (number) {
                 var $cell = $Sudoku.getSelectedCell();
-                $Sudoku.clearHistory();
-                $Sudoku.isMarkMode() ? $Sudoku.setCellMark($cell, number) : $Sudoku.setCellNumber($cell, number);
-                $Sudoku.board.hoverNumber($Sudoku.board.getCellNumber($cell));
-                $Sudoku.checkWinGame();
+                if ($cell && $cell.length) {
+                    $Sudoku.clearHistory();
+                    $Sudoku.isMarkMode() ? $Sudoku.setCellMark($cell, number) : $Sudoku.setCellNumber($cell, number);
+                    $Sudoku.board.hoverNumber($Sudoku.board.getCellNumber($cell));
+                    $Sudoku.checkWinGame();
+                }
             };
 
             /*** SELECTED CELL ***/
@@ -444,9 +447,13 @@
             };
 
             $Sudoku.keyPress = function (charCode) {
-                var number = parseInt(String.fromCharCode(charCode));
-                if (number >= 1 && number <= 9) { // 1..9
-                    $Sudoku.checkNumber(number);
+                if (charCode == 96) { // ~`
+                    $Sudoku.table.find('.mark-mode').click();
+                } else {
+                    var number = parseInt(String.fromCharCode(charCode));
+                    if (number >= 0 && number <= 9) { // 0..9
+                        $Sudoku.checkNumber(number);
+                    }
                 }
             };
 
