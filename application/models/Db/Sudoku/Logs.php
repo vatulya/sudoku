@@ -17,11 +17,11 @@ class Application_Model_Db_Sudoku_Logs extends Application_Model_Db_GameAbstract
             return false;
         }
         $data = [
-            'game_id'        => $data['game_id'],
-            'created'        => $this->getNow(),
-            'action_type'    => $data['action_type'],
-            'new_parameters' => isset($data['new_parameters']) ? $data['new_parameters'] : [],
-            'old_parameters' => isset($data['old_parameters']) ? $data['old_parameters'] : [],
+            'game_id'           => $data['game_id'],
+            'created_microtime' => microtime(true),
+            'action_type'       => $data['action_type'],
+            'new_parameters'    => isset($data['new_parameters']) ? $data['new_parameters'] : [],
+            'old_parameters'    => isset($data['old_parameters']) ? $data['old_parameters'] : [],
         ];
         $data['new_parameters'] = Zend_Json::encode($data['new_parameters']);
         $data['old_parameters'] = Zend_Json::encode($data['old_parameters']);

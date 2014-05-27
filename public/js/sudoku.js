@@ -16,6 +16,7 @@
         $Sudoku.pingTimer = false; // Ping timer
         $Sudoku.durationTimer = 0; // Update duration timer
         $Sudoku.duration = 0;
+        $Sudoku.lastSystemDataMicrotime = 0;
 
         $Sudoku.selectedCell = undefined;
         $Sudoku.allowedNumbers = {'1': true, '2': true, '3': true, '4': true, '5': true, '6': true, '7': true, '8': true, '9': true};
@@ -91,7 +92,9 @@
                     $Sudoku._stopPing();
                 })
                 .on('websocket' + S + 'message' + S + 'sudoku' + S + 'systemData', function (e, data) {
-                    $Sudoku.systemDataResponse(data['_system'] || {});
+                    if ($.isPlainObject(data['_system'])) {
+                        $Sudoku.systemDataResponse(data['_system']);
+                    }
                 })
                 .on('websocket' + S + 'message' + S + 'sudoku' + S + 'forceRefresh', function (e, data) {
                     $Sudoku.forceRefresh(data['reason'] || '');
@@ -161,11 +164,17 @@
             /**************************** SYSTEM DATA RESPONSE ******************/
 
             $Sudoku.systemDataResponse = function (response) {
-                $Sudoku.checkGameHash(response['gameHash'] || '');
-                $Sudoku.setHistory('undo', response['undoMove'] || {});
-                $Sudoku.setHistory('redo', response['redoMove'] || {});
-                $Sudoku.checkHistoryButtons();
-                $Sudoku.updateGameServerTime(response['duration']);
+                if (typeof response['microtime'] != 'undefined' && response['microtime'] > $Sudoku.lastSystemDataMicrotime) {
+                    console.log('true');
+                    $Sudoku.lastSystemDataMicrotime = response['microtime'];
+                    $Sudoku.checkGameHash(response['gameHash'] || '');
+                    $Sudoku.setHistory('undo', response['undoMove'] || {});
+                    $Sudoku.setHistory('redo', response['redoMove'] || {});
+                    $Sudoku.checkHistoryButtons();
+                    $Sudoku.updateGameServerTime(response['duration']);
+                } else {
+                    console.log('false');
+                }
             };
 
             /**************************** /SYSTEM DATA RESPONSE *****************/
@@ -196,8 +205,8 @@
             /**************************** CLEAR BOARD ***************************/
 
             $Sudoku.clearBoard = function () {
+                $Sudoku.clearHistory();
                 $Sudoku.board.clearBoard();
-//                $Sudoku.clearHistory();
                 $Sudoku.sendUserAction('clearBoard', {}, true);
             };
 
@@ -275,8 +284,8 @@
 
             $Sudoku.checkNumber = function (number) {
                 var $cell = $Sudoku.getSelectedCell();
+                $Sudoku.clearHistory();
                 $Sudoku.isMarkMode() ? $Sudoku.setCellMark($cell, number) : $Sudoku.setCellNumber($cell, number);
-                $Sudoku.clearHistory('redo');
                 $Sudoku.board.hoverNumber($Sudoku.board.getCellNumber($cell));
                 $Sudoku.checkWinGame();
             };
@@ -319,17 +328,6 @@
                     : redoButton.addClass('disabled');
             };
 
-            $Sudoku.clearHistory = function (historyType) {
-                if (historyType) {
-                    historyType = historyType == 'redo' ? 'redo' : 'undo';
-                    $Sudoku.table.find('.' + historyType + '-move').data('moves', '');
-                } else {
-                    $Sudoku.table.find('.undo-move').data('moves', '');
-                    $Sudoku.table.find('.redo-move').data('moves', '');
-                }
-                $Sudoku.checkHistoryButtons();
-            };
-
             $Sudoku.getLastMoveFromHistory = function (historyType) {
                 if ($Sudoku.history.hasOwnProperty(historyType)) {
                     return $Sudoku.history[historyType];
@@ -339,6 +337,7 @@
 
             $Sudoku.useHistory = function (historyType) {
                 var cells = $Sudoku.getLastMoveFromHistory(historyType);
+                $Sudoku.clearHistory();
                 if (!$.isPlainObject(cells) || $.isEmptyObject(cells)) {
                     return false;
                 }
@@ -349,12 +348,14 @@
                         ;
                     $Sudoku.board.setCell($cell, number, marks);
                 });
+                $Sudoku.sendUserAction(historyType + 'Move', $Sudoku.board.getBoardState(), true);
+                return true;
+            };
+
+            $Sudoku.clearHistory = function () {
                 $Sudoku.setHistory('undo');
                 $Sudoku.setHistory('redo');
                 $Sudoku.checkHistoryButtons();
-
-                $Sudoku.sendUserAction(historyType + 'Move', $Sudoku.board.getBoardState(), true);
-                return true;
             };
 
             /******************************** /UNDO REDO HISTORY ****************************/

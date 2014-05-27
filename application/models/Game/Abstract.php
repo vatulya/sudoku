@@ -404,12 +404,8 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
      */
     public function getLogs()
     {
-        $where = [
-            'game_id' => $this->getId(),
-        ];
-        $order = [
-            'created DESC',
-        ];
+        $where = ['game_id' => $this->getId()];
+        $order = ['created_microtime DESC'];
         return $this->getModelDbLogs()->getAll($where, $order);
     }
 

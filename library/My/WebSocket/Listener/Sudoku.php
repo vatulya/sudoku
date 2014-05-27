@@ -188,6 +188,7 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
         $data['undoMove'] = $moves['undo'];
         $data['redoMove'] = $moves['redo'];
         $data['duration'] = $this->game->getDuration();
+        $data['microtime'] = microtime(true);
         return $data;
     }
 

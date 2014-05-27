@@ -52,13 +52,13 @@ CREATE TABLE IF NOT EXISTS sudoku_games (
 CREATE TABLE IF NOT EXISTS sudoku_logs (
     id INT NOT NULL AUTO_INCREMENT,
     game_id INT NOT NULL,
-    created TIMESTAMP NOT NULL,
+    created_microtime DECIMAL(26,6) NOT NULL,
     action_type VARCHAR(255) NOT NULL,
     new_parameters TEXT NOT NULL,
     old_parameters TEXT NOT NULL,
     PRIMARY KEY (id),
     INDEX (game_id),
-    INDEX (created),
+    INDEX (created_microtime),
     INDEX (action_type)
 );
 
