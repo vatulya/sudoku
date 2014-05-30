@@ -26,7 +26,7 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
         $this->service = Application_Service_Game_Sudoku::getInstance();
     }
 
-    public function onClientReceivedDataFromClient(array $data = [])
+    public function onMessage(array $data = [])
     {
         if (
             empty($data[static::DATA_KEY_GAME_HASH])

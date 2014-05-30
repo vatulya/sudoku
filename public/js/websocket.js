@@ -10,7 +10,7 @@
         $this.requestsQueue = {};
         $this.sentRequests = {};
 
-        $this.socket = new WebSocket("ws://sudoku.lan:9900/");
+        $this.socket = new WebSocket("ws://sudoku.lan:8080/");
         $this.socket.onopen = function() {
             $(d).trigger('websocket' + $this.S + 'open');
         };

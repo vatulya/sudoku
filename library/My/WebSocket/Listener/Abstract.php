@@ -1,5 +1,7 @@
 <?php
 
+use Ratchet\ConnectionInterface;
+
 abstract class My_WebSocket_Listener_Abstract
 {
 
@@ -13,7 +15,7 @@ abstract class My_WebSocket_Listener_Abstract
     protected $server;
 
     /**
-     * @var My_WebSocket_User
+     * @var ConnectionInterface
      */
     protected $user;
 
@@ -75,7 +77,7 @@ abstract class My_WebSocket_Listener_Abstract
     }
 
     /**
-     * @param \My_WebSocket_User $user
+     * @param ConnectionInterface $user
      * @return $this
      */
     public function setUser($user)
@@ -85,7 +87,7 @@ abstract class My_WebSocket_Listener_Abstract
     }
 
     /**
-     * @return \My_WebSocket_User
+     * @return ConnectionInterface
      */
     public function getUser()
     {
@@ -97,7 +99,7 @@ abstract class My_WebSocket_Listener_Abstract
      */
     public function getUserId()
     {
-        $sessionId = $this->getUser()->getCookie(ini_get('session.name'));
+        $sessionId = $this->getServer()->getConnection($this->getUser())[ini_get('session.name')];
         if (empty(self::$userSessions[$sessionId])) {
             $userSessionsDbModel = new Application_Model_Db_User_Sessions();
             $userId = $userSessionsDbModel->getOne(['session_id' => $sessionId], ['created DESC']);
