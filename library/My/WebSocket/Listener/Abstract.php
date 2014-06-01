@@ -19,6 +19,8 @@ abstract class My_WebSocket_Listener_Abstract
      */
     protected $user;
 
+    protected $response;
+
     protected static $userSessions = [];
 
     public function __call($method, $arguments)
@@ -46,34 +48,10 @@ abstract class My_WebSocket_Listener_Abstract
      */
     protected function send($module, $action, $data, $system = [])
     {
-        if ($user = $this->getUser()) {
-            $data[static::DATA_KEY_MODULE] = $module;
-            $data[static::DATA_KEY_ACTION] = $action;
-            $data[static::DATA_KEY_SYSTEM] = $system;
-            $this->getServer()->send($user, $data);
-        }
-    }
-
-    /**
-     * @param \My_WebSocket_Server $server
-     * @return $this
-     */
-    public function setServer(My_WebSocket_Server $server)
-    {
-        $this->server = $server;
-        return $this;
-    }
-
-    /**
-     * @return \My_WebSocket_Server
-     * @throws \Exception
-     */
-    public function getServer()
-    {
-        if (is_null($this->server)) {
-            throw new Exception('Property "server" is empty. You forgot call setServer?');
-        }
-        return $this->server;
+        $data[static::DATA_KEY_MODULE] = $module;
+        $data[static::DATA_KEY_ACTION] = $action;
+        $data[static::DATA_KEY_SYSTEM] = $system;
+        $this->getResponse()->send($data);
     }
 
     /**
@@ -95,11 +73,27 @@ abstract class My_WebSocket_Listener_Abstract
     }
 
     /**
+     * @param mixed $response
+     */
+    public function setResponse($response)
+    {
+        $this->response = $response;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
      * @return int
      */
     public function getUserId()
     {
-        $sessionId = $this->getServer()->getConnection($this->getUser())[ini_get('session.name')];
+        $sessionId = $this->getUserSessionId();
         if (empty(self::$userSessions[$sessionId])) {
             $userSessionsDbModel = new Application_Model_Db_User_Sessions();
             $userId = $userSessionsDbModel->getOne(['session_id' => $sessionId], ['created DESC']);
@@ -109,6 +103,18 @@ abstract class My_WebSocket_Listener_Abstract
             $userId = self::$userSessions[$sessionId];
         }
         return (int)$userId;
+    }
+
+    public function getUserSessionId()
+    {
+        $user = $this->getUser();
+        $cookiesRows = $user->WebSocket->request->getHeader('cookie');
+        $cookies = [];
+        foreach ($cookiesRows as $cookie) {
+            list ($key, $value) = explode('=', $cookie);
+            $cookies[$key] = $value;
+        }
+        return $cookies[ini_get('session.name')];
     }
 
 }

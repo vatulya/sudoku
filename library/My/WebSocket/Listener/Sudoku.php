@@ -1,5 +1,7 @@
 <?php
 
+use Ratchet\ConnectionInterface;
+
 class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
 {
 
@@ -26,21 +28,23 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
         $this->service = Application_Service_Game_Sudoku::getInstance();
     }
 
-    public function onMessage(array $data = [])
+    public function onMessage(ConnectionInterface $user, My_Wamp_Response $response, array $data = [])
     {
+        $this->setUser($user);
+        $this->setResponse($response);
         if (
             empty($data[static::DATA_KEY_GAME_HASH])
             || empty($data[static::DATA_KEY_ACTION])
             || empty($data[static::DATA_KEY_HASH])
         ) {
-            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Wrong data');
+//            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Wrong data');
             return false;
         }
         $gameHash = $data[static::DATA_KEY_GAME_HASH];
         $action = $data[static::DATA_KEY_ACTION] . 'Action';
         $hash = $data[static::DATA_KEY_HASH];
         if (!method_exists($this, $action)) {
-            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Wrong action "' . $action . '"');
+//            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Wrong action "' . $action . '"');
             return false;
         }
 
@@ -48,21 +52,21 @@ class My_WebSocket_Listener_Sudoku extends My_WebSocket_Listener_Abstract
             $userId = $this->getUserId();
             $this->game = $this->service->loadByUserIdAndGameHash($userId, $gameHash);
         } catch (Exception $e) {
-            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Wrong user or game. Error: ' . $e->getMessage());
+//            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Wrong user or game. Error: ' . $e->getMessage());
             return false;
         }
 
         unset($data[static::DATA_KEY_GAME_HASH], $data[static::DATA_KEY_ACTION], $data[static::DATA_KEY_HASH]);
-        $this->getServer()->getLogger()->debug(static::LOG_PREFIX . 'Call action "' . $action . '". Data: ' . Zend_Json::encode($data));
+//        $this->getServer()->getLogger()->debug(static::LOG_PREFIX . 'Call action "' . $action . '". Data: ' . Zend_Json::encode($data));
         try {
             $this->$action($data);
         } catch (Exception $e) {
-            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Action error: ' . $e->getMessage());
+//            $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Action error: ' . $e->getMessage());
             return false;
         }
         if (!in_array($action, $this->skipCheckBoardForActions)) {
             if (!$this->service->checkBoard($this->game->getId(), $hash)) {
-                $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Check Board error');
+//                $this->getServer()->getLogger()->error(static::LOG_PREFIX . 'Check Board error');
                 $this->send('sudoku', 'forceRefresh', ['reason' => 'Synchronization error']);
                 return false;
             }

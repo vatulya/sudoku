@@ -6,8 +6,8 @@
 
         $Sudoku.hash = gameHash;
 
-        $Sudoku.websocket = new w.WS();
-        var S = $Sudoku.websocket.S;
+        $Sudoku.SC = w.SC;
+        var S = $Sudoku.SC.S;
 
         $Sudoku.table = $('#game-sudoku-' + $Sudoku.hash);
         $Sudoku.board = new SudokuBoard($Sudoku.table.find('.sudoku-board'));
@@ -119,11 +119,8 @@
                     '_action': action,
                     '_hash': $Sudoku.board.getBoardHash()
                 }, parameters || {});
-                var config = {
-                    'data': parameters,
-                    'callback': callback
-                };
-                $Sudoku.websocket.send(config, 'sudoku', withQueue ? 'sudoku' : '');
+                $Sudoku.SC.call('sudoku', parameters).then(callback);
+//                $Sudoku.SC.send(config, 'sudoku', withQueue ? 'sudoku' : '');
             };
 
             /**************************** /SEND USER ACTION *********************/

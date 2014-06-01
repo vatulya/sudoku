@@ -11,13 +11,15 @@ $this->headScript()
     ->prependFile('/js/user.js')
     ->prependFile('/js/modal.js')
     ->prependFile('/js/game.js')
-    ->prependFile('/js/websocket.js')
+    ->prependFile('/js/server.js')
+//    ->prependFile('/js/websocket.js')
     ->prependFile('/js/common.js')
     ->prependFile('/js/form.js')
     ->prependFile('/js/global.js')
     ->prependFile('/js/bootstrap.js')
     ->prependFile('/js/jquery.md5.js')
     ->prependFile('/js/jquery-2.0.3.js')
+    ->prependFile('http://autobahn.s3.amazonaws.com/js/autobahn.js')
 ;
 ?>
 <?php header('Content-type: text/html; charset=utf-8'); ?>
