@@ -44,11 +44,18 @@ class My_Wamp_Handler extends EventEmitter implements WampServerInterface
     {
         $response = new My_Wamp_Response();
         $this->emit($topic . '_message', [$conn, $response, $params]);
-        $conn->callResult($id, $response->getResponse());
+        $error = isset($response->getResponse()['error']) ? $response->getResponse()['error'] : '';
+        if (!empty($error)) {
+            $conn->callError($id, '/', $error);
+        } else {
+            $conn->callResult($id, $response->getResponse());
+        }
     }
 
     public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible)
     {
+        // In this application if clients send data it's because the user hacked around in console
+        $conn->close();
         $a = 1;
     }
 
