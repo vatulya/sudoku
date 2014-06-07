@@ -1,0 +1,86 @@
+
+.sudoku-numpad {
+  margin: 24px 0;
+
+  table {
+    margin-left: 1px;
+
+    &.popup {
+      position: absolute;
+    }
+
+    tr {
+      &:first-child {
+        .number {
+          &:first-child {
+            .border-radius-mixin(3px 0 0 0);
+          }
+
+          &:last-child {
+            .border-radius-mixin(0 3px 0 0);
+          }
+        }
+      }
+
+      .number.clear {
+        .border-radius-mixin(0 0 3px 3px);
+      }
+    }
+
+    .number {
+      float: left;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.2em;
+      line-height: 46px;
+      width: @sudoku-numpad-default-number-width;
+      height: @sudoku-numpad-default-number-height;
+      margin: @sudoku-numpad-default-number-margin;
+      padding: @sudoku-numpad-default-number-padding;
+      border-width: @sudoku-numpad-default-number-border-width;
+      border-style: @sudoku-numpad-default-number-border-style;
+      border-color: @sudoku-numpad-default-number-border-color;
+      background-color: @sudoku-numpad-default-number-background-color;
+
+      .box-sizing-mixin(@sudoku-numpad-default-number-box-sizing);
+      .linear-gradient-mixin(@sudoku-numpad-default-number-gradient-start, @sudoku-numpad-default-number-gradient-end);
+
+      &:active {
+        .box-shadow-mixin(@default-push-box-shadow);
+      }
+
+      &.disabled {
+        color: #999;
+        padding-top: @sudoku-numpad-default-number-padding-top + 1;
+        background-color: @sudoku-numpad-default-number-disabled-background-color;
+        font-weight: normal;
+
+        .linear-gradient-mixin(@sudoku-numpad-default-number-disabled-background-color, @sudoku-numpad-default-number-disabled-background-color);
+      }
+
+      &.clear {
+        height: 30px;
+        line-height: 22px;
+        width: @sudoku-numpad-default-clear-width;
+      }
+
+      &.enabled {
+        &:hover,
+        &.hover {
+          background-color: @sudoku-numpad-default-number-hover-background-color;
+          .linear-gradient-mixin(#e6e6e6, #fff);
+        }
+      }
+    }
+
+    .none {
+      visibility: hidden;
+    }
+
+    .close {
+      cursor: pointer;
+    }
+  }
+}

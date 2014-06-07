@@ -1,5 +1,7 @@
 @import "variables";
 @import "sudoku-variables";
+@import "sudoku-board";
+@import "sudoku-numpad";
 
 .sudoku-table {
   width: 600px;
@@ -54,169 +56,8 @@
   }
 }
 
-.sudoku-board {
-  border: @sudoku-default-board-border-width @sudoku-default-board-border-style @sudoku-default-board-border-color;
-}
-
-/********************************** board cells *********************************/
-
-.sudoku-board {
-
-  &.hide-game {
-    .number-container,
-    .mark {
-      display: none;
-    }
-  }
-
-  .cell {
-    cursor: pointer;
-    text-align: center;
-    vertical-align: middle;
-    font-weight: bold;
-    width: @sudoku-default-board-cell-width;
-    height: @sudoku-default-board-cell-height;
-    background-color: @sudoku-default-board-cell-background-color;
-    border: @sudoku-default-board-cell-border-width @sudoku-default-board-cell-border-style @sudoku-default-board-cell-border-color;
-    margin: -@sudoku-default-board-cell-border-width 0 0 -@sudoku-default-board-cell-border-width;
-    font-size: @sudoku-default-board-cell-font-size;
-
-    .box-sizing-mixin(@sudoku-default-board-cell-box-sizing);
-
-    &.marks {
-      .number-container {
-        display: none;
-      }
-
-      .mark {
-        display: block;
-      }
-
-      &.mark-1 {
-        .mark-1 {
-          visibility: visible;
-        }
-      }
-
-      &.mark-2 {
-        .mark-2 {
-          visibility: visible;
-        }
-      }
-
-      &.mark-3 {
-        .mark-3 {
-          visibility: visible;
-        }
-      }
-
-      &.mark-4 {
-        .mark-4 {
-          visibility: visible;
-        }
-      }
-
-      &.mark-5 {
-        .mark-5 {
-          visibility: visible;
-        }
-      }
-
-      &.mark-6 {
-        .mark-6 {
-          visibility: visible;
-        }
-      }
-
-      &.mark-7 {
-        .mark-7 {
-          visibility: visible;
-        }
-      }
-
-      &.mark-8 {
-        .mark-8 {
-          visibility: visible;
-        }
-      }
-
-      &.mark-9 {
-        .mark-9 {
-          visibility: visible;
-        }
-      }
-    }
-  }
-}
-
-.mark {
-  display: none;
-  visibility: hidden;
-  float: left;
-  text-align: center;
-  vertical-align: middle;
-  color: #333;
-  font-size: 0.6em;
-  line-height: 1em;
-  width: 12px;
-  height: 12px;
-}
-
-.sudoku-board .cell.gray {
-  background-color: @sudoku-default-board-cell-gray-background-color;
-}
-
-.sudoku-board .cell:hover {
-  background-color: @sudoku-default-board-cell-hover-background-color;
-}
-
-.sudoku-board .cell.locked {
-  background-color: @sudoku-default-board-cell-locked-background-color;
-}
-
-.sudoku-board .cell.hovered {
-  color: @sudoku-default-board-cell-number-hover-color;
-  background-color: @sudoku-default-board-cell-number-hover-background-color; // ???
-}
-
-.sudoku-board .cell.selected {
-  background-color: @sudoku-default-board-cell-selected-background-color;
-}
-
-.sudoku-board .cell.pushed {
-  background-color: @sudoku-default-board-cell-pushed-background-color;
-}
-
-.sudoku-board .cell.error {
-  background-color: @sudoku-default-board-cell-error-background-color;
-}
-
-.sudoku-board .cell.row-4,
-.sudoku-board .cell.row-7 {
-  border-top: @sudoku-default-board-around-section-border-width @sudoku-default-board-around-section-border-style @sudoku-default-board-around-section-border-color;
-}
-
-.sudoku-board .cell.col-4,
-.sudoku-board .cell.col-7 {
-  border-left: @sudoku-default-board-around-section-border-width @sudoku-default-board-around-section-border-style @sudoku-default-board-around-section-border-color;
-}
-
-/* no-errors */
-.sudoku-board.no-errors .cell.row-4,
-.sudoku-board.no-errors .cell.row-7 {
-  border-top-color: @sudoku-default-success-board-around-section-border-color;
-}
-
-.sudoku-board.no-errors .cell.col-4,
-.sudoku-board.no-errors .cell.col-7 {
-  border-left-color: @sudoku-default-success-board-around-section-border-color;
-}
-
-.sudoku-board.no-errors {
-  border-color: @sudoku-default-success-board-border-color;
-}
-
 /********************************** controls *********************************/
+
 .sudoku-controls {
   width: 165px;
 
@@ -240,108 +81,35 @@
   }
 }
 
-.sudoku-numpad {
-  margin: 24px 0;
+/********************************** index and other *********************************/
 
-  table {
-    margin-left: 1px;
+.game-board-example-container {
+  height: 350px;
 
-    &.popup {
-      position: absolute;
+  &.small {
+    height: 250px;
+
+    .game-board-example {
+      width: 300px;
     }
+  }
 
-    tr {
-      &:first-child {
-        .number {
-          &:first-child {
-            .border-radius-mixin(3px 0 0 0);
-          }
+  &.medium {
+    height: 300px;
 
-          &:last-child {
-            .border-radius-mixin(0 3px 0 0);
-          }
-        }
-      }
-
-      .number.clear {
-        .border-radius-mixin(0 0 3px 3px);
-      }
-    }
-
-    .number {
-      float: left;
-      text-align: center;
-      vertical-align: middle;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1.2em;
-      line-height: 46px;
-      width: @sudoku-numpad-default-number-width;
-      height: @sudoku-numpad-default-number-height;
-      margin: @sudoku-numpad-default-number-margin;
-      padding: @sudoku-numpad-default-number-padding;
-      border-width: @sudoku-numpad-default-number-border-width;
-      border-style: @sudoku-numpad-default-number-border-style;
-      border-color: @sudoku-numpad-default-number-border-color;
-      background-color: @sudoku-numpad-default-number-background-color;
-
-      .box-sizing-mixin(@sudoku-numpad-default-number-box-sizing);
-      .linear-gradient-mixin(@sudoku-numpad-default-number-gradient-start, @sudoku-numpad-default-number-gradient-end);
-
-      &:active {
-        .box-shadow-mixin(@default-push-box-shadow);
-      }
-
-      &.disabled {
-        color: #999;
-        padding-top: @sudoku-numpad-default-number-padding-top + 1;
-        background-color: @sudoku-numpad-default-number-disabled-background-color;
-        font-weight: normal;
-
-        .linear-gradient-mixin(@sudoku-numpad-default-number-disabled-background-color, @sudoku-numpad-default-number-disabled-background-color);
-      }
-
-      &.clear {
-        height: 30px;
-        line-height: 22px;
-        width: @sudoku-numpad-default-clear-width;
-      }
-
-      &.enabled {
-        &:hover,
-        &.hover {
-          background-color: @sudoku-numpad-default-number-hover-background-color;
-          .linear-gradient-mixin(#e6e6e6, #fff);
-        }
-      }
-    }
-
-    .none {
-      visibility: hidden;
-    }
-
-    .close {
-      cursor: pointer;
+    .game-board-example {
+      width: 325px;
     }
   }
 }
 
-/********************************** index and other *********************************/
 .game-board-example {
   text-align: center;
-  padding: 15px 0;
   margin: 0 auto;
   width: 350px;
+  height: auto;
 
   .sudoku-board {
     margin: 0 auto;
   }
 }
-
-.sudoku-game-goal {
-  font-size: 25px;
-  line-height: 30px;
-}
-
-
-

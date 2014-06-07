@@ -60,8 +60,12 @@ $getCell = function($row, $col) use ($parameters, $isGray) {
 </td>
 <?php
 }; // $getCell
+
+$classes = ['sudoku-board'];
+if ($this->size) $classes[] = $this->size;
+if ($this->hide) $classes[] = 'hide-game';
 ?>
-<table class="sudoku-board<?php if ($this->hide) echo ' hide-game'; ?>">
+<table class="<?php echo implode(' ', $classes); ?>">
     <?php for ($row = 1; $row <= $rows; $row++): ?>
     <tr>
         <?php for ($col = 1; $col <= $cols; $col++): ?>

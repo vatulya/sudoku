@@ -69,8 +69,8 @@
         })
         .on('click', '.scroll-to-top', function(e) {
             e.preventDefault();
-            w.scrollTo(0, 0);
-        });
+            $('.center-column').scrollTop(0);
+        })
     ;
 
 })(this, this.document, this.jQuery);

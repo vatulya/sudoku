@@ -1,0 +1,192 @@
+/*** DEFAULT ***/
+.sudoku-board {
+  border: @sudoku-default-board-border-width @sudoku-default-board-border-style @sudoku-default-board-border-color;
+
+  &.hide-game {
+    .number-container,
+    .mark {
+      display: none;
+    }
+  }
+
+  .cell {
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+    width: @sudoku-default-board-cell-width;
+    height: @sudoku-default-board-cell-height;
+    background-color: @sudoku-default-board-cell-background-color;
+    border: @sudoku-default-board-cell-border-width @sudoku-default-board-cell-border-style @sudoku-default-board-cell-border-color;
+    margin: -@sudoku-default-board-cell-border-width 0 0 -@sudoku-default-board-cell-border-width;
+    font-size: @sudoku-default-board-cell-font-size;
+
+    .box-sizing-mixin(@sudoku-default-board-cell-box-sizing);
+
+    &.marks {
+      .number-container {
+        display: none;
+      }
+
+      .mark {
+        display: block;
+      }
+
+      &.mark-1 {
+        .mark-1 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-2 {
+        .mark-2 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-3 {
+        .mark-3 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-4 {
+        .mark-4 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-5 {
+        .mark-5 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-6 {
+        .mark-6 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-7 {
+        .mark-7 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-8 {
+        .mark-8 {
+          visibility: visible;
+        }
+      }
+
+      &.mark-9 {
+        .mark-9 {
+          visibility: visible;
+        }
+      }
+    }
+  }
+}
+
+.mark {
+  display: none;
+  visibility: hidden;
+  float: left;
+  text-align: center;
+  vertical-align: middle;
+  color: #333;
+  font-size: @sudoku-default-board-mark-font-size;
+  line-height: @sudoku-default-board-mark-line-height;
+  width: @sudoku-default-board-mark-width;
+  height: @sudoku-default-board-mark-height;
+}
+
+.sudoku-board .cell.gray {
+  background-color: @sudoku-default-board-cell-gray-background-color;
+}
+
+.sudoku-board .cell:hover {
+  background-color: @sudoku-default-board-cell-hover-background-color;
+}
+
+.sudoku-board .cell.locked {
+  background-color: @sudoku-default-board-cell-locked-background-color;
+}
+
+.sudoku-board .cell.hovered {
+  color: @sudoku-default-board-cell-number-hover-color;
+  background-color: @sudoku-default-board-cell-number-hover-background-color; // ???
+}
+
+.sudoku-board .cell.selected {
+  background-color: @sudoku-default-board-cell-selected-background-color;
+}
+
+.sudoku-board .cell.pushed {
+  background-color: @sudoku-default-board-cell-pushed-background-color;
+}
+
+.sudoku-board .cell.error {
+  background-color: @sudoku-default-board-cell-error-background-color;
+}
+
+.sudoku-board .cell.row-4,
+.sudoku-board .cell.row-7 {
+  border-top: @sudoku-default-board-around-section-border-width @sudoku-default-board-around-section-border-style @sudoku-default-board-around-section-border-color;
+}
+
+.sudoku-board .cell.col-4,
+.sudoku-board .cell.col-7 {
+  border-left: @sudoku-default-board-around-section-border-width @sudoku-default-board-around-section-border-style @sudoku-default-board-around-section-border-color;
+}
+
+/* no-errors */
+.sudoku-board.no-errors .cell.row-4,
+.sudoku-board.no-errors .cell.row-7 {
+  border-top-color: @sudoku-default-success-board-around-section-border-color;
+}
+
+.sudoku-board.no-errors .cell.col-4,
+.sudoku-board.no-errors .cell.col-7 {
+  border-left-color: @sudoku-default-success-board-around-section-border-color;
+}
+
+.sudoku-board.no-errors {
+  border-color: @sudoku-default-success-board-border-color;
+}
+
+/*** SIZES ***/
+
+.sudoku-board {
+  &.small {
+    .cell {
+      width: @sudoku-small-board-cell-width;
+      height: @sudoku-small-board-cell-height;
+      font-size: @sudoku-small-board-cell-font-size;
+    }
+
+    .mark {
+      font-size: @sudoku-small-board-mark-font-size;
+      line-height: @sudoku-small-board-mark-line-height;
+      width: @sudoku-small-board-mark-width;
+      height: @sudoku-small-board-mark-height;
+    }
+  }
+
+  &.medium {
+    .cell {
+      width: @sudoku-medium-board-cell-width;
+      height: @sudoku-medium-board-cell-height;
+      font-size: @sudoku-medium-board-cell-font-size;
+    }
+
+    .mark {
+      font-size: @sudoku-medium-board-mark-font-size;
+      line-height: @sudoku-medium-board-mark-line-height;
+      width: @sudoku-medium-board-mark-width;
+      height: @sudoku-medium-board-mark-height;
+    }
+  }
+}
+

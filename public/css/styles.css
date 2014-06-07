@@ -276,6 +276,13 @@ ul {
 .right-column .section table.games-history tr.hlink:hover {
   background-color: #ffffff;
 }
+.section {
+  margin-top: 30px;
+}
+.section p.title {
+  font-size: 25px;
+  line-height: 30px;
+}
 .breadcrumbs {
   float: left;
   font-size: 1em;
@@ -652,50 +659,13 @@ body.users-rating .center-column table.users-rating td {
 body.users-rating .center-column table.users-rating.games-history tr.hlink:hover {
   background-color: #ffffff;
 }
-.sudoku-table {
-  width: 600px;
-  height: 420px;
-}
-.sudoku-table.resolved .congratulations {
-  display: block;
-}
-.sudoku-table.resolved .sudoku-board .cell {
-  background-color: #ddffdd;
-}
-.sudoku-table .congratulations {
-  width: 550px;
-  display: none;
-  position: absolute;
-  z-index: 10;
-}
-.sudoku-table .congratulations .message {
-  padding: 20px 50px;
-  margin: 100px auto 0;
-  width: 400px;
-  background-color: #fff;
-  border: 5px solid #cccccc;
-  border-radius: 5px;
-  font-size: 2em;
-  font-weight: bold;
-  line-height: 40px;
-  color: #008800;
-  text-align: center;
-  vertical-align: middle;
-}
-.sudoku-table .sudoku-board {
-  float: left;
-  margin-right: 20px;
-}
-.sudoku-table .sudoku-controls {
-  float: left;
-}
-.sudoku-table .sudoku-game-info {
-  clear: both;
-}
+/*** DEFAULT ***/
 .sudoku-board {
   border: 2px solid #000000;
 }
-/********************************** board cells *********************************/
+.sudoku-board.hide-game .number-container, .sudoku-board.hide-game .mark {
+  display: none;
+}
 .sudoku-board .cell {
   cursor: pointer;
   text-align: center;
@@ -806,18 +776,28 @@ body.users-rating .center-column table.users-rating.games-history tr.hlink:hover
 .sudoku-board.no-errors {
   border-color: #008800;
 }
-/********************************** controls *********************************/
-.sudoku-controls {
-  width: 165px;
+/*** SIZES ***/
+.sudoku-board.small .cell {
+  width: 20px;
+  height: 20px;
+  font-size: 1em;
 }
-.sudoku-controls .sudoku-controls-row {
-  margin-bottom: 5px;
+.sudoku-board.small .mark {
+  font-size: 0.3em;
+  line-height: 0.7em;
+  width: 7px;
+  height: 7px;
 }
-.sudoku-controls .mark-mode.btn, .sudoku-controls .check-field.btn, .sudoku-controls .clear-field.btn {
-  width: 100%;
+.sudoku-board.medium .cell {
+  width: 30px;
+  height: 30px;
+  font-size: 1em;
 }
-.sudoku-controls .undo-move.btn, .sudoku-controls .redo-move.btn {
-  width: 83px;
+.sudoku-board.medium .mark {
+  font-size: 0.5em;
+  line-height: 0.9em;
+  width: 10px;
+  height: 10px;
 }
 .sudoku-numpad {
   margin: 24px 0;
@@ -1068,19 +1048,83 @@ body.users-rating .center-column table.users-rating.games-history tr.hlink:hover
 .sudoku-numpad table .close {
   cursor: pointer;
 }
+.sudoku-table {
+  width: 600px;
+  height: 420px;
+}
+.sudoku-table.resolved .congratulations {
+  display: block;
+}
+.sudoku-table.resolved .sudoku-board .cell {
+  background-color: #ddffdd;
+}
+.sudoku-table .congratulations {
+  width: 550px;
+  display: none;
+  position: absolute;
+  z-index: 10;
+}
+.sudoku-table .congratulations .message {
+  padding: 20px 50px;
+  margin: 100px auto 0;
+  width: 400px;
+  background-color: #fff;
+  border: 5px solid #cccccc;
+  border-radius: 5px;
+  font-size: 2em;
+  font-weight: bold;
+  line-height: 40px;
+  color: #008800;
+  text-align: center;
+  vertical-align: middle;
+}
+.sudoku-table .sudoku-board {
+  float: left;
+  margin-right: 20px;
+}
+.sudoku-table .sudoku-controls {
+  float: left;
+}
+.sudoku-table .sudoku-game-info {
+  clear: both;
+}
+/********************************** controls *********************************/
+.sudoku-controls {
+  width: 165px;
+}
+.sudoku-controls .sudoku-controls-row {
+  margin-bottom: 5px;
+}
+.sudoku-controls .mark-mode.btn, .sudoku-controls .check-field.btn, .sudoku-controls .clear-field.btn {
+  width: 100%;
+}
+.sudoku-controls .undo-move.btn, .sudoku-controls .redo-move.btn {
+  width: 83px;
+}
 /********************************** index and other *********************************/
+.game-board-example-container {
+  height: 350px;
+}
+.game-board-example-container.small {
+  height: 250px;
+}
+.game-board-example-container.small .game-board-example {
+  width: 300px;
+}
+.game-board-example-container.medium {
+  height: 300px;
+}
+.game-board-example-container.medium .game-board-example {
+  width: 325px;
+}
 .game-board-example {
   text-align: center;
-  padding: 15px 0;
   margin: 0 auto;
   width: 350px;
+  height: auto;
 }
 .game-board-example .sudoku-board {
   margin: 0 auto;
-}
-.sudoku-game-goal {
-  font-size: 25px;
-  line-height: 30px;
 }
 .center-column {
   z-index: 1100;
