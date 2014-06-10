@@ -6,17 +6,9 @@ use Ratchet\Wamp\WampServerInterface;
 class My_Wamp_Handler extends EventEmitter implements WampServerInterface
 {
 
-    /**
-     * @var SplObjectStorage
-     */
-    protected $testConnections;
+    protected $connections = [];
 
     protected $subscribedTopics = [];
-
-    public function __construct()
-    {
-        $this->testConnections = new SplObjectStorage();
-    }
 
     public function onSubscribe(ConnectionInterface $conn, $topic)
     {
@@ -32,18 +24,24 @@ class My_Wamp_Handler extends EventEmitter implements WampServerInterface
 
     public function onOpen(ConnectionInterface $conn)
     {
-        $this->testConnections[$conn] = $conn;
+        $this->connections[$this->getConnectionId($conn)] = [];
     }
 
     public function onClose(ConnectionInterface $conn)
     {
-        unset($this->testConnections[$conn]);
+        unset($this->connections[$this->getConnectionId($conn)]);
     }
 
     public function onCall(ConnectionInterface $conn, $id, $topic, array $params)
     {
+        $topicId = $topic->getId();
+        if ($topicId === 'setSessionId') {
+            $this->connections[$this->getConnectionId($conn)]['_session'] = $params['session'];
+            return true;
+        }
         $response = new My_Wamp_Response();
-        $this->emit($topic . '_message', [$conn, $response, $params]);
+        $params += $this->connections[$this->getConnectionId($conn)];
+        $this->emit($topicId . '_message', [$conn, $response, $params]);
         $error = isset($response->getResponse()['error']) ? $response->getResponse()['error'] : '';
         if (!empty($error)) {
             $conn->callError($id, '/', $error);
@@ -72,6 +70,15 @@ class My_Wamp_Handler extends EventEmitter implements WampServerInterface
 
         // re-send the data to all the clients subscribed to that category
         $topic->broadcast($data);
+    }
+
+    /**
+     * @param ConnectionInterface $conn
+     * @return string
+     */
+    public function getConnectionId(ConnectionInterface $conn)
+    {
+        return spl_object_hash($conn);
     }
 
 }

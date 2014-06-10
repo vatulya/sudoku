@@ -5,12 +5,12 @@
             if (e.keyCode == '13') { // Enter button
                 e.preventDefault();
                 e.stopPropagation();
-                Form.clickSubmit(this);
+                Form.clickSubmit($(this));
             }
         })
         .on('click', '.submit-form', function(e) {
             e.preventDefault();
-            Form.clickSubmit(this);
+            Form.clickSubmit($(this));
         })
         .on('click', '.form-field .tooltip', function(e) {
             e.preventDefault();
@@ -24,7 +24,7 @@
         })
         .on('submit', '.ajax-form-submit', function(e) {
             e.preventDefault();
-            Form.submitForm(this);
+            Form.submitForm($(this));
         })
     ;
 
@@ -32,16 +32,24 @@
 
         allowedMessageTypes: ['error', 'notice', 'success'],
 
-        clickSubmit: function(button) {
-            button = $(button);
-            var form = button.closest('form');
-            Form.submitForm(form);
+        clickSubmit: function($button) {
+            var form = $button.closest('form'),
+                additionalData = {}
+                ;
+            if ($button.attr('name') && typeof $button.attr('value') != 'undefined') {
+                additionalData[$button.attr('name')] = $button.attr('value');
+            }
+            Form.submitForm(form, additionalData);
         },
 
-        submitForm: function(form) {
-            form = $(form);
-            var formData = {};
-            $.each(form.serializeArray(), function(_, kv) {
+        submitForm: function($form, additionalData) {
+            if ($form.hasClass('disabled')) {
+                return false;
+            }
+            $form.addClass('disabled');
+            $form.find('.submit-form').addClass('disabled');
+            var formData = additionalData || {};
+            $.each($form.serializeArray(), function(_, kv) {
                 if (formData.hasOwnProperty(kv.name)) {
                     formData[kv.name] = $.makeArray(formData[kv.name]);
                     formData[kv.name].push(kv.value);
@@ -51,16 +59,19 @@
             });
             formData.format = 'json';
             $.ajax({
-                url: form.attr('action'),
+                url: $form.attr('action'),
                 data: formData,
                 success: function(response) {
+                    $form.removeClass('disabled');
+                    $form.find('.submit-form').removeClass('disabled');
                     if (typeof response.success != 'undefined') {
-                        form.trigger('success', response);
+                        $form.trigger('success', response);
                     } else {
-                        Form.showMessages(form, response.messages || {});
+                        Form.showMessages($form, response.messages || {});
                     }
                 }
             });
+            return true;
         },
 
         showMessages: function(form, messages) {

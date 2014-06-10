@@ -113,14 +113,17 @@
 
             /**************************** SEND USER ACTION **********************/
 
-            $Sudoku.sendUserAction = function (action, parameters, withQueue, callback) {
+            $Sudoku.sendUserAction = function (action, parameters, callback) {
                 parameters = $.extend({
                     '_game_hash': $Sudoku.hash,
                     '_action': action,
                     '_hash': $Sudoku.board.getBoardHash()
                 }, parameters || {});
-                $Sudoku.SC.call('sudoku', parameters).then(callback);
-//                $Sudoku.SC.send(config, 'sudoku', withQueue ? 'sudoku' : '');
+                $Sudoku.SC.call('sudoku', parameters).then(function(response) {
+                    if ($Sudoku.systemDataResponse(response)) {
+                        callback(response);
+                    }
+                });
             };
 
             /**************************** /SEND USER ACTION *********************/
@@ -128,7 +131,7 @@
             /**************************** LOAD BOARD ****************************/
 
             $Sudoku.loadBoard = function () {
-                $Sudoku.sendUserAction('loadBoard', {}, true, $Sudoku.loadBoardResponse);
+                $Sudoku.sendUserAction('loadBoard', {}, $Sudoku.loadBoardResponse);
             };
 
             $Sudoku.loadBoardResponse = function (response) {
@@ -145,14 +148,14 @@
             $Sudoku.start = function () {
                 $Sudoku.board.showBoard();
                 $Sudoku._startDurationTimer();
-                $Sudoku.sendUserAction('start', {}, true);
+                $Sudoku.sendUserAction('start');
                 $Sudoku._startPing();
             };
 
             $Sudoku.pause = function () {
                 $Sudoku.board.hideBoard();
                 $Sudoku._stopPing();
-                $Sudoku.sendUserAction('pause', {}, true);
+                $Sudoku.sendUserAction('pause');
                 $Sudoku._stopDurationTimer();
             };
 
@@ -161,14 +164,19 @@
             /**************************** SYSTEM DATA RESPONSE ******************/
 
             $Sudoku.systemDataResponse = function (response) {
-                if (typeof response['microtime'] != 'undefined' && response['microtime'] > $Sudoku.lastSystemDataMicrotime) {
-                    $Sudoku.lastSystemDataMicrotime = response['microtime'];
-                    $Sudoku.checkGameHash(response['gameHash'] || '');
-                    $Sudoku.setHistory('undo', response['undoMove'] || {});
-                    $Sudoku.setHistory('redo', response['redoMove'] || {});
-                    $Sudoku.checkHistoryButtons();
-                    $Sudoku.updateGameServerTime(response['duration']);
+                if ($.isPlainObject(response['_system'])) {
+                    response = response['_system'];
+                    if (typeof response['microtime'] != 'undefined' && response['microtime'] > $Sudoku.lastSystemDataMicrotime) {
+                        $Sudoku.lastSystemDataMicrotime = response['microtime'];
+                        $Sudoku.checkGameHash(response['gameHash'] || '');
+                        $Sudoku.setHistory('undo', response['undoMove'] || {});
+                        $Sudoku.setHistory('redo', response['redoMove'] || {});
+                        $Sudoku.checkHistoryButtons();
+                        $Sudoku.updateGameServerTime(response['duration']);
+                        return true;
+                    }
                 }
+                return false;
             };
 
             /**************************** /SYSTEM DATA RESPONSE *****************/
@@ -179,8 +187,7 @@
                 number = parseInt(number);
                 if ($Sudoku['allowedNumbers'][number]) {
                     $Sudoku.board.setCell($cell, number);
-                    var data = $Sudoku.board.getBoardState();
-                    $Sudoku.sendUserAction('setCell', data, true);
+                    $Sudoku.sendUserAction('setCell', $Sudoku.board.getBoardState());
                     $Sudoku.checkAllowedNumbers();
                 }
             };
@@ -191,8 +198,7 @@
 
             $Sudoku.setCellMark = function ($cell, mark) {
                 mark ? $Sudoku.board.addCellMark($cell, mark) : $Board.setCellMarks($cell, []);
-                var data = $Sudoku.board.getBoardState();
-                $Sudoku.sendUserAction('setCell', data, true);
+                $Sudoku.sendUserAction('setCell', $Sudoku.board.getBoardState());
             };
 
             /**************************** /SET CELL MARK ************************/
@@ -202,7 +208,7 @@
             $Sudoku.clearBoard = function () {
                 $Sudoku.clearHistory();
                 $Sudoku.board.clearBoard();
-                $Sudoku.sendUserAction('clearBoard', {}, true);
+                $Sudoku.sendUserAction('clearBoard');
             };
 
             /**************************** /CLEAR BOARD **************************/
@@ -210,7 +216,7 @@
             /**************************** CHECK BOARD ***************************/
 
             $Sudoku.checkBoard = function () {
-                $Sudoku.sendUserAction('checkBoard', {}, true, $Sudoku.checkBoardResponse);
+                $Sudoku.sendUserAction('checkBoard', {}, $Sudoku.checkBoardResponse);
             };
 
             $Sudoku.checkBoardResponse = function (response) {
@@ -344,7 +350,7 @@
                         ;
                     $Sudoku.board.setCell($cell, number, marks);
                 });
-                $Sudoku.sendUserAction(historyType + 'Move', $Sudoku.board.getBoardState(), true);
+                $Sudoku.sendUserAction(historyType + 'Move', $Sudoku.board.getBoardState());
                 return true;
             };
 

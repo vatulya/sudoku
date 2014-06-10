@@ -8,6 +8,7 @@ class My_Wamp_Listener_Sudoku extends My_Wamp_Listener_Abstract
     const DATA_KEY_GAME_HASH = '_game_hash';
     const DATA_KEY_ACTION = '_action';
     const DATA_KEY_HASH = '_hash';
+    const DATA_KEY_SESSION = '_session';
 
     /**
      * @var Application_Service_Game_Sudoku
@@ -37,20 +38,22 @@ class My_Wamp_Listener_Sudoku extends My_Wamp_Listener_Abstract
                 empty($data[static::DATA_KEY_GAME_HASH])
                 || empty($data[static::DATA_KEY_ACTION])
                 || empty($data[static::DATA_KEY_HASH])
+                || empty($data[static::DATA_KEY_SESSION])
             ) {
                 throw new Exception('Wrong request');
             }
             $gameHash = $data[static::DATA_KEY_GAME_HASH];
             $action = $data[static::DATA_KEY_ACTION] . 'Action';
             $hash = $data[static::DATA_KEY_HASH];
+            $sessionId = $data[static::DATA_KEY_SESSION];
             if (!method_exists($this, $action)) {
                 throw new Exception('Wrong Action');
             }
 
-            $userId = $this->getUserId();
+            $userId = $this->getUserId($sessionId);
             $this->game = $this->service->loadByUserIdAndGameHash($userId, $gameHash);
 
-            unset($data[static::DATA_KEY_GAME_HASH], $data[static::DATA_KEY_ACTION], $data[static::DATA_KEY_HASH]);
+            unset($data[static::DATA_KEY_GAME_HASH], $data[static::DATA_KEY_ACTION], $data[static::DATA_KEY_HASH], $data[static::DATA_KEY_SESSION]);
             $this->$action($data);
 
             if (!in_array($action, $this->skipCheckBoardForActions)) {

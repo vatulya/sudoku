@@ -70,11 +70,11 @@ abstract class My_Wamp_Listener_Abstract
     }
 
     /**
+     * @param string $sessionId
      * @return int
      */
-    public function getUserId()
+    public function getUserId($sessionId)
     {
-        $sessionId = $this->getUserSessionId();
         if (empty(self::$userSessions[$sessionId])) {
             $userSessionsDbModel = new Application_Model_Db_User_Sessions();
             $userId = $userSessionsDbModel->getOne(['session_id' => $sessionId], ['created DESC']);
@@ -84,17 +84,6 @@ abstract class My_Wamp_Listener_Abstract
             $userId = self::$userSessions[$sessionId];
         }
         return (int)$userId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUserSessionId()
-    {
-        $user = $this->getUser();
-        $cookies = $user->WebSocket->request->getHeader('cookie');
-        $cookies = http_parse_cookie($cookies);
-        return $cookies[ini_get('session.name')];
     }
 
 }

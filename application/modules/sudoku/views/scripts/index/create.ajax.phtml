@@ -7,9 +7,9 @@ if (isset($this->selectedDifficulty) && $this->difficulties[$this->selectedDiffi
 $titleTemplate = '%s (%s открытых клеток)';
 ?>
 <div class="create-new-game-container">
-    <div class="difficulties">
-        <form class="create-new-game ajax-form-submit form-inline" method="post" action="<?php echo $this->url(['action' => 'create'], 'sudoku', true); ?>">
-            <input type="hidden" name="submitted" value="1">
+    <form class="create-new-game ajax-form-submit" method="post" action="<?php echo $this->url(['action' => 'create'], 'sudoku', true); ?>">
+        <input type="hidden" name="submitted" value="1">
+        <div class="difficulties">
             <div class="form-message hidden"></div>
             <select class="select-difficulties" name="difficulty">
                 <?php foreach ($this->difficulties as $difficulty): ?>
@@ -24,13 +24,20 @@ $titleTemplate = '%s (%s открытых клеток)';
                     <option value="<?php echo $difficulty['id']; ?>"<?php echo $selected; ?>><?php echo $title; ?></option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" class="btn btn-danger submit-form">Начать новую игру</button>
-        </form>
-    </div>
-    <div class="game-board-example-container medium">
-        <div class="game-board-example">
-            <?php echo $this->partial('_partials/sudoku-board.phtml', ['size' => 'medium', 'parameters' => $this->boardExample, 'hide' => true]); ?>
-            <span class="image-info">(Пример головоломки "Судоку")</span>
         </div>
-    </div>
+        <div class="game-board-example-container medium">
+            <div class="game-board-example">
+                <?php echo $this->partial('_partials/sudoku-board.phtml', ['size' => 'medium', 'parameters' => $this->boardExample, 'hide' => true]); ?>
+                <span class="image-info">(Пример головоломки "Судоку")</span>
+            </div>
+        </div>
+        <div class="buttons-container">
+            <label class="title pull-left">Начать игру:</label>
+            <div class="buttons">
+                <button type="submit" class="btn btn-danger btn-small submit-form" name="gameType" value="single">На время</button>
+                <button type="submit" class="btn btn-primary btn-small submit-form" name="gameType" value="bot">Против робота</button>
+                <button type="submit" class="btn btn-primary btn-small submit-form" name="gameType" value="multiplayer">Против игрока</button>
+            </div>
+        </div>
+    </form>
 </div>
