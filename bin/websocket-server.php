@@ -23,7 +23,7 @@ $pull = $context->getSocket(ZMQ::SOCKET_PULL);
 try {
     $pull->bind('tcp://127.0.0.1:8079');
 } catch (\Exception $e) {
-    die ($e->getMessage());
+    die ('[' . date('Y-m-d H:i:s') . '] ' . $e->getMessage() . "\r\n");
 }
 $pull->on('message', array($myWampHandler, 'onServerEvent'));
 
