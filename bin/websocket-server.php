@@ -20,7 +20,11 @@ $loop = React\EventLoop\Factory::create();
 /** @var \React\ZMQ\SocketWrapper $pull */
 $context = new React\ZMQ\Context($loop);
 $pull = $context->getSocket(ZMQ::SOCKET_PULL);
-$pull->bind('tcp://127.0.0.1:8079');
+try {
+    $pull->bind('tcp://127.0.0.1:8079');
+} catch (\Exception $e) {
+    die ($e->getMessage());
+}
 $pull->on('message', array($myWampHandler, 'onServerEvent'));
 
 // Set up our WebSocket server for clients wanting real-time updates
