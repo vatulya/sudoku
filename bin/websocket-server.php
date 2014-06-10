@@ -1,5 +1,9 @@
 <?php
 
+if (`netstat -ntl | grep :8079`) {
+    return true;
+}
+
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
@@ -20,9 +24,6 @@ $loop = React\EventLoop\Factory::create();
 /** @var \React\ZMQ\SocketWrapper $pull */
 $context = new React\ZMQ\Context($loop);
 $pull = $context->getSocket(ZMQ::SOCKET_PULL);
-if (`netstat -ntl | grep :8079`) {
-    return true;
-}
 try {
     $pull->bind('tcp://127.0.0.1:8079');
 } catch (\Exception $e) {
