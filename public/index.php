@@ -1,5 +1,6 @@
 <?php
 date_default_timezone_set('UTC');
+ini_set('session.gc_maxlifetime', 43200); // does't remove sessions till 6 hours
 
 // Define path to application directory
 defined('APPLICATION_PATH')
