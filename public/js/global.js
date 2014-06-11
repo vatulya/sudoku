@@ -1,6 +1,12 @@
-(function (w, d, $) {
+(function (w, d, $, undefined) {
 
     $(d)
+        .on('click', '.server-status', function(e) {
+            console.log('SYSTEM: send stop-script command');
+            w.SC.call('system', {'_action': 'stopScript'}).then(function(response) {
+                console.log('SYSTEM RESPONSE: ' + response);
+            });
+        })
         .on('click', '.hlink', function(e) {
             e.preventDefault();
             var el = $(e.currentTarget);

@@ -1,4 +1,4 @@
-(function (w, d, $, undefined) {
+(function (w, d, $) {
 
     var allMarksCssClasses = 'mark-1 mark-2 mark-3 mark-4 mark-5 mark-6 mark-7 mark-8 mark-9';
 
@@ -247,4 +247,4 @@
 
     w.SudokuBoard = SudokuBoard;
 
-})(this, this.document, this.jQuery, undefined);
+})(this, this.document, this.jQuery);

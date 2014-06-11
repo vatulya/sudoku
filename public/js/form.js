@@ -1,4 +1,4 @@
-(function (w, d, $) {
+(function (w, d, $, undefined) {
 
     $(d)
         .on('keypress', 'input', function(e) {

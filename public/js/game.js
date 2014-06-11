@@ -1,4 +1,4 @@
-(function (w, d, $) {
+(function (w, d, $, undefined) {
 
     var contentBlocker = $('.content-blocker');
 

@@ -337,6 +337,66 @@ ul {
 .create-new-game-container .difficulties {
   text-align: center;
 }
+/**************************************** form messages ***************************************/
+.form-message {
+  display: none;
+  vertical-align: middle;
+  text-align: center;
+  background-color: #ff9999;
+  padding: 5px;
+  margin: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+.form-message ul {
+  list-style-type: none;
+}
+.form-field.error .message {
+  color: #b94a48;
+}
+.form-field.error .tooltip-inner {
+  background-color: #b94a48;
+}
+.form-field.error .tooltip-arrow {
+  border-right-color: #b94a48;
+}
+.form-field.success .message {
+  color: #468847;
+}
+.form-field .message {
+  display: none;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 12px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
 /**************************************** navigation ***************************************/
 .navigation-panel {
   position: fixed;
@@ -482,66 +542,6 @@ ul {
 .user-info-block.user-menu-opened .user-menu-open-icon {
   display: none;
 }
-/**************************************** form messages ***************************************/
-.form-message {
-  display: none;
-  vertical-align: middle;
-  text-align: center;
-  background-color: #ff9999;
-  padding: 5px;
-  margin: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-}
-.form-message ul {
-  list-style-type: none;
-}
-.form-field.error .message {
-  color: #b94a48;
-}
-.form-field.error .tooltip-inner {
-  background-color: #b94a48;
-}
-.form-field.error .tooltip-arrow {
-  border-right-color: #b94a48;
-}
-.form-field.success .message {
-  color: #468847;
-}
-.form-field .message {
-  display: none;
-  vertical-align: middle;
-  text-align: center;
-  font-size: 12px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-}
 /**************************************** login and register ***************************************/
 #login-modal .modal-body {
   padding: 15px 0 0 0;
@@ -598,6 +598,21 @@ ul {
 }
 #login-modal .login-register.show-register-form .register-container, #login-modal .login-register.show-register-form .show-login {
   display: block;
+}
+.server-container {
+  position: absolute;
+  font-size: 20px;
+  margin-top: -5px;
+  margin-left: -5px;
+}
+.server-container .server-status.ready {
+  color: #080;
+}
+.server-container .server-status.connecting {
+  color: #00f;
+}
+.server-container .server-status.disconnected {
+  color: #f00;
 }
 body.user-games-history .center-column table.games-history {
   width: 100%;

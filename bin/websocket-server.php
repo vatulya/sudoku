@@ -16,6 +16,7 @@ define('LOG_FILE', __DIR__ . '/../logs/websocket-server.log');
 echo 'Start' . PHP_EOL;
 
 $myWampHandler = new My_Wamp_Handler();
+$myWampHandler->on('system_message', [new My_Wamp_Listener_System(), 'onMessage']);
 $myWampHandler->on('sudoku_message', [new My_Wamp_Listener_Sudoku(), 'onMessage']);
 
 $loop = React\EventLoop\Factory::create();

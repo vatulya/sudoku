@@ -471,4 +471,4 @@
 
     w.Sudoku = Sudoku;
 
-})(this, this.document, this.jQuery, undefined);
+})(this, this.document, this.jQuery);

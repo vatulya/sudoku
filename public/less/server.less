@@ -1,0 +1,20 @@
+.server-container {
+  position: absolute;
+  font-size: 20px;
+  margin-top: -5px;
+  margin-left: -5px;
+
+  .server-status {
+    &.ready {
+      color: #080;
+    }
+
+    &.connecting {
+      color: #00f;
+    }
+
+    &.disconnected {
+      color: #f00;
+    }
+  }
+}
