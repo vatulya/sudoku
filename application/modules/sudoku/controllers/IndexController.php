@@ -91,14 +91,13 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     public function createAction()
     {
-        $vars = [];
-        $messages = [];
+        $vars          = [];
+        $messages      = [];
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
-        $difficulties = $sudokuService->getAllDifficulties();
-        $difficulty = $this->_request->getParam('difficulty');
-        if (null === $difficulty) {
-            $difficulty = $sudokuService::DEFAULT_GAME_DIFFICULTY;
-        }
+        $difficulties  = $sudokuService->getAllDifficulties();
+        $difficulty    = $this->_request->getParam('difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
+        $gameType      = $this->_request->getParam('gameType');
+
         $vars['selectedDifficulty'] = $difficulty;
 
         if ($this->_request->getParam('submitted')) {
@@ -108,7 +107,27 @@ class Sudoku_IndexController extends Zend_Controller_Action
                 if (!isset($difficulties[$difficulty])) {
                     throw new Exception('Неправильная сложность. Выберите другую.');
                 }
-                $sudokuGame = $sudokuService->create($user['id'], ['difficulty' => $difficulty]);
+                if (in_array($gameType, [Application_Service_Game_Abstract::GAME_TYPE_VERSUS_BOT, Application_Service_Game_Abstract::GAME_TYPE_VERSUS_PLAYER])) {
+                    if ($sudokuService->createMultiplayer($user['id'], ['difficulty' => $difficulty])) {
+                        $vars['success']  = true;
+                    }
+                } else {
+                    $sudokuGame = $sudokuService->create($user['id'], ['difficulty' => $difficulty]);
+                    if ($sudokuGame instanceof Application_Model_Game_Abstract) {
+                        $vars['gameHash'] = $sudokuGame->getHash();
+                        $vars['success']  = true;
+                        if (!$this->_request->isXmlHttpRequest()) {
+                            $url = $this->_helper->Url->url(
+                                [
+                                    'gameHash' => $vars['gameHash'],
+                                ],
+                                'sudoku-game',
+                                true
+                            );
+                            return $this->redirect($url);
+                        }
+                    }
+                }
             } catch (Exception $e) {
                 $messages[] = [
                     'name' => '',
@@ -116,20 +135,6 @@ class Sudoku_IndexController extends Zend_Controller_Action
                     'text' => $e->getMessage(),
                     'type' => 'error',
                 ];
-            }
-            if ($sudokuGame instanceof Application_Model_Game_Abstract) {
-                $vars['gameHash'] = $sudokuGame->getHash();
-                $vars['success'] = true;
-                if (!$this->_request->isXmlHttpRequest()) {
-                    $url = $this->_helper->Url->url(
-                        [
-                            'gameHash' => $vars['gameHash'],
-                        ],
-                        'sudoku-game',
-                        true
-                    );
-                    return $this->redirect($url);
-                }
             }
         }
         if (isset($difficulties[$difficulty]['openCells'])) {
@@ -207,7 +212,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
 //                $where['user_id'] = $user['id'];
             }
         }
-        $where['difficulty'] = $this->getParam('difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
+        $where['difficulty_id'] = $this->getParam('difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
 
         $order = $this->_request->getParam('sort', 'position') . ' ' . $this->_request->getParam('direction', 'ASC');
 
@@ -276,7 +281,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
         $difficulty = $this->getParam('top-users-time-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
         $topUsersTime = $sudokuService->getUsersRating(
-            ['difficulty' => $difficulty],
+            ['difficulty_id' => $difficulty],
             ['faster_game_duration ASC']
         );
         $topUsersTime->setLimit(static::DEFAULT_TOP_USERS_TIME_LIMIT);
@@ -291,7 +296,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
         $difficulty = $this->getParam('top-users-rating-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
         $topUsersRating = $sudokuService->getUsersRating(
-            ['difficulty' => $difficulty],
+            ['difficulty_id' => $difficulty],
             ['rating DESC']
         );
         $topUsersRating->setLimit(static::DEFAULT_TOP_USERS_RATING_LIMIT);

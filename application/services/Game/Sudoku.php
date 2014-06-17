@@ -40,9 +40,21 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
             'parameters' => [
                 'openCells' => $board,
             ],
-            'hash'       => md5($userId . time()),
         ];
         $game = Application_Model_Game_Sudoku::create($game);
+        return $game;
+    }
+
+    public function createMultiplayer($userId, array $parameters = [])
+    {
+        $difficulty = isset($parameters['difficulty']) ? $parameters['difficulty'] : static::DEFAULT_GAME_DIFFICULTY;
+        $difficulty = $this->getDifficulty($difficulty) ?: $this->getDifficulty(static::DEFAULT_GAME_DIFFICULTY);
+
+        $game = [
+            'user_id'    => $userId,
+            'difficulty' => $difficulty,
+        ];
+        $game = Application_Model_Sudoku_Multiplayer::create($game);
         return $game;
     }
 

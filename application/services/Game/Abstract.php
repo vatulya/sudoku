@@ -3,6 +3,10 @@
 abstract class Application_Service_Game_Abstract extends Application_Service_Abstract
 {
 
+    const GAME_TYPE_SINGLE_PLAYER = 'single';
+    const GAME_TYPE_VERSUS_BOT    = 'bot';
+    const GAME_TYPE_VERSUS_PLAYER = 'player';
+
     const STATE_NEW         = 0;
     const STATE_IN_PROGRESS = 1;
     const STATE_PAUSED      = 2;

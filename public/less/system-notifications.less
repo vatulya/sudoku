@@ -1,0 +1,27 @@
+/**************************************** system notifications ***************************************/
+.system-notifications-panel {
+  display: none; // temporary
+
+  position: fixed;
+  top: 0;
+  left: 50%;
+  text-align: center;
+  width: @system-notifications-system-notifications-panel-width;
+  margin-left: -(@system-notifications-system-notifications-panel-width / 2);
+  background-color: @system-notifications-system-notifications-panel-background-color;
+
+  .linear-gradient-mixin(@system-notifications-system-notifications-panel-gradient-start, @system-notifications-system-notifications-panel-gradient-end);
+
+  .system-notifications-container {
+    vertical-align: middle;
+    margin: 0 auto;
+    display: inline-block;
+    line-height: @system-notifications-system-notifications-panel-height;
+    padding: @system-notifications-system-notifications-panel-padding;
+    border-left: @system-notifications-system-notifications-panel-border;
+    border-right: @system-notifications-system-notifications-panel-border;
+
+    .linear-gradient-mixin(@system-notifications-system-notifications-panel-system-notifications-container-gradient-start, @system-notifications-system-notifications-panel-system-notifications-container-gradient-end);
+
+  }
+}

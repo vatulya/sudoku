@@ -18,14 +18,14 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     protected $user;
 
     /**
-     * @var int
+     * @var array
      */
-    protected $state = 0;
+    protected $difficulty;
 
     /**
      * @var int
      */
-    protected $difficulty;
+    protected $state = Application_Service_Game_Abstract::STATE_NEW;
 
     /**
      * @var string
@@ -80,8 +80,8 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
         try { $parameters = (array)Zend_Json::decode($game['parameters']); } catch (Exception $e) { $parameters = []; }
         $this->id         = $game['id'];
         $this->user       = (new Application_Model_Db_Users())->getOne(['id' => $game['user_id']]);
+        $this->difficulty = $this->getService()->getDifficulty($game['difficulty_id']);
         $this->state      = (int)$game['state'];
-        $this->difficulty = (int)$game['difficulty'];
         $this->created    = (string)$game['created'];
         $this->started    = (string)$game['started'];
         $this->ended      = (string)$game['ended'];
@@ -97,6 +97,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
      */
     public static function create(array $parameters)
     {
+        $parameters['hash'] = md5(Zend_Json::encode($parameters) . microtime());
         $id = self::getModelDb()->insert($parameters);
         $game = new static($id);
         return $game;
@@ -171,7 +172,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
      */
     public function getDifficulty()
     {
-        return $this->difficulty;
+        return $this->difficulty['id'];
     }
 
     /**
@@ -361,15 +362,15 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     public function toArray()
     {
         $data = [
-            'id'         => $this->id,
-//            'user_id'    => $this->userId,
-            'state'      => $this->state,
-            'difficulty' => $this->difficulty,
-            'created'    => $this->created,
-            'started'    => $this->started,
-            'ended'      => $this->ended,
-            'duration'   => $this->duration,
-            'parameters' => $this->parameters,
+            'id'            => $this->id,
+//            'user_id'       => $this->user,
+            'state'         => $this->state,
+            'difficulty_id' => $this->difficulty['id'],
+            'created'       => $this->created,
+            'started'       => $this->started,
+            'ended'         => $this->ended,
+            'duration'      => $this->duration,
+            'parameters'    => $this->parameters,
         ];
         return $data;
     }

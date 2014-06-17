@@ -28,8 +28,9 @@ CREATE TABLE IF NOT EXISTS user_sessions (
 CREATE TABLE IF NOT EXISTS sudoku_games (
     id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
+    multiplayer_id INT NOT NULL DEFAULT 0,
+    difficulty_id INT NOT NULL,
     state INT NOT NULL DEFAULT 0,
-    difficulty INT NOT NULL,
     created DATETIME NOT NULL,
     started DATETIME NOT NULL,
     ended DATETIME DEFAULT NULL,
@@ -41,6 +42,7 @@ CREATE TABLE IF NOT EXISTS sudoku_games (
     updated TIMESTAMP NOT NULL,
     PRIMARY KEY (id),
     INDEX (user_id),
+    INDEX (difficulty_id),
     INDEX (state),
     INDEX (created),
     INDEX (started),
@@ -65,7 +67,7 @@ CREATE TABLE IF NOT EXISTS sudoku_logs (
 CREATE TABLE IF NOT EXISTS sudoku_ratings (
     id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
-    difficulty INT NOT NULL,
+    difficulty_id INT NOT NULL,
     position INT NOT NULL,
     rating INT NOT NULL,
     faster_game_hash VARCHAR(50) NOT NULL,
@@ -74,8 +76,20 @@ CREATE TABLE IF NOT EXISTS sudoku_ratings (
     PRIMARY KEY (id),
     UNIQUE (user_id, difficulty),
     INDEX (user_id),
-    INDEX (difficulty),
+    INDEX (difficulty_id),
     INDEX (position),
     INDEX (rating),
     INDEX (faster_game_duration)
+);
+
+CREATE TABLE sudoku_multiplayer (
+    id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    difficulty_id INT NOT NULL,
+    state INT NOT NULL DEFAULT 0,
+    created DATETIME NOT NULL,
+    PRIMARY KEY (id),
+    INDEX (user_id),
+    INDEX (difficulty_id),
+    INDEX (state)
 );

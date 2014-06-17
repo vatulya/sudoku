@@ -10,7 +10,7 @@ class Application_Model_Db_Sudoku_Ratings extends Application_Model_Db_GameAbstr
         $now = $this->getNow();
         $data = [
             'user_id'              => $data['user_id'],
-            'difficulty'           => $data['difficulty']['id'],
+            'difficulty_id'        => $data['difficulty']['id'],
             'rating'               => $data['rating'],
             'position'             => 0,
             'faster_game_hash'     => '',

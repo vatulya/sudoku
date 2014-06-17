@@ -1,7 +1,5 @@
 <div class="navigation-panel">
     <?php echo $this->partial('_partials/server.phtml'); ?>
     <?php echo $this->partial('_partials/breadcrumbs.phtml', ['breadcrumbs' => $this->breadcrumbs]); ?>
-    <div class="user-block">
-        <?php echo $this->partial('_partials/user-block.phtml', ['currentUser' => $this->currentUser]); ?>
-    </div>
+    <?php echo $this->partial('_partials/user-block.phtml', ['currentUser' => $this->currentUser]); ?>
 </div>
