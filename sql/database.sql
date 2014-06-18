@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     PRIMARY KEY (id),
     INDEX (email),
     INDEX (login)
-);
+) DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS user_sessions (
     id INT NOT NULL AUTO_INCREMENT,

@@ -26,6 +26,7 @@ production:
                 username: sudoku
                 password: sudoku
                 dbname: sudoku
+                charset: utf8
         layout:
             layoutPath: APPLICATION_PATH/layouts/scripts/
 
