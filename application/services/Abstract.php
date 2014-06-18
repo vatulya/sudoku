@@ -17,12 +17,19 @@ abstract class Application_Service_Abstract
     {
         $class = get_called_class();
         if (!isset(Application_Service_Abstract::$instances[$class])) {
-            Application_Service_Abstract::$instances[$class] = new $class();
+            /** @var Application_Service_Abstract $instance */
+            $instance = new $class();
+            $instance->init();
+            Application_Service_Abstract::$instances[$class] = $instance;
         }
         return Application_Service_Abstract::$instances[$class];
     }
 
     protected function __construct()
+    {
+    }
+
+    protected function init()
     {
     }
 

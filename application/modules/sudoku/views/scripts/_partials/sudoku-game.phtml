@@ -27,8 +27,8 @@ $sudoku = $this->sudoku;
         </div>
         <?php
         $currentDifficulty = $sudoku->getDifficulty();
-        $currentDifficulty = $sudoku->getService()->getAllDifficulties()[$currentDifficulty];
-        $openCells = $currentDifficulty['openCells'];
+        $currentDifficulty = $sudoku->getService()->getServiceDifficulty()->getDifficulty($currentDifficulty);
+        $openCells = $currentDifficulty['open_cells'];
         if (is_array($openCells)) {
             $openCells = $openCells['min'] . '..' . $openCells['max'];
         }

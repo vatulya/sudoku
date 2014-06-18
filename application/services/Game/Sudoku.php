@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class Application_Service_Game_Sudoku
+ *
+ * @property Application_Service_Difficulty_Sudoku $serviceDifficulty
+ */
 class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
 {
 
@@ -13,12 +18,10 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
 
     protected $modelDb = 'Sudoku_Games';
 
-    protected static $difficulties;
-
     /**
      * @var array
      */
-    protected static $emptyBoard;
+    protected $emptyBoard;
 
     /**
      * @param int $userId
@@ -27,11 +30,11 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      */
     public function create($userId, array $parameters = [])
     {
-        $difficulty = isset($parameters['difficulty']) ? $parameters['difficulty'] : static::DEFAULT_GAME_DIFFICULTY;
-        $difficulty = $this->getDifficulty($difficulty) ?: $this->getDifficulty(static::DEFAULT_GAME_DIFFICULTY);
+        $difficulty = isset($parameters['difficulty']) ? $parameters['difficulty'] : null;
+        $difficulty = $this->serviceDifficulty->getDifficulty($difficulty, true);
 
         $board = $this->generateBoard();
-        $board = $this->getOpenCells($board, $difficulty['openCells']);
+        $board = $this->getOpenCells($board, $difficulty['open_cells']);
         $board = $this->normalizeBoardKeys($board);
 
         $game = [
@@ -42,19 +45,6 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
             ],
         ];
         $game = Application_Model_Game_Sudoku::create($game);
-        return $game;
-    }
-
-    public function createMultiplayer($userId, array $parameters = [])
-    {
-        $difficulty = isset($parameters['difficulty']) ? $parameters['difficulty'] : static::DEFAULT_GAME_DIFFICULTY;
-        $difficulty = $this->getDifficulty($difficulty) ?: $this->getDifficulty(static::DEFAULT_GAME_DIFFICULTY);
-
-        $game = [
-            'user_id'    => $userId,
-            'difficulty' => $difficulty,
-        ];
-        $game = Application_Model_Sudoku_Multiplayer::create($game);
         return $game;
     }
 
@@ -389,9 +379,9 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
     /**
      * @return array
      */
-    public static function getEmptyBoard()
+    public function getEmptyBoard()
     {
-        if (null === static::$emptyBoard) {
+        if (null === $this->emptyBoard) {
             $board = [];
             $coords = [1, 2, 3, 4, 5, 6, 7, 8, 9];
             foreach ($coords as $r) {
@@ -399,9 +389,9 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
                     $board[$r . $c] = '';
                 }
             }
-            static::$emptyBoard = $board;
+            $this->emptyBoard = $board;
         }
-        return static::$emptyBoard;
+        return $this->emptyBoard;
     }
 
     /**
@@ -419,25 +409,6 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
         return false;
     }
 
-    protected static function initDifficulties()
-    {
-        parent::initDifficulties();
-        $additionalParameters = [
-            self::DIFFICULTY_PRACTICE  => ['openCells' => 40],
-            self::DIFFICULTY_EASY      => ['openCells' => 35],
-            self::DIFFICULTY_NORMAL    => ['openCells' => 30],
-            self::DIFFICULTY_EXPERT    => ['openCells' => 25],
-            self::DIFFICULTY_NIGHTMARE => ['openCells' => 20],
-            self::DIFFICULTY_RANDOM    => ['openCells' => ['min' => 20, 'max' => 30]],
-            self::DIFFICULTY_TEST      => ['openCells' => 78],
-        ];
-        foreach (static::$difficulties as $code => $parameters) {
-            if (isset($additionalParameters[$code])) {
-                static::$difficulties[$code] += $additionalParameters[$code];
-            }
-        }
-    }
-
     /**
      * @param int $difficulty
      * @param int $duration in seconds
@@ -445,50 +416,24 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
      */
     public function calculateRating($difficulty, $duration)
     {
-        $difficulty = intval($difficulty);
+        $difficulty = $this->serviceDifficulty->getDifficulty($difficulty);
         $duration   = intval($duration);
-        $settings = [
-            self::DIFFICULTY_PRACTICE  => [
-                'startRating' => 1000,
-                'minimalRating' => 1000,
-                'perSecond' => 0,
-            ],
-            self::DIFFICULTY_EASY      => [
-                'startRating' => 5000,
-                'minimalRating' => 1000,
-                'perSecond' => 10,
-            ],
-            self::DIFFICULTY_NORMAL    => [
-                'startRating' => 10000,
-                'minimalRating' => 1200,
-                'perSecond' => 15,
-            ],
-            self::DIFFICULTY_EXPERT    => [
-                'startRating' => 16000,
-                'minimalRating' => 2000,
-                'perSecond' => 20,
-            ],
-            self::DIFFICULTY_NIGHTMARE => [
-                'startRating' => 25000,
-                'minimalRating' => 2500,
-                'perSecond' => 25,
-            ],
-        ];
-        if (!isset($settings[$difficulty])) {
-            // This difficulty doesn't change user's rating
+
+        if (!empty($difficulty)) { // Wrong difficulty or Hidden
             return 0;
         }
-        $difficultySettings = $settings[$difficulty];
-        if (self::DIFFICULTY_PRACTICE === $difficulty) {
-            return $difficultySettings['minimalRating'];
+        if (!$difficulty['per_second']) { // no time penalty
+            return $difficulty['minimal_rating'];
         }
-        $maxTime = ($difficultySettings['startRating'] - $difficultySettings['minimalRating']) / $difficultySettings['perSecond'];
+
+        $maxTime = ($difficulty['start_rating'] - $difficulty['minimal_rating']) / $difficulty['per_second'];
         $maxTime = floor($maxTime);
-        if ($duration >= $maxTime) {
-            return $difficultySettings['minimalRating'];
+        if ($duration >= $maxTime) { // too long game
+            return $difficulty['minimal_rating'];
         }
-        $bonus = ($maxTime - $duration) * $difficultySettings['perSecond'];
-        $rating = $difficultySettings['minimalRating'] + $bonus;
+
+        $bonus  = ($maxTime - $duration) * $difficulty['per_second'];
+        $rating = $difficulty['minimal_rating'] + $bonus;
         return $rating;
     }
 

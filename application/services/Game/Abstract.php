@@ -3,6 +3,8 @@
 abstract class Application_Service_Game_Abstract extends Application_Service_Abstract
 {
 
+    const CODE = '';
+
     const GAME_TYPE_SINGLE_PLAYER = 'single';
     const GAME_TYPE_VERSUS_BOT    = 'bot';
     const GAME_TYPE_VERSUS_PLAYER = 'player';
@@ -19,25 +21,10 @@ abstract class Application_Service_Game_Abstract extends Application_Service_Abs
     const STATE_CODE_REJECTED    = 'rejected';
     const STATE_CODE_FINISHED    = 'finished';
 
-    const DIFFICULTY_PRACTICE  = 1;
-    const DIFFICULTY_EASY      = 2;
-    const DIFFICULTY_NORMAL    = 4;
-    const DIFFICULTY_EXPERT    = 6;
-    const DIFFICULTY_NIGHTMARE = 10;
-    const DIFFICULTY_RANDOM    = 0;
-    const DIFFICULTY_TEST      = -1;
-
-    const DIFFICULTY_CODE_PRACTICE  = 'practice';
-    const DIFFICULTY_CODE_EASY      = 'easy';
-    const DIFFICULTY_CODE_NORMAL    = 'normal';
-    const DIFFICULTY_CODE_EXPERT    = 'expert';
-    const DIFFICULTY_CODE_NIGHTMARE = 'nightmare';
-    const DIFFICULTY_CODE_RANDOM    = 'random';
-    const DIFFICULTY_CODE_TEST      = 'test';
-
-    const DEFAULT_GAME_DIFFICULTY = 2;
-
-    protected static $difficulties;
+    /**
+     * @var Application_Service_Difficulty_Abstract
+     */
+    protected $serviceDifficulty;
 
     /**
      * @param int $userId
@@ -57,6 +44,25 @@ abstract class Application_Service_Game_Abstract extends Application_Service_Abs
      * @return array|bool
      */
     abstract public function checkGameSolution(Application_Model_Game_Abstract $game);
+
+    /**
+     * @return $this
+     */
+    protected function init()
+    {
+        parent::init();
+        $service = 'Application_Service_Difficulty_' . ucfirst(static::CODE);
+        $this->serviceDifficulty = $service::getInstance();
+        return $this;
+    }
+
+    /**
+     * @return Application_Service_Difficulty_Abstract
+     */
+    public function getServiceDifficulty()
+    {
+        return $this->serviceDifficulty;
+    }
 
     /**
      * @param int $oldState
@@ -99,72 +105,6 @@ abstract class Application_Service_Game_Abstract extends Application_Service_Abs
                 'id' => self::STATE_FINISHED,
                 'code' => self::STATE_CODE_FINISHED,
                 'title' => 'Завершена',
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public static function getAllDifficulties()
-    {
-        if (is_null(static::$difficulties)) {
-            static::initDifficulties();
-        }
-        return static::$difficulties;
-    }
-
-    /**
-     * @param int $difficulty
-     * @return array
-     */
-    public function getDifficulty($difficulty)
-    {
-        $difficulties = static::getAllDifficulties();
-        if (isset($difficulties[$difficulty])) {
-            return $difficulties[$difficulty];
-        } else {
-            return [];
-        }
-    }
-
-    protected static function initDifficulties()
-    {
-        static::$difficulties = [
-            self::DIFFICULTY_PRACTICE  => [
-                'id'    => self::DIFFICULTY_PRACTICE,
-                'code'  => self::DIFFICULTY_CODE_PRACTICE,
-                'title' => 'Практика',
-            ],
-            self::DIFFICULTY_EASY      => [
-                'id'    => self::DIFFICULTY_EASY,
-                'code'  => self::DIFFICULTY_CODE_EASY,
-                'title' => 'Легкая',
-            ],
-            self::DIFFICULTY_NORMAL    => [
-                'id'    => self::DIFFICULTY_NORMAL,
-                'code'  => self::DIFFICULTY_CODE_NORMAL,
-                'title' => 'Средняя',
-            ],
-            self::DIFFICULTY_EXPERT    => [
-                'id'    => self::DIFFICULTY_EXPERT,
-                'code'  => self::DIFFICULTY_CODE_EXPERT,
-                'title' => 'Сложная',
-            ],
-            self::DIFFICULTY_NIGHTMARE => [
-                'id'    => self::DIFFICULTY_NIGHTMARE,
-                'code'  => self::DIFFICULTY_CODE_NIGHTMARE,
-                'title' => 'Эксперт',
-            ],
-            self::DIFFICULTY_RANDOM    => [
-                'id'    => self::DIFFICULTY_RANDOM,
-                'code'  => self::DIFFICULTY_CODE_RANDOM,
-                'title' => 'Случайная',
-            ],
-            self::DIFFICULTY_TEST      => [
-                'id'    => self::DIFFICULTY_TEST,
-                'code'  => self::DIFFICULTY_CODE_TEST,
-                'title' => 'Test',
             ],
         ];
     }

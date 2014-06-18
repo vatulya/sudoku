@@ -80,7 +80,7 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
         try { $parameters = (array)Zend_Json::decode($game['parameters']); } catch (Exception $e) { $parameters = []; }
         $this->id         = $game['id'];
         $this->user       = (new Application_Model_Db_Users())->getOne(['id' => $game['user_id']]);
-        $this->difficulty = $this->getService()->getDifficulty($game['difficulty_id']);
+        $this->difficulty = $this->getService()->getServiceDifficulty()->getDifficulty($game['difficulty_id']);
         $this->state      = (int)$game['state'];
         $this->created    = (string)$game['created'];
         $this->started    = (string)$game['started'];

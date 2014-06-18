@@ -63,7 +63,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
             'uLoginData'         => Application_Service_User::getULoginData($uLoginRedirectUrl),
             'currentUser'        => Application_Service_User::getInstance()->getCurrentUser(),
             'states'             => Application_Service_Game_Sudoku::getStates(),
-            'difficulties'       => Application_Service_Game_Sudoku::getAllDifficulties(),
+            'difficulties'       => Application_Service_Difficulty_Sudoku::getInstance()->getAllDifficulties(),
             'rightColumnModules' => $modules,
         ]);
     }
@@ -94,8 +94,8 @@ class Sudoku_IndexController extends Zend_Controller_Action
         $vars          = [];
         $messages      = [];
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
-        $difficulties  = $sudokuService->getAllDifficulties();
-        $difficulty    = $this->_request->getParam('difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
+        $difficulties  = Application_Service_Difficulty_Sudoku::getInstance()->getAllDifficulties();
+        $difficulty    = $this->_request->getParam('difficulty', Application_Service_Difficulty_Sudoku::DEFAULT_GAME_DIFFICULTY);
         $gameType      = $this->_request->getParam('gameType');
 
         $vars['selectedDifficulty'] = $difficulty;
@@ -137,10 +137,10 @@ class Sudoku_IndexController extends Zend_Controller_Action
                 ];
             }
         }
-        if (isset($difficulties[$difficulty]['openCells'])) {
+        if (isset($difficulties[$difficulty]['open_cells'])) {
             $board = $sudokuService->generateBoard();
             $board = $sudokuService->normalizeBoardKeys($board);
-            $openCells = $sudokuService->getOpenCells($board, $difficulties[$difficulty]['openCells']);
+            $openCells = $sudokuService->getOpenCells($board, $difficulties[$difficulty]['open_cells']);
             $vars['boardExample'] = [
                 'openCells' => $openCells,
             ];
@@ -212,7 +212,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
 //                $where['user_id'] = $user['id'];
             }
         }
-        $where['difficulty_id'] = $this->getParam('difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
+        $where['difficulty_id'] = $this->getParam('difficulty', Application_Service_Difficulty_Sudoku::DEFAULT_GAME_DIFFICULTY);
 
         $order = $this->_request->getParam('sort', 'position') . ' ' . $this->_request->getParam('direction', 'ASC');
 
@@ -231,16 +231,16 @@ class Sudoku_IndexController extends Zend_Controller_Action
     public function getBoardAction()
     {
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
-        $difficulties = $sudokuService->getAllDifficulties();
+        $difficulties = Application_Service_Difficulty_Sudoku::getInstance()->getAllDifficulties();
         $difficulty = $this->_request->getParam('difficulty');
         if (null === $difficulty) {
-            $difficulty = $sudokuService::DEFAULT_GAME_DIFFICULTY;
+            $difficulty = Application_Service_Difficulty_Sudoku::DEFAULT_GAME_DIFFICULTY;
         }
         $boardExample = [];
-        if (isset($difficulties[$difficulty]['openCells'])) {
+        if (isset($difficulties[$difficulty]['open_cells'])) {
             $board = $sudokuService->generateBoard();
             $board = $sudokuService->normalizeBoardKeys($board);
-            $openCells = $sudokuService->getOpenCells($board, $difficulties[$difficulty]['openCells']);
+            $openCells = $sudokuService->getOpenCells($board, $difficulties[$difficulty]['open_cells']);
             $boardExample = [
                 'openCells' => $openCells,
             ];
@@ -266,11 +266,11 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     public function userActionAction()
     {
-        $sudokuService = Application_Service_Game_Sudoku::getInstance();
-
         $game       = $this->_getParam('game_id');
         $action     = $this->_getParam('user_action');
         $parameters = $this->_getParam('parameters');
+
+        $sudokuService = Application_Service_Game_Sudoku::getInstance();
 
         $game = $sudokuService->load($game);
         $game->logUserAction($action, $parameters);
@@ -278,10 +278,13 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     public function getTopUsersTimeAction()
     {
+        $difficulty = $this->getParam('top-users-time-difficulty');
+        $difficulty = Application_Service_Difficulty_Sudoku::getInstance()->getDifficulty($difficulty, true);
+
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
-        $difficulty = $this->getParam('top-users-time-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
+
         $topUsersTime = $sudokuService->getUsersRating(
-            ['difficulty_id' => $difficulty],
+            ['difficulty_id' => $difficulty['id']],
             ['faster_game_duration ASC']
         );
         $topUsersTime->setLimit(static::DEFAULT_TOP_USERS_TIME_LIMIT);
@@ -293,15 +296,18 @@ class Sudoku_IndexController extends Zend_Controller_Action
 
     public function getTopUsersRatingAction()
     {
+        $difficulty = $this->getParam('top-users-rating-difficulty');
+        $difficulty = Application_Service_Difficulty_Sudoku::getInstance()->getDifficulty($difficulty, true);
+
         $sudokuService = Application_Service_Game_Sudoku::getInstance();
-        $difficulty = $this->getParam('top-users-rating-difficulty', $sudokuService::DEFAULT_GAME_DIFFICULTY);
+
         $topUsersRating = $sudokuService->getUsersRating(
-            ['difficulty_id' => $difficulty],
+            ['difficulty_id' => $difficulty['id']],
             ['rating DESC']
         );
         $topUsersRating->setLimit(static::DEFAULT_TOP_USERS_RATING_LIMIT);
         $this->view->assign([
-            'topUsersRatingDifficulty' => $difficulty,
+            'topUsersRatingDifficulty' => $difficulty['id'],
             'topUsersRating'           => $topUsersRating,
         ]);
     }

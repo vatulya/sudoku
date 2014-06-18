@@ -10,4 +10,20 @@ abstract class Application_Service_Multiplayer_Abstract extends Application_Serv
     const STATE_STARTED     = 4;
     const STATE_FINISHED    = 5;
 
+    /**
+     * @var Application_Service_Difficulty_Abstract
+     */
+    protected $serviceDifficulty;
+
+    /**
+     * @return $this
+     */
+    protected function init()
+    {
+        parent::init();
+        $service = 'Application_Service_Difficulty_' . ucfirst(static::CODE);
+        $this->serviceDifficulty = $service::getInstance();
+        return $this;
+    }
+
 }

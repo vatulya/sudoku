@@ -51,6 +51,45 @@ CREATE TABLE IF NOT EXISTS sudoku_games (
     INDEX (hash)
 );
 
+CREATE TABLE IF NOT EXISTS sudoku_difficulties (
+    id INT NOT NULL,
+    code VARCHAR(50) NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    hidden INT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (id),
+    INDEX (code),
+    INDEX (hidden)
+) DEFAULT CHARSET=utf8;
+
+INSERT IGNORE INTO sudoku_difficulties (id, code, title, hidden) VALUES
+(-1, 'test', 'Тестовая', 1),
+ (0, 'random', 'Случайная', 1),
+ (1, 'practice', 'Практика', 0),
+ (2, 'easy', 'Легкая', 0),
+ (4, 'normal', 'Средняя', 0),
+ (6, 'expert', 'Сложная', 0),
+(10, 'nightmare', 'Эксперт', 0)
+;
+
+CREATE TABLE IF NOT EXISTS sudoku_difficulty_parameters (
+    difficulty_id INT NOT NULL,
+    open_cells VARCHAR(255) NOT NULL,
+    start_rating INT NOT NULL,
+    minimal_rating INT NOT NULL,
+    penalty_per_second INT NOT NULL,
+    PRIMARY KEY (difficulty_id)
+);
+
+INSERT IGNORE INTO sudoku_difficulty_parameters (difficulty_id, open_cells, start_rating, minimal_rating, penalty_per_second) VALUES
+(-1, 78, 0, 0, 0),
+ (0, '{"min": 35, "max": 45}', 0, 0, 0),
+ (1, 50, 1000, 1000, 0),
+ (2, 45, 2000, 1100, 3),
+ (4, 40, 4000, 1900, 5),
+ (6, 35, 8000, 2200, 12),
+(10, 30, 16000, 4000, 17)
+;
+
 CREATE TABLE IF NOT EXISTS sudoku_logs (
     id INT NOT NULL AUTO_INCREMENT,
     game_id INT NOT NULL,
@@ -82,7 +121,7 @@ CREATE TABLE IF NOT EXISTS sudoku_ratings (
     INDEX (faster_game_duration)
 );
 
-CREATE TABLE sudoku_multiplayer (
+CREATE TABLE IF NOT EXISTS sudoku_multiplayer (
     id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     difficulty_id INT NOT NULL,

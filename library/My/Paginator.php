@@ -8,6 +8,11 @@ class My_Paginator implements Countable, IteratorAggregate
      */
     protected $_adapter;
 
+    /**
+     * @var mixed
+     */
+    protected $_source;
+
     protected $_limit = 0;
 
     protected $_offset = 0;
@@ -16,12 +21,46 @@ class My_Paginator implements Countable, IteratorAggregate
 
     protected $_fullLastPage = false;
 
-    /**
-     * @param Zend_Paginator_Adapter_Interface $adapter
-     */
-    public function __construct(Zend_Paginator_Adapter_Interface $adapter)
+    public function __construct($source)
     {
-        $this->_adapter = $adapter;
+        $this->_adapter = $this->initAdapter($source);
+        $this->_source = $source;
+    }
+
+    /**
+     * @param mixed $source
+     * @return Zend_Paginator_Adapter_Interface|null
+     */
+    public function initAdapter($source)
+    {
+        switch (true) {
+            case $source instanceof Zend_Db_Select:
+                $adapter = new Zend_Paginator_Adapter_DbSelect($source);
+                break;
+            case is_array($source):
+                $adapter = new Zend_Paginator_Adapter_Array($source);
+                break;
+            default:
+                $adapter = null;
+                break;
+        }
+        return $adapter;
+    }
+
+    /**
+     * @return Zend_Paginator_Adapter_Interface
+     */
+    public function getAdapter()
+    {
+        return $this->_adapter;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSource()
+    {
+        return $this->_source;
     }
 
     /**

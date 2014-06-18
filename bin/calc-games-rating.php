@@ -25,7 +25,7 @@ class CalculateGamesRating
         $difficulties = [];
         foreach ($games as $game) {
             $userId     = $game['user_id'];
-            $difficulty = $game['difficulty'];
+            $difficulty = $game['difficulty_id'];
             $duration   = $game['duration'];
             $rating = $sudokuService->calculateRating($difficulty, $duration);
             if ($rating > 0) {
@@ -55,16 +55,17 @@ class CalculateGamesRating
         $check = [];
         foreach ($rows as $row) {
             $userId     = $row['user_id'];
-            $difficulty = $row['difficulty'];
+            $difficulty = $row['difficulty_id'];
             $rating     = $row['rating'];
             if (!isset($check[$userId])) {
                 $check[$userId] = [];
             }
             $check[$userId][$difficulty] = $rating;
         }
+        $difficultyService = Application_Service_Difficulty_Sudoku::getInstance();
         foreach ($toUpdate as $userId => $ratings) {
             foreach ($ratings as $difficulty => $rating) {
-                $difficulty = $sudokuService->getDifficulty($difficulty);
+                $difficulty = $difficultyService->getDifficulty($difficulty);
                 if (empty($difficulty)) {
                     continue;
                 }
@@ -76,14 +77,14 @@ class CalculateGamesRating
                             rating = ' . intval($newRating) . '
                         WHERE
                             user_id = ' . intval($userId) . '
-                            AND difficulty = ' . intval($difficulty['id']) . '
+                            AND difficulty_id = ' . intval($difficulty['id']) . '
                     ';
                     $this->_db->query($sql);
                 } else {
                     $sudokuRatingsDbModel->insert([
-                        'user_id'    => $userId,
-                        'difficulty' => $difficulty,
-                        'rating'     => $rating,
+                        'user_id'       => $userId,
+                        'difficulty_id' => $difficulty,
+                        'rating'        => $rating,
                     ]);
                 }
             }
@@ -92,12 +93,12 @@ class CalculateGamesRating
             CREATE TEMPORARY TABLE tmp_sudoku_ratings (
                 id INT NOT NULL AUTO_INCREMENT,
                 user_id INT NOT NULL,
-                difficulty INT NOT NULL,
+                difficulty_id INT NOT NULL,
                 faster_game_hash VARCHAR(50) NOT NULL DEFAULT "",
                 faster_game_duration INT NOT NULL DEFAULT 0,
                 PRIMARY KEY (id),
                 INDEX (user_id),
-                INDEX (difficulty)
+                INDEX (difficulty_id)
             )
         ';
         $this->_db->query($sql);
@@ -108,20 +109,20 @@ class CalculateGamesRating
                 SELECT
                     NULL AS id,
                     user_id AS user_id,
-                    difficulty AS difficulty,
+                    difficulty_id AS difficulty_id,
                     "" AS faster_game_hash,
                     0 AS faster_game_duration
                 FROM
                     ' . $sudokuRatingsDbModel::TABLE_NAME . '
                 WHERE
-                    difficulty = ' . intval($difficulty) . '
+                    difficulty_id = ' . intval($difficulty) . '
                 ORDER BY rating DESC
             ';
             $this->_db->query($sql);
 
             $sql = '
                 UPDATE tmp_sudoku_ratings tsr
-                INNER JOIN ' . $sudokuGamesDbModel::TABLE_NAME . ' sg ON (tsr.user_id = sg.user_id AND tsr.difficulty = sg.difficulty)
+                INNER JOIN ' . $sudokuGamesDbModel::TABLE_NAME . ' sg ON (tsr.user_id = sg.user_id AND tsr.difficulty_id = sg.difficulty_id)
                 SET
                     tsr.faster_game_hash = sg.hash,
                     tsr.faster_game_duration = sg.duration
@@ -133,7 +134,7 @@ class CalculateGamesRating
 
             $sql = '
                 UPDATE ' . $sudokuRatingsDbModel::TABLE_NAME . ' sr
-                INNER JOIN tmp_sudoku_ratings tsr ON (sr.user_id = tsr.user_id AND sr.difficulty = tsr.difficulty)
+                INNER JOIN tmp_sudoku_ratings tsr ON (sr.user_id = tsr.user_id AND sr.difficulty_id = tsr.difficulty_id)
                 SET
                     sr.position = tsr.id,
                     sr.faster_game_hash = tsr.faster_game_hash,

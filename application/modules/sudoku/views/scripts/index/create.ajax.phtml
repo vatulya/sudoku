@@ -1,9 +1,5 @@
 <?php
-if (isset($this->selectedDifficulty) && $this->difficulties[$this->selectedDifficulty]) {
-    $selectedDifficulty = $this->difficulties[$this->selectedDifficulty];
-} else {
-    $selectedDifficulty = $this->difficulties[Application_Service_Game_Abstract::DEFAULT_GAME_DIFFICULTY];
-}
+$selectedDifficulty = $this->selectedDifficulty ? : Application_Service_Difficulty_Sudoku::DEFAULT_GAME_DIFFICULTY;
 $titleTemplate = '%s (%s открытых клеток)';
 ?>
 <div class="create-new-game-container">
@@ -14,12 +10,12 @@ $titleTemplate = '%s (%s открытых клеток)';
             <select class="select-difficulties" name="difficulty">
                 <?php foreach ($this->difficulties as $difficulty): ?>
                     <?php
-                        $openCells = $difficulty['openCells'];
+                        $openCells = $difficulty['open_cells'];
                         if (is_array($openCells)) {
                             $openCells = $openCells['min'] . '..' . $openCells['max'];
                         }
                         $title = sprintf($titleTemplate, $difficulty['title'], $openCells);
-                        $selected = $selectedDifficulty['id'] == $difficulty['id'] ? ' selected="selected"' : '';
+                        $selected = $selectedDifficulty == $difficulty['id'] ? ' selected="selected"' : '';
                     ?>
                     <option value="<?php echo $difficulty['id']; ?>"<?php echo $selected; ?>><?php echo $title; ?></option>
                 <?php endforeach; ?>

@@ -67,8 +67,7 @@ class Application_Model_Db_Sudoku_Ratings extends Application_Model_Db_GameAbstr
         if (!empty($order)) {
             $select->order($order);
         }
-        $paginator = new Zend_Paginator_Adapter_DbSelect($select);
-        $paginator = new My_Paginator($paginator);
+        $paginator = new My_Paginator($select);
         return $paginator;
     }
 
