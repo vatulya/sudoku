@@ -41,13 +41,16 @@ abstract class Application_Service_Difficulty_Abstract extends Application_Servi
     }
 
     /**
-     * @param int $difficulty
+     * @param int|array $difficulty
      * @param bool $orGetDefault
      * @return array
      */
     public function getDifficulty($difficulty, $orGetDefault = false)
     {
         $difficulties = $this->getAllDifficulties();
+        if (is_array($difficulty)) {
+            $difficulty = isset($difficulty['id']) ? $difficulty['id'] : null;
+        }
         if (isset($difficulties[$difficulty])) {
             return $difficulties[$difficulty];
         } elseif ($orGetDefault) {

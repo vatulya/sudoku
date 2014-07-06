@@ -33,14 +33,17 @@ class Application_Service_Game_Sudoku extends Application_Service_Game_Abstract
         $difficulty = isset($parameters['difficulty']) ? $parameters['difficulty'] : null;
         $difficulty = $this->serviceDifficulty->getDifficulty($difficulty, true);
 
+        $multiplayerId = isset($parameters['multiplayer_id']) ? $parameters['multiplayer_id'] : null;
+
         $board = $this->generateBoard();
         $board = $this->getOpenCells($board, $difficulty['open_cells']);
         $board = $this->normalizeBoardKeys($board);
 
         $game = [
-            'user_id'    => $userId,
-            'difficulty' => $difficulty,
-            'parameters' => [
+            'user_id'        => $userId,
+            'multiplayer_id' => $multiplayerId,
+            'difficulty'     => $difficulty,
+            'parameters'     => [
                 'openCells' => $board,
             ],
         ];

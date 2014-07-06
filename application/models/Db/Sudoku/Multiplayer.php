@@ -11,6 +11,7 @@ class Application_Model_Db_Sudoku_Multiplayer extends Application_Model_Db_GameA
         $data = [
             'user_id'       => $data['user_id'],
             'difficulty_id' => $data['difficulty']['id'],
+            'game_type'     => $data['game_type'],
             'state'         => Application_Service_Multiplayer_Abstract::STATE_NEW,
             'created'       => $now,
         ];

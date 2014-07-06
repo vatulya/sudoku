@@ -107,25 +107,27 @@ class Sudoku_IndexController extends Zend_Controller_Action
                 if (!isset($difficulties[$difficulty])) {
                     throw new Exception('Неправильная сложность. Выберите другую.');
                 }
+
                 if (in_array($gameType, [Application_Service_Game_Abstract::GAME_TYPE_VERSUS_BOT, Application_Service_Game_Abstract::GAME_TYPE_VERSUS_PLAYER])) {
-                    if ($sudokuService->createMultiplayer($user['id'], ['difficulty' => $difficulty])) {
-                        $vars['success']  = true;
-                    }
+                    $sudokuGame = Application_Service_Multiplayer_Sudoku::getInstance()->create($user['id'], ['difficulty' => $difficulty, 'gameType' => $gameType]);
                 } else {
                     $sudokuGame = $sudokuService->create($user['id'], ['difficulty' => $difficulty]);
-                    if ($sudokuGame instanceof Application_Model_Game_Abstract) {
-                        $vars['gameHash'] = $sudokuGame->getHash();
-                        $vars['success']  = true;
-                        if (!$this->_request->isXmlHttpRequest()) {
-                            $url = $this->_helper->Url->url(
-                                [
-                                    'gameHash' => $vars['gameHash'],
-                                ],
-                                'sudoku-game',
-                                true
-                            );
-                            return $this->redirect($url);
-                        }
+                }
+
+                if ($sudokuGame) {
+                    $vars['success']  = true;
+                }
+                if ($sudokuGame instanceof Application_Model_Game_Abstract) {
+                    $vars['gameHash'] = $sudokuGame->getHash();
+                    if (!$this->_request->isXmlHttpRequest()) {
+                        $url = $this->_helper->Url->url(
+                            [
+                                'gameHash' => $vars['gameHash'],
+                            ],
+                            'sudoku-game',
+                            true
+                        );
+                        return $this->redirect($url);
                     }
                 }
             } catch (Exception $e) {
@@ -167,7 +169,7 @@ class Sudoku_IndexController extends Zend_Controller_Action
             $this->getHelper('redirector')->gotoRoute([], 'sudoku', true);
         }
         $this->view->assign([
-            'sudoku'       => $sudokuGame,
+            'sudoku' => $sudokuGame,
         ]);
         $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'create'], 'sudoku', true)] = 'Игра';
         $this->view->pageCode = 'game';

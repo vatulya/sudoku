@@ -5,11 +5,11 @@
  *
  * @method Application_Service_Multiplayer_Sudoku getService()
  */
-class Application_Model_Multiplayer_Sudoku extends Application_Model_Game_Abstract
+class Application_Model_Multiplayer_Sudoku extends Application_Model_Abstract
 {
 
-    protected static $modelDb = 'Sudoku_Games';
+    protected static $modelDb = 'Sudoku_Multiplayer';
 
-    protected static $service = 'Sudoku';
+    protected static $service = 'Multiplayer_Sudoku';
 
 }

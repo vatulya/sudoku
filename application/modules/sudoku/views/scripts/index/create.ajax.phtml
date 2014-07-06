@@ -30,9 +30,9 @@ $titleTemplate = '%s (%s открытых клеток)';
         <div class="buttons-container">
             <label class="title pull-left">Начать игру:</label>
             <div class="buttons">
-                <button type="submit" class="btn btn-danger btn-small submit-form" name="gameType" value="single">На время</button>
-                <button type="submit" class="btn btn-primary btn-small submit-form" name="gameType" value="bot">Против робота</button>
-                <button type="submit" class="btn btn-primary btn-small submit-form" name="gameType" value="multiplayer">Против игрока</button>
+                <button type="submit" class="btn btn-danger btn-small submit-form" name="gameType" value="<?php echo Application_Service_Game_Abstract::GAME_TYPE_SINGLE_PLAYER; ?>">На время</button>
+                <button type="submit" class="btn btn-primary btn-small submit-form" name="gameType" value="<?php echo Application_Service_Game_Abstract::GAME_TYPE_VERSUS_BOT; ?>">Против робота</button>
+                <button type="submit" class="btn btn-primary btn-small submit-form" name="gameType" value="<?php echo Application_Service_Game_Abstract::GAME_TYPE_VERSUS_PLAYER; ?>">Против игрока</button>
             </div>
         </div>
     </form>

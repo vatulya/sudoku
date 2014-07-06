@@ -125,10 +125,12 @@ CREATE TABLE IF NOT EXISTS sudoku_multiplayer (
     id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     difficulty_id INT NOT NULL,
+    game_type ENUM('versus_bot', 'versus_player') NOT NULL,
     state INT NOT NULL DEFAULT 0,
     created DATETIME NOT NULL,
     PRIMARY KEY (id),
     INDEX (user_id),
     INDEX (difficulty_id),
+    INDEX (game_type),
     INDEX (state)
 );
