@@ -31,7 +31,7 @@ $this->headScript()
     echo $this->headTitle();
 ?>
 </head>
-<body class="<?php echo $this->pageCode; ?>">
+<body class="<?php echo is_array($this->pageCode) ? implode(' ', $this->pageCode) : $this->pageCode; ?>">
 
 <?php echo $this->render('_extra/navigation.phtml'); ?>
 <?php echo $this->render('_extra/system-notifications.phtml'); ?>

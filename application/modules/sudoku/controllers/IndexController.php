@@ -172,7 +172,10 @@ class Sudoku_IndexController extends Zend_Controller_Action
             'sudoku' => $sudokuGame,
         ]);
         $this->view->breadcrumbs[$this->_helper->Url->url(['action' => 'create'], 'sudoku', true)] = 'Игра';
-        $this->view->pageCode = 'game';
+        $this->view->pageCode = ['game'];
+        if ($sudokuGame->isMultiplayer()) {
+            $this->view->pageCode[] = 'multiplayer';
+        }
         $this->_rightColumn();
     }
 

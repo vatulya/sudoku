@@ -8,6 +8,13 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
     protected static $service;
 
     /**
+     * Raw data from database. Call init() to load this data into properties
+     *
+     * @var array
+     */
+    protected $data = [];
+
+    /**
      * @var int
      */
     protected $id;
@@ -77,6 +84,17 @@ abstract class Application_Model_Game_Abstract extends Application_Model_Abstrac
         if (!$game) {
             throw new RuntimeException('Wrong game ID "' . $id . '".');
         }
+        $this->data = $game;
+        $this->init();
+    }
+
+    /**
+     * Load data from ->data into other properties
+     */
+    protected function init()
+    {
+        $game = $this->data;
+
         try { $parameters = (array)Zend_Json::decode($game['parameters']); } catch (Exception $e) { $parameters = []; }
         $this->id         = $game['id'];
         $this->user       = (new Application_Model_Db_Users())->getOne(['id' => $game['user_id']]);

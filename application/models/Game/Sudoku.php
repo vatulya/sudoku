@@ -18,6 +18,33 @@ class Application_Model_Game_Sudoku extends Application_Model_Game_Abstract
     protected static $service = 'Sudoku';
 
     /**
+     * @var int
+     */
+    protected $multiplayerId = 0;
+
+    protected function init()
+    {
+        parent::init();
+        $this->multiplayerId = (int)$this->data['multiplayer_id'];
+    }
+
+    /**
+     * @return int
+     */
+    public function getMultiplayerId()
+    {
+        return $this->multiplayerId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMultiplayer()
+    {
+        return (bool)$this->getMultiplayerId();
+    }
+
+    /**
      * @param array $cells coords => [number => 1, marks => [1,2,3]]
      * @param string $logAction like Application_Model_Db_Sudoku_Logs::ACTION_TYPE_SET_CELLS
      * @return bool
